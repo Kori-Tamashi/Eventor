@@ -19,6 +19,27 @@ services:
     networks:
       - eventor-network
 
+  database-interface:
+      image: dpage/pgadmin4
+      container_name: database-interface
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@example.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+      ports:
+        - "3001:80"
+      volumes:
+        - ../pgadmin/servers.json:/pgadmin4/servers.json:ro
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+        start_period: 15s
+        interval: 5s
+        timeout: 5s
+        retries: 5
+      depends_on:
+        - database
+      networks:
+        - eventor-network
+
 networks:
   eventor-network:
     driver: bridge
