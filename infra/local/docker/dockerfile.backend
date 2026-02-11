@@ -1,0 +1,11 @@
+# 1. Установка базового образа
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
+
+# 2. Установка рабочей директории
+WORKDIR /app
+
+# 3. Копирование .cproj файла (# TODO: изменить путь к файлу проекта )
+COPY src/backend/dotnet/Eventor.cproj ./ 
+
+# 4. Установка зависимостей и удаление .cproj файла
+RUN dotnet restore Eventor.cproj --verbosity normal && rm Eventor.cproj
