@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
 WORKDIR /app
 
 # 3. Копирование .cproj файла (# TODO: изменить путь к файлу проекта )
-COPY src/backend/dotnet/Eventor.cproj ./ 
+COPY ../../../src/backend/dotnet/Eventor.csproj ./ 
 
 # 4. Установка зависимостей и удаление .cproj файла
-RUN dotnet restore Eventor.cproj --verbosity normal && rm Eventor.cproj
+RUN dotnet restore Eventor.csproj --verbosity normal
