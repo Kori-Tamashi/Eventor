@@ -20,21 +20,23 @@ services:
       - eventor-network
 
   database-interface:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:9
     container_name: database-interface
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
-      - "3001:80"
+      - "3002:80"
     volumes:
       - ../pgadmin/servers.json:/pgadmin4/servers.json:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
-      start_period: 15s
+      test: ["CMD-SHELL", "wget --spider http://localhost:80 || exit 1"]
+      start_period: 30s
       interval: 5s
       timeout: 5s
       retries: 5
+    tmpfs:
+      - /var/lib/pgadmin
     depends_on:
       - database
     networks:
