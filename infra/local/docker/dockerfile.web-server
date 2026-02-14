@@ -8,15 +8,12 @@ WORKDIR /app
 # 3. Копирование кода фронтенда
 COPY src/frontend/typescript ./
 
-# 4. Установка зависимостей
-RUN npm install
-
-# 5. Компилирование кода
-RUN npm run build
+# 4. Установка зависимостей и компилирование кода
+RUN npm install && npm run build
 
 # --- Стадия запуска веб-сервера ---
 # 1. Установка базового образа для веб сервера
-FROM nginx:alpine
+FROM nginx:1.28-alpine
 
 # 2. Установка рабочей директории
 WORKDIR /app
