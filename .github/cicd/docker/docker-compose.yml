@@ -4,8 +4,6 @@ services:
       context: ../../../
       dockerfile: dockerfile.database
     container_name: database
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -28,5 +26,25 @@ services:
       context: ../../../
       dockerfile: dockerfile.frontend
     container_name: frontend
+    networks:
+      - eventor-network
 
-  
+  backend:
+    build:
+      context: ../../../
+      dockerfile: dockerfile.backend
+    container_name: backend
+    ports:
+      - "8080:8080"
+    networks:
+      - eventor-network
+
+  web-server:
+    build:
+      context: ../../../
+      dockerfile: dockerfile.web-server
+    container_name: web-server
+    ports:
+      - "80:80"
+    networks:
+      - eventor-network
