@@ -1,0 +1,8 @@
+# 1. Установка базового образа
+FROM postgres:17
+
+# 2. Установка рабочей директории
+WORKDIR /docker-entrypoint-initdb.d
+
+# 3. Копирование скрипта создания базы данных
+COPY src/database/postgresql/ ./
