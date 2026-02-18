@@ -1,6 +1,7 @@
 name: Continuous Integration
 env:
   ENV_FILE: .github/cicd/settings.conf
+  DOCKER_COMPOSE_PATH: .github/cicd/docker/docker-compose.yml
 
 on: [push, pull_request]
 
@@ -23,7 +24,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the database container
-        run: docker compose --env-file ${{ env.ENV_FILE }} up -d database
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database
     
       - name: Check container status
           run: |
