@@ -2,7 +2,7 @@ services:
   database:
     build:
       context: ../../../
-      dockerfile: dockerfile.database
+      dockerfile: ${DOCKER_PATH}/dockerfile.database
     container_name: database
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -24,7 +24,7 @@ services:
   frontend:
     build:
       context: ../../../
-      dockerfile: dockerfile.frontend
+      dockerfile: ${DOCKER_PATH}/dockerfile.frontend
     container_name: frontend
     networks:
       - eventor-network
@@ -32,7 +32,7 @@ services:
   backend:
     build:
       context: ../../../
-      dockerfile: dockerfile.backend
+      dockerfile: ${DOCKER_PATH}/dockerfile.backend
     container_name: backend
     ports:
       - "8080:8080"
@@ -42,9 +42,13 @@ services:
   web-server:
     build:
       context: ../../../
-      dockerfile: dockerfile.web-server
+      dockerfile: ${DOCKER_PATH}/dockerfile.webserver
     container_name: web-server
     ports:
       - "80:80"
     networks:
       - eventor-network
+
+networks:
+  eventor-network:
+    driver: bridge
