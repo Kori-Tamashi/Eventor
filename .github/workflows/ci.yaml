@@ -1,0 +1,34 @@
+name: Continuous Integration
+env:
+  ENV_FILE: .github/cicd/settings.conf
+
+on: [push, pull_request]
+
+jobs:
+  build-database:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          docker-version: 'latest'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the database container
+        run: docker compose --env-file ${{ env.ENV_FILE }} up -d database
+    
+      - name: Check container status
+          run: |
+            status=$(docker inspect -f '{{.State.Status}}' database)
+            if [ "$status" != "running" ]; then
+              echo "Container is not running (status: $status)"
+              exit 1
+            fi
