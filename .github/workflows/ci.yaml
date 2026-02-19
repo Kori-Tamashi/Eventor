@@ -40,6 +40,14 @@ jobs:
             echo "Container is not running (status: $status)"
             exit 1
           fi
+
+      - name: Check container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}}' database)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
   
   build-backend:
     runs-on: ${{ matrix.os }}
@@ -68,8 +76,6 @@ jobs:
             echo "Container is not running (status: $status)"
             exit 1
           fi
-      
-      
 
       - name: Build domain layer 
         run: docker exec backend dotnet build Domain/Domain.csproj --verbosity normal
