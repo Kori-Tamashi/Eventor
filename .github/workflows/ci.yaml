@@ -78,3 +78,34 @@ jobs:
 
       - name: Build all projects in solution
         run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
+
+  build-frontend:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          docker-version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the frontend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d frontend --wait
+
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' frontend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Build project
+        run: docker exec frontend npm run build
