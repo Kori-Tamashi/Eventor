@@ -1,13 +1,13 @@
 name: Continuous Integration
 env:
-  CICD_PATH: .github/cicd
-  DOCKER_PATH: .github/cicd/docker
+  CICD_PATH: infra/cicd
+  DOCKER_PATH: infra/cicd/docker
   BACKEND_PATH: src/backend/dotnet
   FRONTEND_PATH: src/frontend/typescript
   DATABASE_PATH: src/database/postgresql
 
-  ENV_FILE: .github/cicd/settings.conf
-  DOCKER_COMPOSE_PATH: .github/cicd/docker/docker-compose.yml
+  ENV_FILE: infra/cicd/settings.conf
+  DOCKER_COMPOSE_PATH: infra/cicd/docker/docker-compose.yml
 
 on: [push, pull_request]
 
