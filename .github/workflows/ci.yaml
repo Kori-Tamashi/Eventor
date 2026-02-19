@@ -1,7 +1,14 @@
 name: Continuous Integration
 env:
+  CICD_PATH: .github/cicd
+  DOCKER_PATH: .github/cicd/docker
+  BACKEND_PATH: src/backend/dotnet
+  FRONTEND_PATH: src/frontend/typescript
+  DATABASE_PATH: src/database/postgresql
+
   ENV_FILE: .github/cicd/settings.conf
   DOCKER_COMPOSE_PATH: .github/cicd/docker/docker-compose.yml
+  BACKEND_PROJECTS:    
 
 on: [push, pull_request]
 
@@ -18,7 +25,7 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
         with:
-          docker-version: 'latest'
+          docker-version: '29.2.1'
 
       - name: Verify Docker installation
         run: docker --version
@@ -27,9 +34,51 @@ jobs:
         run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database
     
       - name: Check container status
-          run: |
-            status=$(docker inspect -f '{{.State.Status}}' database)
-            if [ "$status" != "running" ]; then
-              echo "Container is not running (status: $status)"
-              exit 1
-            fi
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' database)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+  
+  build-backend:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          docker-version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+      
+      
+
+      - name: Build domain layer 
+        run: docker exec backend dotnet build Domain/Domain.csproj --verbosity normal
+
+      - name: Build data access layer 
+        run: docker exec backend dotnet build DataAccess/DataAccess.csproj --verbosity normal
+
+      - name: Build business logic layer 
+        run: docker exec backend dotnet build Application/Application.csproj --verbosity normal
+
+      - name: Build controllers layer 
+        run: docker exec backend dotnet build Web/Web.csproj --verbosity normal
