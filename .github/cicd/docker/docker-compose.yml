@@ -49,9 +49,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       start_period: 15s
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 3s
+      timeout: 3s
+      retries: 3
     networks:
       - eventor-network
 
