@@ -61,6 +61,7 @@ jobs:
         uses: docker/setup-docker-action@v4
         with:
           docker-version: '29.2.1'
+          version: '29.2.1'
 
       - name: Verify Docker installation
         run: docker --version
