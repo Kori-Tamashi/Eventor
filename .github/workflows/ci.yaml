@@ -8,7 +8,6 @@ env:
 
   ENV_FILE: .github/cicd/settings.conf
   DOCKER_COMPOSE_PATH: .github/cicd/docker/docker-compose.yml
-  BACKEND_PROJECTS:    
 
 on: [push, pull_request]
 
@@ -43,7 +42,7 @@ jobs:
 
       - name: Check container health
         run: |
-          status=$(docker inspect -f '{{.State.Health.Status}}}' database)
+          status=$(docker inspect -f '{{.State.Health.Status}}' database)
           if [ "$status" != "healthy" ]; then
             echo "Container is not healthy (status: $status)"
             exit 1
@@ -77,14 +76,5 @@ jobs:
             exit 1
           fi
 
-      - name: Build domain layer 
-        run: docker exec backend dotnet build Domain/Domain.csproj --verbosity normal
-
-      - name: Build data access layer 
-        run: docker exec backend dotnet build DataAccess/DataAccess.csproj --verbosity normal
-
-      - name: Build business logic layer 
-        run: docker exec backend dotnet build Application/Application.csproj --verbosity normal
-
-      - name: Build controllers layer 
-        run: docker exec backend dotnet build Web/Web.csproj --verbosity normal
+      - name: Build all projects in solution
+        run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
