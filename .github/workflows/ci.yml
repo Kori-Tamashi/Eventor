@@ -226,5 +226,56 @@ jobs:
             exit 1
           fi
       
-      - name: Run unit tests
+      - name: Run integration tests
         run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Integration" --verbosity=normal
+
+  e2e-tests-backend:
+    needs: [build-database, build-backend, unit-tests-backend, integration-tests-backend]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          docker-version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the database container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database --wait
+    
+      - name: Check database container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' database)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Check database container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' database)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend --wait
+
+      - name: Check backend container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+      
+      - name: Run E2E tests
+        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=E2E" --verbosity=normal
