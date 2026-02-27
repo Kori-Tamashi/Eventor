@@ -1,8 +1,0 @@
-# 1. Установка базового образа для веб сервера
-FROM nginx:1.28-alpine
-
-# 2. Установка рабочей директории
-WORKDIR /app
-
-# 3. Копирование конфигурационного файла
-COPY infra/cicd/nginx/nginx.conf /etc/nginx/conf.d/default.conf

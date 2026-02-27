@@ -40,12 +40,12 @@ services:
       - eventor-network
 
   web-server:
-    build:
-      context: ../../../
-      dockerfile: ${DOCKER_PATH}/dockerfile.webserver
+    image: nginx:1.28-alpine
     container_name: web-server
     ports:
       - "80:80"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       start_period: 15s
