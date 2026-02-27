@@ -212,7 +212,7 @@ jobs:
         run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Integration" --verbosity=normal
 
   e2e-tests-backend:
-    needs: [build-database, build-backend, unit-tests-backend, integration-tests-backend]
+    needs: [integration-tests-backend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
