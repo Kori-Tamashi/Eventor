@@ -3,8 +3,8 @@ env:
   CICD_PATH: infra/cicd
   DOCKER_PATH: infra/cicd/docker
   BACKEND_PATH: src/backend/dotnet
-  FRONTEND_PATH: src/frontend/typescript
-  DATABASE_PATH: src/database/postgresql
+  FRONTEND_PATH: src/frontend/angular
+  DATABASE_PATH: src/database/postgresql/v1
 
   ENV_FILE: infra/cicd/settings.conf
   DOCKER_COMPOSE_PATH: infra/cicd/docker/docker-compose.yml
@@ -26,7 +26,7 @@ jobs:
       - name: Verify Docker installation
         run: docker --version
 
-      - name: Lifting the frontend container
+      - name: Lifting the web-server container
         run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d web-server --wait
 
       - name: Check container status
@@ -132,10 +132,11 @@ jobs:
           fi
 
       - name: Build project
-        run: docker exec frontend npm run build
+        run: docker exec frontend ng build
 
   unit-tests-backend:
-    needs: ubuntu-latest
+    needs: build-backend
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -245,7 +246,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend --wait
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check backend container status
         run: |

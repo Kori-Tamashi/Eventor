@@ -8,4 +8,7 @@ WORKDIR /app
 COPY src/backend/dotnet/ ./
 
 # 4. Установка зависимостей 
-RUN dotnet restore Eventor.csproj --verbosity normal
+RUN dotnet restore Eventor.sln --verbosity normal
+
+# 5. Удержание контейнера запущенным
+CMD ["tail", "-f", "/dev/null"]

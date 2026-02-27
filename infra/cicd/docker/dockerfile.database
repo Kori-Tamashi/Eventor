@@ -5,4 +5,4 @@ FROM postgres:17
 WORKDIR /docker-entrypoint-initdb.d
 
 # 3. Копирование скрипта создания базы данных
-COPY src/database/postgresql/ ./
+COPY src/database/postgresql/v1 ./
