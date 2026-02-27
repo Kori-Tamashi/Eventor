@@ -1,12 +1,12 @@
 # --- Стадия установки зависимостей для фронтенда ---
 # 1. Установка базового образа для работы фронтенда
-FROM node:18-alpine AS frontend-builder
+FROM node:20-alpine AS frontend-builder
 
 # 2. Установка рабочей директории
 WORKDIR /app
 
 # 3. Копирование кода фронтенда
-COPY src/frontend/typescript ./
+COPY src/frontend/angular ./
 
 # 4. Установка зависимостей и компилирование кода
 RUN npm install && npm run build
@@ -19,7 +19,7 @@ FROM nginx:1.28-alpine
 WORKDIR /app
 
 # 3. Копирование собранных зависимостей из стадии сборки фронтенда
-COPY --from=frontend-builder /app/dist /usr/share/nginx/html
+COPY --from=frontend-builder /app/dist/eventor-frontend /usr/share/nginx/html
 
 # 4. Открываем порт 80 для доступа к веб-серверу
 EXPOSE 80

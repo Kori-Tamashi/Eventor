@@ -4,8 +4,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
 # 2. Установка рабочей директории
 WORKDIR /app
 
-# 3. Копирование .csproj файла (# TODO: изменить путь к файлу проекта )
-COPY src/backend/dotnet/Eventor.csproj ./ 
+# 3. Копирование .sln файла 
+COPY src/backend/dotnet/Eventor.sln ./ 
 
-# 4. Установка зависимостей и удаление .csproj файла
-RUN dotnet restore Eventor.csproj --verbosity normal
+# 4. Установка зависимостей
+RUN dotnet restore Eventor.sln --verbosity normal
