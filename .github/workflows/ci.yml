@@ -13,10 +13,7 @@ on: [push, pull_request]
 
 jobs:
   build-webserver:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,10 +46,7 @@ jobs:
           fi
 
   build-database:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -85,10 +79,7 @@ jobs:
           fi
   
   build-backend:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -102,7 +93,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend --wait
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check container status
         run: |
@@ -116,10 +107,7 @@ jobs:
         run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
 
   build-frontend:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -133,7 +121,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the frontend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d frontend --wait
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d frontend
 
       - name: Check container status
         run: |
@@ -147,11 +135,7 @@ jobs:
         run: docker exec frontend npm run build
 
   unit-tests-backend:
-    needs: build-backend
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    needs: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -165,7 +149,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend --wait
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check container status
         run: |
@@ -180,10 +164,7 @@ jobs:
 
   integration-tests-backend:
     needs: [build-database, build-backend, unit-tests-backend]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -216,7 +197,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend --wait
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check backend container status
         run: |
@@ -231,10 +212,7 @@ jobs:
 
   e2e-tests-backend:
     needs: [build-database, build-backend, unit-tests-backend, integration-tests-backend]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
