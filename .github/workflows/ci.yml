@@ -9,7 +9,7 @@ env:
   ENV_FILE: infra/cicd/settings.conf
   DOCKER_COMPOSE_PATH: infra/cicd/docker/docker-compose.yml
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build-webserver:
