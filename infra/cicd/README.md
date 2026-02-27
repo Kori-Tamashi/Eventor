@@ -13,20 +13,10 @@
 | `docker/dockerfile.backend`   | Dockerfile для сборки backend-сервиса. |
 | `docker/dockerfile.database`  | Dockerfile для инициализации базы данных. |
 | `docker/dockerfile.frontend`  | Dockerfile для сборки фронтенда. |
-| `docker/dockerfile.webserver` | Dockerfile для веб-сервера Nginx. |
 
 ## Инструкция по управлению стендом
 
 Для работы стенда требуется предустановленный `docker` и `docker-compose`. Все команды выполняются из директории `.github/cicd/docker`.
-
-| Команда | Описание |
-|---------|----------|
-| `docker-compose up -d`          | Собрать и запустить все контейнеры в фоновом режиме. |
-| `docker-compose down`           | Остановить и удалить контейнеры, сети и тома. |
-| `docker-compose restart`        | Перезапустить все сервисы. |
-| `docker-compose logs -f`        | Просмотреть логи всех контейнеров в реальном времени. |
-| `docker-compose build --no-cache` | Принудительно пересобрать образы без использования кеша. |
-
 
 ## Описание сервисов стенда
 
