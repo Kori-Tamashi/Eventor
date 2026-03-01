@@ -13,4 +13,8 @@
       <Folder Include="Models\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Npgsql" Version="10.0.1" />
+    </ItemGroup>
+
 </Project>
