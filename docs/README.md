@@ -36,7 +36,6 @@
 | title | Строковый | NOT NULL | Название |
 | number | Целочисленный | NOT NULL, CHECK (sequence_number > 0) | Порядковый номер |
 | description | Строковый | NOT NULL | Описание |
-| price | Вещественный | NOT NULL, CHECK (price >= 0) | Цена посещения |
 | menu_id | UUID | NOT NULL | Идентификатор меню |
 
 ### Таблица 2.4 — Таблица registrations
@@ -45,7 +44,7 @@
 | person_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор регистрации |
 | event_id | UUID | NOT NULL, UNIQUE(event_id, user_id) | Идентификатор мероприятия |
 | user_id | UUID | NOT NULL | Идентификатор пользователя |
-| price | Перечисляемый | NOT NULL | Тип (стандартный, VIP, организатор)|
+| type | Перечисляемый | NOT NULL | Тип (стандартный, VIP, организатор)|
 | payment | Логический | NOT NULL | Факт оплаты |
 
 ### Таблица 2.5 — Таблица menu
@@ -60,7 +59,7 @@
 | :--- | :--- | :--- | :--- |
 | item_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор предмета |
 | title | Строковый | NOT NULL | Название |
-| price | Вещественный | NOT NULL, CHECK (price >= 0) | Цена |
+| cost | Вещественный | NOT NULL, CHECK (cost >= 0) | Цена |
 
 ### Таблица 2.7 —Таблица feedbacks
 | Атрибут | Тип данных | Ограничения | Сведение |
