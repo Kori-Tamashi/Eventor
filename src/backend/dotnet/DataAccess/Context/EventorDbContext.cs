@@ -9,6 +9,9 @@ public class EventorDbContext : DbContext
     public DbSet<UserDb> Users { get; set; }
     public DbSet<LocationDb> Locations { get; set; }
     public DbSet<EventDb> Events { get; set; }
+    public DbSet<ItemDb> Items { get; set; }
+    public DbSet<MenuDb> Menus { get; set; }
+    public DbSet<MenuItemDb> MenuItems { get; set; }
 
     public EventorDbContext(DbContextOptions<EventorDbContext> options)
         : base(options)

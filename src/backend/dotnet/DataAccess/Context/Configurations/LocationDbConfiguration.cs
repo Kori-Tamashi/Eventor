@@ -40,9 +40,5 @@ public class LocationDbConfiguration : IEntityTypeConfiguration<LocationDb>
             .HasColumnName("capacity")
             .HasColumnType("int")
             .IsRequired();
-        
-        builder.HasMany(x => x.Events)
-            .WithOne(e=> e.Location)
-            .HasForeignKey(x => x.LocationId);
     }
 }

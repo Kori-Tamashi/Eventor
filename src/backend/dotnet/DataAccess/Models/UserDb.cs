@@ -67,9 +67,9 @@ public class UserDb
     [Column("role", TypeName = "user_role")]
     public UserRole Role { get; set; }
 
-    /// <summary>
-    /// Мероприятия пользователя
-    /// </summary>
+    // <summary>
+    // Мероприятия пользователя
+    // </summary>
     // public List<UserEventDBModel> UserEvents { get; set; } = new();
 }
 

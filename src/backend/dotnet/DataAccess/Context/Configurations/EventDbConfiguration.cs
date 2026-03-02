@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DataAccess.Context.Configurations;
 
-public class EventDbConfiguration
+public class EventDbConfiguration: IEntityTypeConfiguration<EventDb>
 {
     public void Configure(EntityTypeBuilder<EventDb> builder)
     {

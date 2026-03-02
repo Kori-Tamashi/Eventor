@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(EventorDbContext))]
-    [Migration("20260302093138_dfghfghjfhj")]
-    partial class dfghfghjfhj
+    [Migration("20260302123345_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,30 @@ namespace DataAccess.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("events");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.ItemDb", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("numeric")
+                        .HasColumnName("cost");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("items", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Items_Cost", "\"cost\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("DataAccess.Models.LocationDb", b =>

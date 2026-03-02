@@ -1,0 +1,20 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- EF Core -->
+        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.24" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.24" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.24" />
+
+        <!-- PostgreSQL -->
+        <PackageVersion Include="Npgsql" Version="8.0.8" />
+        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
+
+        <!-- Web -->
+        <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    </ItemGroup>
+</Project>

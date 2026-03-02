@@ -64,6 +64,30 @@ namespace DataAccess.Migrations
                     b.ToTable("events");
                 });
 
+            modelBuilder.Entity("DataAccess.Models.ItemDb", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("numeric")
+                        .HasColumnName("cost");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("items", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Items_Cost", "\"cost\" >= 0");
+                        });
+                });
+
             modelBuilder.Entity("DataAccess.Models.LocationDb", b =>
                 {
                     b.Property<Guid>("Id")
