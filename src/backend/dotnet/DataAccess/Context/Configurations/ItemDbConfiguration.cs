@@ -1,6 +1,6 @@
-using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
 

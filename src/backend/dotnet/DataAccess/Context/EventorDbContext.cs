@@ -1,6 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
 using Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Context;
 
@@ -12,6 +12,11 @@ public class EventorDbContext : DbContext
     public DbSet<ItemDb> Items { get; set; }
     public DbSet<MenuDb> Menus { get; set; }
     public DbSet<MenuItemDb> MenuItems { get; set; }
+    public DbSet<RegistrationDb> Registrations { get; set; }
+    public DbSet<ParticipationDb> Participations { get; set; }
+    public DbSet<FeedbackDb> Feedbacks { get; set; }
+    public DbSet<DayDb> Days { get; set; }
+
 
     public EventorDbContext(DbContextOptions<EventorDbContext> options)
         : base(options)
@@ -22,7 +27,8 @@ public class EventorDbContext : DbContext
     {
         modelBuilder.HasPostgresEnum<Gender>();
         modelBuilder.HasPostgresEnum<UserRole>();
-        
+        modelBuilder.HasPostgresEnum<RegistrationType>();
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(EventorDbContext).Assembly);
     }
 }

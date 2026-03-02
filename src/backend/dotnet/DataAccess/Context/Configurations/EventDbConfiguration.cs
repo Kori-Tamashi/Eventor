@@ -1,10 +1,10 @@
-using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
 
-public class EventDbConfiguration: IEntityTypeConfiguration<EventDb>
+public class EventDbConfiguration : IEntityTypeConfiguration<EventDb>
 {
     public void Configure(EntityTypeBuilder<EventDb> builder)
     {
@@ -52,7 +52,7 @@ public class EventDbConfiguration: IEntityTypeConfiguration<EventDb>
             .IsRequired();
 
         builder.HasOne(x => x.Location)
-            .WithMany(l=> l.Events)
+            .WithMany(l => l.Events)
             .HasForeignKey(x => x.LocationId);
     }
 }

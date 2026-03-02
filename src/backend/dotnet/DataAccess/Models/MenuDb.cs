@@ -1,24 +1,27 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Constants;
+
 namespace DataAccess.Models;
 
 /// <summary>
-/// Меню конкретного дня мероприятия
+/// Модель таблицы меню конкретного дня мероприятия в базе данных
 /// </summary>
 [Table("menu")]
 public class MenuDb
 {
-    public MenuDb(Guid id, string title, string description)
+    public MenuDb(Guid id,
+        string title,
+        string description)
     {
         Id = id;
         Title = title;
         Description = description;
     }
-    
+
     /// <summary>
     /// Идентификатор меню
     /// </summary>
-    /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Key]
     [Column("menu_id", TypeName = "uuid")]
     public Guid Id { get; set; }
@@ -26,7 +29,6 @@ public class MenuDb
     /// <summary>
     /// Название
     /// </summary>
-    /// <example>Основное меню</example>
     [Column("title", TypeName = "varchar(255)")]
     public string Title { get; set; }
 
@@ -34,10 +36,16 @@ public class MenuDb
     /// Описание
     /// </summary>
     [Column("description", TypeName = "text")]
+    [MaxLength(TextConstraints.MaxDescriptionLength)]
     public string Description { get; set; }
 
     /// <summary>
-    /// Предметы меню
+    /// Навигационное свойство для связи с днем мероприятия
     /// </summary>
-    public ICollection<MenuItemDb> MenuItems { get; set; }
+    public DayDb? Day { get; set; }
+
+    /// <summary>
+    /// Навигационное свойство для связи с позициями меню
+    /// </summary>
+    public ICollection<MenuItemDb>? MenuItems { get; set; }
 }

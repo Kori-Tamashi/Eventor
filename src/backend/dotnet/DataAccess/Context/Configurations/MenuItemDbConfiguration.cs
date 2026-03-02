@@ -1,17 +1,17 @@
-using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
 
-public class MenuItemDbConfiguration: IEntityTypeConfiguration<MenuItemDb>
+public class MenuItemDbConfiguration : IEntityTypeConfiguration<MenuItemDb>
 {
     public void Configure(EntityTypeBuilder<MenuItemDb> builder)
     {
         builder.ToTable("menu_items");
 
         builder.HasKey(x => new { x.MenuId, x.ItemId });
-        
+
         builder.Property(x => x.MenuId)
             .HasColumnName("menu_id")
             .HasColumnType("uuid")
@@ -21,14 +21,13 @@ public class MenuItemDbConfiguration: IEntityTypeConfiguration<MenuItemDb>
             .HasColumnName("item_id")
             .HasColumnType("uuid")
             .IsRequired();
-        
+
         builder.Property(x => x.Amount)
             .IsRequired();
 
         builder.HasOne(x => x.Menu)
             .WithMany(m => m.MenuItems)
-            .HasForeignKey(x => x.MenuId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(x => x.MenuId);
 
         builder.HasOne(x => x.Item)
             .WithMany(i => i.MenuItems)

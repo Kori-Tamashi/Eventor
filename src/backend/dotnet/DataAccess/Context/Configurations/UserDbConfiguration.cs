@@ -1,10 +1,10 @@
-using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
 
-public class UserDbConfiguration : IEntityTypeConfiguration<UserDb> 
+public class UserDbConfiguration : IEntityTypeConfiguration<UserDb>
 {
     public void Configure(EntityTypeBuilder<UserDb> builder)
     {

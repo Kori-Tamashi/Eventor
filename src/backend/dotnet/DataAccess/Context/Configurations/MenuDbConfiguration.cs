@@ -1,10 +1,10 @@
-using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
 
-public class MenuDbConfiguration: IEntityTypeConfiguration<MenuDb>
+public class MenuDbConfiguration : IEntityTypeConfiguration<MenuDb>
 {
     public void Configure(EntityTypeBuilder<MenuDb> builder)
     {

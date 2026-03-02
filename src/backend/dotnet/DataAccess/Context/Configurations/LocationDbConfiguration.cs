@@ -1,6 +1,6 @@
-using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
 
@@ -8,7 +8,7 @@ public class LocationDbConfiguration : IEntityTypeConfiguration<LocationDb>
 {
     public void Configure(EntityTypeBuilder<LocationDb> builder)
     {
-        builder.ToTable("locations", t => 
+        builder.ToTable("locations", t =>
         {
             t.HasCheckConstraint("CK_Location_Cost", "\"cost\" >= 0");
             t.HasCheckConstraint("CK_Location_Capacity", "\"capacity\" >= 0");
