@@ -2,7 +2,7 @@ using NpgsqlTypes;
 
 namespace Domain.Enums;
 
-public enum RegistrationTypeEnum
+public enum RegistrationType
 {
     [PgName("Cтандартный")]
     Standart,
