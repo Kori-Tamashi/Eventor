@@ -1,0 +1,260 @@
+name: Continuous Integration
+env:
+  CICD_PATH: infra/cicd
+  DOCKER_PATH: infra/cicd/docker
+  BACKEND_PATH: src/backend/dotnet
+  FRONTEND_PATH: src/frontend/angular
+  DATABASE_PATH: src/database/postgresql/v1
+
+  ENV_FILE: infra/cicd/settings.conf
+  DOCKER_COMPOSE_PATH: infra/cicd/docker/docker-compose.yml
+
+on: [push]
+
+jobs:
+  build-webserver:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the web-server container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d web-server --wait
+
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' web-server)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+      
+      - name: Check container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' web-server)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
+
+  build-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the database container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database --wait
+    
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' database)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Check container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' database)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
+  
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Build all projects in solution
+        run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the frontend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d frontend
+
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' frontend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Build project
+        run: docker exec frontend ng build
+
+  unit-tests-backend:
+    needs: build-backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+      
+      - name: Run unit tests
+        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Unit" --verbosity=normal
+
+  integration-tests-backend:
+    needs: [build-database, build-backend, unit-tests-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the database container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database --wait
+    
+      - name: Check database container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' database)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Check database container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' database)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check backend container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+      
+      - name: Run integration tests
+        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Integration" --verbosity=normal
+
+  e2e-tests-backend:
+    needs: [integration-tests-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the database container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database --wait
+    
+      - name: Check database container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' database)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Check database container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' database)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check backend container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+      
+      - name: Run E2E tests
+        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=E2E" --verbosity=normal
