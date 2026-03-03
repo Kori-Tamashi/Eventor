@@ -1,0 +1,89 @@
+services:
+  database:
+    image: postgres:17
+    container_name: database
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${DATABASE_PATH}/postgresql/v1:docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      start_period: 20s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - eventor-network
+
+  database-interface:
+    image: dpage/pgadmin4:9
+    container_name: database-interface
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "3002:80"
+    volumes:
+      - ../pgadmin/servers.json:/pgadmin4/servers.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider http://localhost:80 || exit 1"]
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    tmpfs:
+      - /var/lib/pgadmin
+    depends_on:
+      - database
+    networks:
+      - eventor-network
+
+  web-server:
+    build:
+      context: ../../../
+      dockerfile: dockerfile.web-server
+    container_name: web-server
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      start_period: 15s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - eventor-network
+
+  backend:
+    build:
+      context: ../../../
+      dockerfile: dockerfile.backend
+    container_name: backend
+    command: 
+      - dotnet run --project Eventor.csproj --urls=http://0.0.0.0:8080
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${BACKEND_PATH}/dotnet/:/app
+    depends_on:
+      - database
+    networks:
+      - eventor-network
+
+networks:
+  eventor-network:
+    driver: bridge
