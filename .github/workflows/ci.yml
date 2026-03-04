@@ -132,7 +132,7 @@ jobs:
           fi
 
       - name: Build project
-        run: docker exec frontend ng build
+        run: docker exec frontend npx ng build
 
   unit-tests-backend:
     needs: build-backend
