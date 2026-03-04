@@ -9,7 +9,7 @@ WORKDIR /app
 COPY src/frontend/angular ./
 
 # 4. Установка зависимостей и компилирование кода
-RUN npm install && npm run build
+RUN npm install && npx ng build
 
 # --- Стадия запуска веб-сервера ---
 # 1. Установка базового образа для веб сервера
@@ -19,7 +19,7 @@ FROM nginx:1.28-alpine
 WORKDIR /app
 
 # 3. Копирование собранных зависимостей из стадии сборки фронтенда
-COPY --from=frontend-builder /app/dist/eventor-frontend /usr/share/nginx/html
+COPY --from=frontend-builder /app/dist/eventor-frontend /var/www/eventor
 
 # 4. Открываем порт 80 для доступа к веб-серверу
 EXPOSE 80
