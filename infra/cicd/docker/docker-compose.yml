@@ -40,7 +40,9 @@ services:
       - eventor-network
 
   web-server:
-    image: nginx:1.28-alpine
+    build:
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.web-server
     container_name: web-server
     ports:
       - "80:80"
