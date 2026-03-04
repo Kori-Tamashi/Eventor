@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ${DATABASE_PATH}/postgresql/v1:docker-entrypoint-initdb.d
+      - ${CONTEXT}/${DATABASE_PATH}/postgresql/v1:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       start_period: 20s
@@ -47,8 +47,8 @@ services:
 
   web-server:
     build:
-      context: ../../../
-      dockerfile: dockerfile.web-server
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.web-server
     container_name: web-server
     ports:
       - "80:80"
@@ -65,11 +65,10 @@ services:
 
   backend:
     build:
-      context: ../../../
-      dockerfile: dockerfile.backend
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.backend
     container_name: backend
-    command: 
-      - dotnet run --project Eventor.csproj --urls=http://0.0.0.0:8080
+    command: dotnet run --project Web/Web.csproj --urls=http://0.0.0.0:8080
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PORT: ${POSTGRES_PORT}
@@ -78,7 +77,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ${BACKEND_PATH}/dotnet/:/app
+      - ${CONTEXT}/${BACKEND_PATH}/dotnet/:/app
     depends_on:
       - database
     networks:
