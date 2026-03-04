@@ -1,7 +1,7 @@
 services:
   database:
     build:
-      context: ../../../
+      context: ${CONTEXT}
       dockerfile: ${DOCKER_PATH}/dockerfile.database
     container_name: database
     environment:
@@ -23,7 +23,7 @@ services:
 
   frontend:
     build:
-      context: ../../../
+      context: ${CONTEXT}
       dockerfile: ${DOCKER_PATH}/dockerfile.frontend
     container_name: frontend
     networks:
@@ -31,7 +31,7 @@ services:
 
   backend:
     build:
-      context: ../../../
+      context: ${CONTEXT}
       dockerfile: ${DOCKER_PATH}/dockerfile.backend
     container_name: backend
     ports:
@@ -45,7 +45,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${CONTEXT}/${NGINX_PATH}/eventor.conf:/etc/nginx/conf.d/eventor.conf:ro
+      - ${CONTEXT}/${NGINX_PATH}/nginx.conf:/etc/nginx/nginx.conf:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       start_period: 15s
