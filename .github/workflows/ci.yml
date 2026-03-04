@@ -99,7 +99,7 @@ jobs:
           fi
 
       - name: Build project
-        run: docker exec frontend echo "n" | npx ng build 
+        run: docker exec frontend sh -c "echo 'n' | npx ng build"
 
   build-webserver:
     needs: build-frontend
