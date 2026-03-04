@@ -12,39 +12,6 @@ env:
 on: [push]
 
 jobs:
-  build-webserver:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-        with:
-          version: '29.2.1'
-
-      - name: Verify Docker installation
-        run: docker --version
-
-      - name: Lifting the web-server container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d web-server --wait
-
-      - name: Check container status
-        run: |
-          status=$(docker inspect -f '{{.State.Status}}' web-server)
-          if [ "$status" != "running" ]; then
-            echo "Container is not running (status: $status)"
-            exit 1
-          fi
-      
-      - name: Check container health
-        run: |
-          status=$(docker inspect -f '{{.State.Health.Status}}' web-server)
-          if [ "$status" != "healthy" ]; then
-            echo "Container is not healthy (status: $status)"
-            exit 1
-          fi
-
   build-database:
     runs-on: ubuntu-latest
     steps:
@@ -132,7 +99,41 @@ jobs:
           fi
 
       - name: Build project
-        run: docker exec frontend npx ng build
+        run: docker exec frontend echo "n" | npx ng build 
+
+  build-webserver:
+    needs: build-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the web-server container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d web-server --wait
+
+      - name: Check container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' web-server)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+      
+      - name: Check container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' web-server)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
 
   unit-tests-backend:
     needs: build-backend
