@@ -53,11 +53,12 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/eventor.conf:/etc/nginx/conf.d/eventor.conf:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       start_period: 15s
-      interval: 5s
+      interval: 5s  
       timeout: 5s
       retries: 5
     networks:
