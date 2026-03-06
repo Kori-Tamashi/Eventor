@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(EventorDbContext))]
-    [Migration("20260306063539_Initial")]
+    [Migration("20260306070000_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -236,11 +236,11 @@ namespace DataAccess.Migrations
                         .HasColumnName("title");
 
                     b.HasKey("Id")
-                        .HasName("PK_menu");
+                        .HasName("PK_menus");
 
                     b.ToTable("menus", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Menu_DescriptionLength", "char_length(description) <= 8192");
+                            t.HasCheckConstraint("CK_Menus_DescriptionLength", "char_length(description) <= 8192");
                         });
                 });
 
@@ -277,11 +277,11 @@ namespace DataAccess.Migrations
                         .HasColumnName("registration_id");
 
                     b.HasKey("DayId", "RegistrationId")
-                        .HasName("PK_participation");
+                        .HasName("PK_participations");
 
                     b.HasIndex("RegistrationId");
 
-                    b.ToTable("participation", (string)null);
+                    b.ToTable("participations", (string)null);
                 });
 
             modelBuilder.Entity("DataAccess.Models.RegistrationDb", b =>

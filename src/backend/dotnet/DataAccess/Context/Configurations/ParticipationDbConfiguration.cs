@@ -8,10 +8,10 @@ public class ParticipationDbConfiguration : IEntityTypeConfiguration<Participati
 {
     public void Configure(EntityTypeBuilder<ParticipationDb> builder)
     {
-        builder.ToTable("participation");
+        builder.ToTable("participations");
 
         builder.HasKey(x => new { x.DayId, x.RegistrationId })
-            .HasName("PK_participation");
+            .HasName("PK_participations");
         
         builder.Property(x => x.DayId)
             .HasColumnName("day_id")

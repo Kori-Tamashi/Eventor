@@ -57,8 +57,8 @@ namespace DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_menu", x => x.menu_id);
-                    table.CheckConstraint("CK_Menu_DescriptionLength", "char_length(description) <= 8192");
+                    table.PrimaryKey("PK_menus", x => x.menu_id);
+                    table.CheckConstraint("CK_Menus_DescriptionLength", "char_length(description) <= 8192");
                 });
 
             migrationBuilder.CreateTable(
@@ -208,7 +208,7 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "participation",
+                name: "participations",
                 columns: table => new
                 {
                     day_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -216,15 +216,15 @@ namespace DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_participation", x => new { x.day_id, x.registration_id });
+                    table.PrimaryKey("PK_participations", x => new { x.day_id, x.registration_id });
                     table.ForeignKey(
-                        name: "FK_participation_days_day_id",
+                        name: "FK_participations_days_day_id",
                         column: x => x.day_id,
                         principalTable: "days",
                         principalColumn: "day_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_participation_registrations_registration_id",
+                        name: "FK_participations_registrations_registration_id",
                         column: x => x.registration_id,
                         principalTable: "registrations",
                         principalColumn: "registration_id",
@@ -258,8 +258,8 @@ namespace DataAccess.Migrations
                 column: "item_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_participation_registration_id",
-                table: "participation",
+                name: "IX_participations_registration_id",
+                table: "participations",
                 column: "registration_id");
 
             migrationBuilder.CreateIndex(
@@ -295,7 +295,7 @@ namespace DataAccess.Migrations
                 name: "menu_items");
 
             migrationBuilder.DropTable(
-                name: "participation");
+                name: "participations");
 
             migrationBuilder.DropTable(
                 name: "items");

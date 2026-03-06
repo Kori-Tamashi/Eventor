@@ -11,12 +11,12 @@ public class MenuDbConfiguration : IEntityTypeConfiguration<MenuDb>
     {
         builder.ToTable("menus", t =>
         {
-            t.HasCheckConstraint("CK_Menu_DescriptionLength", 
+            t.HasCheckConstraint("CK_Menus_DescriptionLength", 
                 $"char_length(description) <= {TextConstraints.MaxDescriptionLength}");
         });
 
         builder.HasKey(x => x.Id)
-            .HasName("PK_menu");
+            .HasName("PK_menus");
 
         builder.Property(x => x.Id)
             .HasColumnName("menu_id")
