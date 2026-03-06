@@ -1,96 +1,104 @@
-## Таблицы
+# Структура базы данных
 
-1) locations – таблица локаций;
-2) events – таблица мероприятий;
-3) registrations – таблица регистраций участников на мероприятия;
-4) days – таблица дней мероприятий;
-5) participation - таблица участия в конкретном дне;
-6) menu – таблица меню дней мероприятий;
-7) items – таблица предметов меню;
-8) feedbacks – таблица отзывов участников;
-9) menu_items - таблица связи меню и предметов;
-10) users – таблица пользователей.
+## 1. Общий обзор таблиц базы данных
 
-### Таблица 2.1 — Таблица locations
+### Таблица 1.1. - Описание всех таблиц
+| Таблица | Описание |
+|-|-|
+| **users** | Пользователи |
+| **locations** | Локации |
+| **events** | Мероприятия |
+| **days** | Дни мероприятий |
+| **registrations** | Участники мероприятий |
+| **participation** | Участники конкретных дней мероприятий |
+| **menu** | Меню мероприятий |
+| **menu_items** | Позиции меню мероприятий |
+| **items** | Предметы для мероприятий |
+| **feedbacks** | Отзывы участников мероприятий |
+
+## 2. Подробное описание таблиц
+
+### Таблица 2.1 — Таблица **users**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| location_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор локации |
-| title | Строковый | NOT NULL | Название |
-| description | Строковый | NOT NULL | Описание |
-| cost | Вещественный | NOT NULL, CHECK (cost >= 0) | Цена аренды на 1 день |
-| capacity | Целочисленный | NOT NULL, CHECK (capacity >= 0) | Вместимость |
+| *user_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор пользователя |
+| *name* | Строковый | • NOT NULL<br>• длина до 255 | Имя |
+| *phone* | Строковый | • NOT NULL<br>• UNIQUE<br>• длина до 255 | Номер телефона |
+| *password_hash* | Строковый | • NOT NULL<br>• длина до 255 | Хеш пароля |
+| *gender* | Перечисление | • NOT NULL<br>• значения: 'Мужчина', 'Женщина' | Пол |
+| *role* | Перечисление | • NOT NULL<br>• значения: 'Администратор', 'Зарегистрированный пользователь', 'Гость' | Роль |
 
-### Таблица 2.2 — Таблица events
+
+### Таблица 2.2 — Таблица **locations**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| event_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор мероприятия |
-| title | Строковый | NOT NULL | Название |
-| description | Строковый | NOT NULL | Описание |
-| start_date | Дата | NOT NULL | Дата начала |
-| location_id | UUID | NOT NULL | Идентификатор локации |
-| days_count | Целый | NOT NULL, CHECK (days_count >= 0) | Количество дней в мероприятии |
-| percent | Вещественный | NOT NULL, CHECK (percent >= 0) | Наценка на посещение в процентах |
+| *location_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор локации |
+| *title* | Строковый | • NOT NULL<br>• длина до 255 | Название |
+| *description* | Текст | • NOT NULL<br>• длина до 8192 | Описание |
+| *cost* | Вещественный | • NOT NULL<br>• значение >= 0 | Цена аренды на 1 день |
+| *capacity* | Целочисленный | • NOT NULL<br>• значение >= 0 | Вместимость |
 
-### Таблица 2.3 — Таблица days
+### Таблица 2.3 — Таблица **events**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| day_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор дня мероприятия |
-| event_id | UUID | NOT NULL | Идентификатор мероприятия |
-| title | Строковый | NOT NULL | Название |
-| number | Целочисленный | NOT NULL, CHECK (sequence_number > 0) | Порядковый номер |
-| description | Строковый | NOT NULL | Описание |
-| menu_id | UUID | NOT NULL | Идентификатор меню |
+| *event_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор мероприятия |
+| *title* | Строковый | • NOT NULL<br>• длина до 255 | Название |
+| *description* | Текст | • NOT NULL<br>• длина до 8192 | Описание |
+| *start_date* | Дата | • NOT NULL | Дата начала |
+| *location_id* | UUID | • NOT NULL<br>• FOREIGN KEY | Идентификатор локации |
+| *days_count* | Целочисленный | • NOT NULL<br>• значение >= 0 | Количество дней в мероприятии |
+| *percent* | Вещественный | • NOT NULL<br>• значение >= 0 | Наценка на посещение в процентах |
 
-### Таблица 2.4 — Таблица registrations
+### Таблица 2.4 — Таблица **days**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| person_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор регистрации |
-| event_id | UUID | NOT NULL, UNIQUE(event_id, user_id) | Идентификатор мероприятия |
-| user_id | UUID | NOT NULL | Идентификатор пользователя |
-| type | Перечисляемый | NOT NULL | Тип (стандартный, VIP, организатор)|
-| payment | Логический | NOT NULL | Факт оплаты |
+| *day_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор дня мероприятия |
+| *event_id* | UUID | • NOT NULL<br>• FOREIGN KEY | Идентификатор мероприятия |
+| *menu_id* | UUID | • NOT NULL<br>• FOREIGN KEY | Идентификатор меню |
+| *title* | Строковый | • NOT NULL<br>• длина до 255 | Название |
+| *sequence_number* | Целочисленный | • NOT NULL<br>• значение > 0 | Порядковый номер |
+| *description* | Текст | • NOT NULL<br>• длина до 8192 | Описание |
 
-### Таблица 2.5 — Таблица participation
+### Таблица 2.5 — Таблица **registrations**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| day_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор дня мероприятия |
-| registration_id | UUID | NOT NULL, UNIQUE(day_id, registration_id), PRIMARY KEY | Идентификатор регистрации |
+| *registration_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор регистрации |
+| *event_id* | UUID | • NOT NULL<br>• UNIQUE (event_id, user_id)<br>• FOREIGN KEY | Идентификатор мероприятия |
+| *user_id* | UUID | • NOT NULL<br>• UNIQUE (event_id, user_id)<br>• FOREIGN KEY | Идентификатор пользователя |
+| *type* | Перечисление | • NOT NULL<br>• значения: 'Cтандартный', 'VIP', 'Организатор' | Тип регистрации |
+| *payment* | Логический | • NOT NULL | Факт оплаты |
 
-### Таблица 2.6 — Таблица menu
+### Таблица 2.6 — Таблица **participations**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| menu_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор меню |
-| title | Строковый | NOT NULL | Название |
-| description | Строковый | NOT NULL | Описание |
+| *day_id* | UUID | • NOT NULL<br>• PRIMARY KEY (*day_id*, *registration_id*)<br>• FOREIGN KEY | Идентификатор дня мероприятия |
+| *registration_id* | UUID | • NOT NULL<br>• PRIMARY KEY (*day_id*, *registration_id*)<br>• FOREIGN KEY | Идентификатор регистрации |
 
-### Таблица 2.7 — Таблица items
+### Таблица 2.7 — Таблица **menus**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| item_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор предмета |
-| title | Строковый | NOT NULL | Название |
-| cost | Вещественный | NOT NULL, CHECK (cost >= 0) | Цена |
+| *menu_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор меню |
+| *title* | Строковый | • NOT NULL<br>• длина до 255 | Название |
+| *description* | Текст | • NOT NULL<br>• длина до 8192 | Описание |
 
-### Таблица 2.8 — Таблица menu_items
+### Таблица 2.8 — Таблица **items**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| menu_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор меню |
-| item_id | UUID | NOT NULL, PRIMARY KEY, UNIQUE(menu_id, item_id) | Идентификатор предмета |
-| amount | double | NOT NULL | Количество предмета |
+| *item_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор предмета |
+| *title* | Строковый | • NOT NULL<br>• длина до 255 | Название |
+| *cost* | Вещественный | • NOT NULL<br>• значение >= 0 | Цена |
 
-### Таблица 2.9 —Таблица feedbacks
+### Таблица 2.9 — Таблица **menu_items**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| feedback_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор отзыва |
-| comment | Строковый | NOT NULL | Комментарий |
-| rate | Целочисленный | NOT NULL, CHECK (rating >= 1 AND rating <= 5) | Рейтинг |
-| registation_id | UUID | NOT NULL, FOREIGN KEY | Участник мероприятия |
+| *menu_id* | UUID | • NOT NULL<br>• PRIMARY KEY (*menu_id*, *item_id*)<br>• FOREIGN KEY | Идентификатор меню |
+| *item_id* | UUID | • NOT NULL<br>• PRIMARY KEY (*menu_id*, *item_id*)<br>• FOREIGN KEY | Идентификатор предмета |
+| *amount* | Целочисленный | • NOT NULL<br>• значение > 0 | Количество предмета |
 
-### Таблица 2.10 — Таблица users
+### Таблица 2.10 — Таблица **feedbacks**
 | Атрибут | Тип данных | Ограничения | Сведение |
 | :--- | :--- | :--- | :--- |
-| user_id | UUID | NOT NULL, PRIMARY KEY | Идентификатор пользователя |
-| name | Строковый | NOT NULL | Имя |
-| phone | Строковый | NOT NULL, UNIQUE | Телефон |
-| gender | Перечисляемый | NOT NULL | Гендер |
-| role | Перечисляемый | NOT NULL | Роль (гость, пользователь, администратор) |
-| password_hash | Строковый | NOT NULL | Пароль (в зашифрованном виде) |
+| *feedback_id* | UUID | • NOT NULL<br>• PRIMARY KEY | Идентификатор отзыва |
+| *comment* | Текст | • NOT NULL<br>• длина до 4096 | Комментарий |
+| *rating* | Целочисленный | • NOT NULL<br>• значение от 1 до 5 | Рейтинг |
+| *registration_id* | UUID | • NOT NULL<br>• FOREIGN KEY | Идентификатор регистрации |
