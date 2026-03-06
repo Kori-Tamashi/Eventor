@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Domain.Constants;
 using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
@@ -8,9 +9,14 @@ public class MenuDbConfiguration : IEntityTypeConfiguration<MenuDb>
 {
     public void Configure(EntityTypeBuilder<MenuDb> builder)
     {
-        builder.ToTable("menu");
+        builder.ToTable("menu", t =>
+        {
+            t.HasCheckConstraint("CK_Menu_DescriptionLength", 
+                $"char_length(description) <= {TextConstraints.MaxDescriptionLength}");
+        });
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id)
+            .HasName("PK_menu");
 
         builder.Property(x => x.Id)
             .HasColumnName("menu_id")

@@ -9,7 +9,7 @@ builder.Services.AddDbContext<EventorDbContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     if (string.IsNullOrWhiteSpace(connectionString))
         throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json");
-    options.UseNpgsql(connectionString);
+    options.UseLazyLoadingProxies().UseNpgsql(connectionString);
 });
 
 

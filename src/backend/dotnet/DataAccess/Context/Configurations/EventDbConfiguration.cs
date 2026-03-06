@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Domain.Constants;
 using DataAccess.Models;
 
 namespace DataAccess.Context.Configurations;
@@ -12,9 +13,12 @@ public class EventDbConfiguration : IEntityTypeConfiguration<EventDb>
         {
             t.HasCheckConstraint("CK_Event_DaysCount", "\"days_count\" >= 0");
             t.HasCheckConstraint("CK_Event_Percent", "\"percent\" >= 0");
+            t.HasCheckConstraint("CK_Event_DescriptionLength", 
+                $"char_length(description) <= {TextConstraints.MaxDescriptionLength}");
         });
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id)
+            .HasName("PK_events");
 
         builder.Property(x => x.Id)
             .HasColumnName("event_id")
@@ -43,7 +47,7 @@ public class EventDbConfiguration : IEntityTypeConfiguration<EventDb>
 
         builder.Property(x => x.DaysCount)
             .HasColumnName("days_count")
-            .HasColumnType("int")
+            .HasColumnType("integer")
             .IsRequired();
 
         builder.Property(x => x.Percent)
@@ -53,6 +57,7 @@ public class EventDbConfiguration : IEntityTypeConfiguration<EventDb>
 
         builder.HasOne(x => x.Location)
             .WithMany(l => l.Events)
-            .HasForeignKey(x => x.LocationId);
+            .HasForeignKey(x => x.LocationId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -10,7 +10,8 @@ public class MenuItemDbConfiguration : IEntityTypeConfiguration<MenuItemDb>
     {
         builder.ToTable("menu_items");
 
-        builder.HasKey(x => new { x.MenuId, x.ItemId });
+        builder.HasKey(x => new { x.MenuId, x.ItemId })
+            .HasName("PK_menu_items");
 
         builder.Property(x => x.MenuId)
             .HasColumnName("menu_id")
@@ -23,11 +24,14 @@ public class MenuItemDbConfiguration : IEntityTypeConfiguration<MenuItemDb>
             .IsRequired();
 
         builder.Property(x => x.Amount)
+            .HasColumnName("amount")
+            .HasColumnType("integer")
             .IsRequired();
 
         builder.HasOne(x => x.Menu)
             .WithMany(m => m.MenuItems)
-            .HasForeignKey(x => x.MenuId);
+            .HasForeignKey(x => x.MenuId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Item)
             .WithMany(i => i.MenuItems)

@@ -10,17 +10,27 @@ public class ParticipationDbConfiguration : IEntityTypeConfiguration<Participati
     {
         builder.ToTable("participation");
 
-        builder.HasKey(x => new { x.DayId, x.RegistrationId });
+        builder.HasKey(x => new { x.DayId, x.RegistrationId })
+            .HasName("PK_participation");
+        
+        builder.Property(x => x.DayId)
+            .HasColumnName("day_id")
+            .HasColumnType("uuid")
+            .IsRequired();
 
-        builder.HasIndex(x => new { x.DayId, x.RegistrationId })
-            .IsUnique();
+        builder.Property(x => x.RegistrationId)
+            .HasColumnName("registration_id")
+            .HasColumnType("uuid")
+            .IsRequired();
 
         builder.HasOne(x => x.Day)
             .WithMany(d => d.Participations)
-            .HasForeignKey(x => x.DayId);
+            .HasForeignKey(x => x.DayId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Registration)
             .WithMany(r => r.Participations)
-            .HasForeignKey(x => x.RegistrationId);
+            .HasForeignKey(x => x.RegistrationId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

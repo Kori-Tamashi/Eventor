@@ -14,7 +14,8 @@ public class LocationDbConfiguration : IEntityTypeConfiguration<LocationDb>
             t.HasCheckConstraint("CK_Location_Capacity", "\"capacity\" >= 0");
         });
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id)
+            .HasName("PK_locations");
 
         builder.Property(x => x.Id)
             .HasColumnName("location_id")
@@ -38,7 +39,7 @@ public class LocationDbConfiguration : IEntityTypeConfiguration<LocationDb>
 
         builder.Property(x => x.Capacity)
             .HasColumnName("capacity")
-            .HasColumnType("int")
+            .HasColumnType("integer")
             .IsRequired();
     }
 }

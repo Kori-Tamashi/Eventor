@@ -36,9 +36,9 @@ namespace DataAccess.Migrations
                 {
                     location_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "varchar(255)", nullable: false),
-                    description = table.Column<string>(type: "text", maxLength: 8192, nullable: false),
-                    cost = table.Column<double>(type: "numeric", nullable: false),
-                    capacity = table.Column<int>(type: "int", nullable: false)
+                    description = table.Column<string>(type: "text", nullable: false),
+                    cost = table.Column<decimal>(type: "numeric", nullable: false),
+                    capacity = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,11 +53,12 @@ namespace DataAccess.Migrations
                 {
                     menu_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "varchar(255)", nullable: false),
-                    description = table.Column<string>(type: "text", maxLength: 8192, nullable: false)
+                    description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_menu", x => x.menu_id);
+                    table.CheckConstraint("CK_Menu_DescriptionLength", "char_length(description) <= 8192");
                 });
 
             migrationBuilder.CreateTable(
@@ -82,16 +83,17 @@ namespace DataAccess.Migrations
                 {
                     event_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "varchar(255)", nullable: false),
-                    description = table.Column<string>(type: "text", maxLength: 8192, nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
                     start_date = table.Column<DateOnly>(type: "date", nullable: false),
                     location_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    days_count = table.Column<int>(type: "int", nullable: false),
+                    days_count = table.Column<int>(type: "integer", nullable: false),
                     percent = table.Column<double>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_events", x => x.event_id);
                     table.CheckConstraint("CK_Event_DaysCount", "\"days_count\" >= 0");
+                    table.CheckConstraint("CK_Event_DescriptionLength", "char_length(description) <= 8192");
                     table.CheckConstraint("CK_Event_Percent", "\"percent\" >= 0");
                     table.ForeignKey(
                         name: "FK_events_locations_location_id",
@@ -107,7 +109,7 @@ namespace DataAccess.Migrations
                 {
                     menu_id = table.Column<Guid>(type: "uuid", nullable: false),
                     item_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    amount = table.Column<double>(type: "double precision", nullable: false)
+                    amount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,14 +135,15 @@ namespace DataAccess.Migrations
                     day_id = table.Column<Guid>(type: "uuid", nullable: false),
                     event_id = table.Column<Guid>(type: "uuid", nullable: false),
                     menu_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    title = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    number = table.Column<int>(type: "integer", nullable: false),
-                    description = table.Column<string>(type: "text", maxLength: 8192, nullable: false)
+                    title = table.Column<string>(type: "varchar(255)", nullable: false),
+                    sequence_number = table.Column<int>(type: "integer", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_days", x => x.day_id);
-                    table.CheckConstraint("CK_Days_Number_Positive", "\"number\" > 0");
+                    table.CheckConstraint("CK_Days_DescriptionLength", "char_length(description) <= 8192");
+                    table.CheckConstraint("CK_Days_SequenceNumber_Positive", "\"sequence_number\" > 0");
                     table.ForeignKey(
                         name: "FK_days_events_event_id",
                         column: x => x.event_id,
@@ -187,17 +190,18 @@ namespace DataAccess.Migrations
                 columns: table => new
                 {
                     feedback_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    registration_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    comment = table.Column<string>(type: "text", maxLength: 4096, nullable: false),
-                    rate = table.Column<int>(type: "int", nullable: false)
+                    RegistrationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    comment = table.Column<string>(type: "text", nullable: false),
+                    rate = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_feedbacks", x => x.feedback_id);
+                    table.CheckConstraint("CK_Feedback_CommentLength", "char_length(comment) <= 4096");
                     table.CheckConstraint("CK_Feedback_Rate", "\"rate\" >= 1 AND \"rate\" <= 5");
                     table.ForeignKey(
-                        name: "FK_feedbacks_registrations_registration_id",
-                        column: x => x.registration_id,
+                        name: "FK_feedbacks_registrations_RegistrationId",
+                        column: x => x.RegistrationId,
                         principalTable: "registrations",
                         principalColumn: "registration_id",
                         onDelete: ReferentialAction.Cascade);
@@ -244,9 +248,9 @@ namespace DataAccess.Migrations
                 column: "location_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_feedbacks_registration_id",
+                name: "IX_feedbacks_RegistrationId",
                 table: "feedbacks",
-                column: "registration_id");
+                column: "RegistrationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_menu_items_item_id",
@@ -254,18 +258,12 @@ namespace DataAccess.Migrations
                 column: "item_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_participation_day_id_registration_id",
-                table: "participation",
-                columns: new[] { "day_id", "registration_id" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_participation_registration_id",
                 table: "participation",
                 column: "registration_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_registrations_event_id_user_id",
+                name: "IX_registrations_event_user",
                 table: "registrations",
                 columns: new[] { "event_id", "user_id" },
                 unique: true);
@@ -280,6 +278,11 @@ namespace DataAccess.Migrations
                 table: "users",
                 column: "phone",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_role",
+                table: "users",
+                column: "role");
         }
 
         /// <inheritdoc />

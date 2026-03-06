@@ -10,7 +10,8 @@ public class UserDbConfiguration : IEntityTypeConfiguration<UserDb>
     {
         builder.ToTable("users");
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id)
+            .HasName("PK_users");
 
         builder.Property(x => x.Id)
             .HasColumnName("user_id")
@@ -26,9 +27,10 @@ public class UserDbConfiguration : IEntityTypeConfiguration<UserDb>
             .HasColumnName("phone")
             .HasColumnType("varchar(255)")
             .IsRequired();
-
+        
         builder.HasIndex(x => x.Phone)
-            .IsUnique();
+            .IsUnique()
+            .HasDatabaseName("IX_users_phone");
 
         builder.Property(x => x.Gender)
             .HasColumnName("gender")
@@ -39,6 +41,9 @@ public class UserDbConfiguration : IEntityTypeConfiguration<UserDb>
             .HasColumnName("role")
             .HasColumnType("user_role")
             .IsRequired();
+        
+        builder.HasIndex(x => x.Role)
+            .HasDatabaseName("IX_users_role");
 
         builder.Property(x => x.PasswordHash)
             .HasColumnName("password_hash")

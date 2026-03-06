@@ -13,7 +13,8 @@ public class ItemDbConfiguration : IEntityTypeConfiguration<ItemDb>
             t.HasCheckConstraint("CK_Items_Cost", "\"cost\" >= 0");
         });
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id)
+            .HasName("PK_items");
 
         builder.Property(x => x.Id)
             .HasColumnName("item_id")

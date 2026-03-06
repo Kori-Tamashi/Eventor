@@ -18,6 +18,9 @@ namespace DataAccess.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.24")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "gender", new[] { "Мужчина", "Женщина" });
@@ -34,7 +37,6 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(8192)
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -46,17 +48,17 @@ namespace DataAccess.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("menu_id");
 
-                    b.Property<int>("Number")
+                    b.Property<int>("SequenceNumber")
                         .HasColumnType("integer")
-                        .HasColumnName("number");
+                        .HasColumnName("sequence_number");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_days");
 
                     b.HasIndex("EventId");
 
@@ -65,7 +67,9 @@ namespace DataAccess.Migrations
 
                     b.ToTable("days", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Days_Number_Positive", "\"number\" > 0");
+                            t.HasCheckConstraint("CK_Days_DescriptionLength", "char_length(description) <= 8192");
+
+                            t.HasCheckConstraint("CK_Days_SequenceNumber_Positive", "\"sequence_number\" > 0");
                         });
                 });
 
@@ -77,12 +81,11 @@ namespace DataAccess.Migrations
                         .HasColumnName("event_id");
 
                     b.Property<int>("DaysCount")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("days_count");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(8192)
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -103,13 +106,16 @@ namespace DataAccess.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_events");
 
                     b.HasIndex("LocationId");
 
                     b.ToTable("events", null, t =>
                         {
                             t.HasCheckConstraint("CK_Event_DaysCount", "\"days_count\" >= 0");
+
+                            t.HasCheckConstraint("CK_Event_DescriptionLength", "char_length(description) <= 8192");
 
                             t.HasCheckConstraint("CK_Event_Percent", "\"percent\" >= 0");
                         });
@@ -124,24 +130,25 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasMaxLength(4096)
                         .HasColumnType("text")
                         .HasColumnName("comment");
 
                     b.Property<int>("Rate")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("rate");
 
                     b.Property<Guid>("RegistrationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("registration_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_feedbacks");
 
                     b.HasIndex("RegistrationId");
 
                     b.ToTable("feedbacks", null, t =>
                         {
+                            t.HasCheckConstraint("CK_Feedback_CommentLength", "char_length(comment) <= 4096");
+
                             t.HasCheckConstraint("CK_Feedback_Rate", "\"rate\" >= 1 AND \"rate\" <= 5");
                         });
                 });
@@ -162,7 +169,8 @@ namespace DataAccess.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_items");
 
                     b.ToTable("items", null, t =>
                         {
@@ -178,16 +186,15 @@ namespace DataAccess.Migrations
                         .HasColumnName("location_id");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("capacity");
 
-                    b.Property<double>("Cost")
+                    b.Property<decimal>("Cost")
                         .HasColumnType("numeric")
                         .HasColumnName("cost");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(8192)
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -196,7 +203,8 @@ namespace DataAccess.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_locations");
 
                     b.ToTable("locations", null, t =>
                         {
@@ -215,7 +223,6 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(8192)
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -224,9 +231,13 @@ namespace DataAccess.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_menu");
 
-                    b.ToTable("menu", (string)null);
+                    b.ToTable("menu", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Menu_DescriptionLength", "char_length(description) <= 8192");
+                        });
                 });
 
             modelBuilder.Entity("DataAccess.Models.MenuItemDb", b =>
@@ -239,11 +250,12 @@ namespace DataAccess.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("item_id");
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("double precision")
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer")
                         .HasColumnName("amount");
 
-                    b.HasKey("MenuId", "ItemId");
+                    b.HasKey("MenuId", "ItemId")
+                        .HasName("PK_menu_items");
 
                     b.HasIndex("ItemId");
 
@@ -260,12 +272,10 @@ namespace DataAccess.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("registration_id");
 
-                    b.HasKey("DayId", "RegistrationId");
+                    b.HasKey("DayId", "RegistrationId")
+                        .HasName("PK_participation");
 
                     b.HasIndex("RegistrationId");
-
-                    b.HasIndex("DayId", "RegistrationId")
-                        .IsUnique();
 
                     b.ToTable("participation", (string)null);
                 });
@@ -293,12 +303,14 @@ namespace DataAccess.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_registrations");
 
                     b.HasIndex("UserId");
 
                     b.HasIndex("EventId", "UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_registrations_event_user");
 
                     b.ToTable("registrations", (string)null);
                 });
@@ -333,10 +345,15 @@ namespace DataAccess.Migrations
                         .HasColumnType("user_role")
                         .HasColumnName("role");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_users");
 
                     b.HasIndex("Phone")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_users_phone");
+
+                    b.HasIndex("Role")
+                        .HasDatabaseName("IX_users_role");
 
                     b.ToTable("users", (string)null);
                 });
@@ -463,7 +480,8 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Models.MenuDb", b =>
                 {
-                    b.Navigation("Day");
+                    b.Navigation("Day")
+                        .IsRequired();
 
                     b.Navigation("MenuItems");
                 });

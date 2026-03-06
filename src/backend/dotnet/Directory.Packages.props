@@ -9,6 +9,7 @@
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.24" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.24" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.24" />
 
         <!-- PostgreSQL -->
         <PackageVersion Include="Npgsql" Version="8.0.8" />
