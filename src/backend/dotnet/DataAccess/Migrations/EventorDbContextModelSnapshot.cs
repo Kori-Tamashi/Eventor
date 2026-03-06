@@ -235,7 +235,7 @@ namespace DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("PK_menu");
 
-                    b.ToTable("menu", null, t =>
+                    b.ToTable("menus", null, t =>
                         {
                             t.HasCheckConstraint("CK_Menu_DescriptionLength", "char_length(description) <= 8192");
                         });

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(EventorDbContext))]
-    [Migration("20260306061441_Initial")]
+    [Migration("20260306063539_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -238,7 +238,7 @@ namespace DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("PK_menu");
 
-                    b.ToTable("menu", null, t =>
+                    b.ToTable("menus", null, t =>
                         {
                             t.HasCheckConstraint("CK_Menu_DescriptionLength", "char_length(description) <= 8192");
                         });

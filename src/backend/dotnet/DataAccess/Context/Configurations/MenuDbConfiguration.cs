@@ -9,7 +9,7 @@ public class MenuDbConfiguration : IEntityTypeConfiguration<MenuDb>
 {
     public void Configure(EntityTypeBuilder<MenuDb> builder)
     {
-        builder.ToTable("menu", t =>
+        builder.ToTable("menus", t =>
         {
             t.HasCheckConstraint("CK_Menu_DescriptionLength", 
                 $"char_length(description) <= {TextConstraints.MaxDescriptionLength}");

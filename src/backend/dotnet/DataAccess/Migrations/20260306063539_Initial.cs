@@ -48,7 +48,7 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "menu",
+                name: "menus",
                 columns: table => new
                 {
                     menu_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -121,9 +121,9 @@ namespace DataAccess.Migrations
                         principalColumn: "item_id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_menu_items_menu_menu_id",
+                        name: "FK_menu_items_menus_menu_id",
                         column: x => x.menu_id,
-                        principalTable: "menu",
+                        principalTable: "menus",
                         principalColumn: "menu_id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -151,9 +151,9 @@ namespace DataAccess.Migrations
                         principalColumn: "event_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_days_menu_menu_id",
+                        name: "FK_days_menus_menu_id",
                         column: x => x.menu_id,
-                        principalTable: "menu",
+                        principalTable: "menus",
                         principalColumn: "menu_id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -307,7 +307,7 @@ namespace DataAccess.Migrations
                 name: "registrations");
 
             migrationBuilder.DropTable(
-                name: "menu");
+                name: "menus");
 
             migrationBuilder.DropTable(
                 name: "events");
