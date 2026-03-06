@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(EventorDbContext))]
-    [Migration("20260306030946_Initial")]
+    [Migration("20260306061441_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -141,7 +141,8 @@ namespace DataAccess.Migrations
                         .HasColumnName("rate");
 
                     b.Property<Guid>("RegistrationId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("registration_id");
 
                     b.HasKey("Id")
                         .HasName("PK_feedbacks");

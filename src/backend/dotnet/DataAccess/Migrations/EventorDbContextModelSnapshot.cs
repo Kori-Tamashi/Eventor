@@ -138,7 +138,8 @@ namespace DataAccess.Migrations
                         .HasColumnName("rate");
 
                     b.Property<Guid>("RegistrationId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("registration_id");
 
                     b.HasKey("Id")
                         .HasName("PK_feedbacks");

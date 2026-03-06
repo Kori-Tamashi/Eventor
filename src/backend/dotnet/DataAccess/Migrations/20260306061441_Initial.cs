@@ -190,7 +190,7 @@ namespace DataAccess.Migrations
                 columns: table => new
                 {
                     feedback_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RegistrationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    registration_id = table.Column<Guid>(type: "uuid", nullable: false),
                     comment = table.Column<string>(type: "text", nullable: false),
                     rate = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -200,8 +200,8 @@ namespace DataAccess.Migrations
                     table.CheckConstraint("CK_Feedback_CommentLength", "char_length(comment) <= 4096");
                     table.CheckConstraint("CK_Feedback_Rate", "\"rate\" >= 1 AND \"rate\" <= 5");
                     table.ForeignKey(
-                        name: "FK_feedbacks_registrations_RegistrationId",
-                        column: x => x.RegistrationId,
+                        name: "FK_feedbacks_registrations_registration_id",
+                        column: x => x.registration_id,
                         principalTable: "registrations",
                         principalColumn: "registration_id",
                         onDelete: ReferentialAction.Cascade);
@@ -248,9 +248,9 @@ namespace DataAccess.Migrations
                 column: "location_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_feedbacks_RegistrationId",
+                name: "IX_feedbacks_registration_id",
                 table: "feedbacks",
-                column: "RegistrationId");
+                column: "registration_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_menu_items_item_id",

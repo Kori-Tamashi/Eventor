@@ -24,6 +24,11 @@ public class FeedbackDbConfiguration : IEntityTypeConfiguration<FeedbackDb>
             .HasColumnType("uuid")
             .IsRequired();
         
+        builder.Property(f => f.RegistrationId)
+            .HasColumnName("registration_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+        
         builder.Property(f => f.Comment)
             .HasColumnName("comment")
             .HasColumnType("text")
