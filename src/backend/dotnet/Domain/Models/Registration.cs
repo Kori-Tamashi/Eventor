@@ -6,7 +6,11 @@ public class Registration
 {
     public Registration() { }
 
-    public Registration(Guid id, Guid eventId, Guid userId, RegistrationType type, bool payment)
+    public Registration(Guid id, 
+        Guid eventId, 
+        Guid userId, 
+        RegistrationType type, 
+        bool payment)
     {
         Id = id;
         EventId = eventId;

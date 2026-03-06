@@ -4,7 +4,9 @@ public class Menu
 {
     public Menu() { }
     
-    public Menu(Guid id, string title, string description)
+    public Menu(Guid id, 
+        string title, 
+        string description)
     {
         Id = id;
         Title = title;

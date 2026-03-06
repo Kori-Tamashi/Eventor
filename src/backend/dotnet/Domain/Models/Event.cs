@@ -4,7 +4,12 @@ public class Event
 {
     public Event() { }
     
-    public Event(Guid id, Guid locationId, string name, string description, DateOnly date, int daysCount, 
+    public Event(Guid id, 
+        Guid locationId, 
+        string name, 
+        string description, 
+        DateOnly date, 
+        int daysCount, 
         double percent)
     {
         Id = id;

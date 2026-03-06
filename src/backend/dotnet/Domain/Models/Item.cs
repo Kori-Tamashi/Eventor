@@ -4,7 +4,9 @@ public class Item
 {
     public Item() { }
     
-    public Item(Guid id, string title, double cost)
+    public Item(Guid id, 
+        string title, 
+        decimal cost)
     {
         Id = id;
         Title = title;
@@ -13,5 +15,5 @@ public class Item
     
     public Guid Id { get; set; }
     public string Title { get; set; }
-    public double Cost { get; set; }
+    public decimal Cost { get; set; }
 }

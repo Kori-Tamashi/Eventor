@@ -6,7 +6,12 @@ public class User
 {
     public User() { }
     
-    public User(Guid id, string name, string phone, Gender gender, UserRole role, string passwordHash)
+    public User(Guid id, 
+        string name, 
+        string phone, 
+        Gender gender, 
+        UserRole role, 
+        string passwordHash)
     {
         Id = id;
         Name = name;
