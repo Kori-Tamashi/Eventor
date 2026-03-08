@@ -12,11 +12,11 @@ public class Feedback
         Id = id;
         Comment = comment;
         Rate = rate;
-        RegistationId = registationId;
+        RegistrationId = registationId;
     }
     
     public Guid Id { get; set; }
-    public Guid RegistationId { get; set; }
+    public Guid RegistrationId { get; set; }
     public string Comment { get; set; }
     public int Rate { get; set; }
 }

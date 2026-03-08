@@ -24,4 +24,6 @@ public class Registration
     public Guid UserId { get; set; }
     public RegistrationType Type { get; set; }
     public bool Payment { get; set; }
+    
+    public List<Day> Days { get; set; } = [];
 }
