@@ -9,11 +9,11 @@
     <ItemGroup>
       <Folder Include="Enums\" />
       <Folder Include="Exceptions\" />
-      <Folder Include="Interfaces\" />
       <Folder Include="Models\" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
       <PackageReference Include="Npgsql" />
     </ItemGroup>
 
