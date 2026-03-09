@@ -1,4 +1,4 @@
-using Eventor.Domain.Models;
+using Domain.Models;
 
 namespace Domain.Interfaces.Repositories;
 

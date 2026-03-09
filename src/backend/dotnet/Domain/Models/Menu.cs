@@ -1,5 +1,3 @@
-using Eventor.Domain.Models;
-
 namespace Domain.Models;
 
 public class Menu

@@ -1,6 +1,6 @@
 using Domain.Enums;
 
-namespace Eventor.Domain.Models;
+namespace Domain.Models;
 
 public class Registration
 {

@@ -1,6 +1,5 @@
 using Domain.Filters;
 using Domain.Models;
-using Eventor.Domain.Models;
 
 namespace Domain.Interfaces.Repositories;
 
