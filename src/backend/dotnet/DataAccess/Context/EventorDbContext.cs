@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
-using Domain.Enums;
+using DataAccess.Enums;
 
 namespace DataAccess.Context;
 
@@ -25,9 +25,9 @@ public class EventorDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasPostgresEnum<Gender>();
-        modelBuilder.HasPostgresEnum<UserRole>();
-        modelBuilder.HasPostgresEnum<RegistrationType>();
+        modelBuilder.HasPostgresEnum<GenderDb>();
+        modelBuilder.HasPostgresEnum<UserRoleDb>();
+        modelBuilder.HasPostgresEnum<RegistrationTypeDb>();
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(EventorDbContext).Assembly);
     }

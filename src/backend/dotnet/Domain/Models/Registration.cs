@@ -1,6 +1,6 @@
 using Domain.Enums;
 
-namespace Eventor.Domain.Models;
+namespace Domain.Models;
 
 public class Registration
 {
@@ -26,4 +26,4 @@ public class Registration
     public bool Payment { get; set; }
     
     public List<Day> Days { get; set; } = [];
-}
+} 

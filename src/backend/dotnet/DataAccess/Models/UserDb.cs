@@ -1,4 +1,4 @@
-using Domain.Enums;
+using DataAccess.Enums;
 
 namespace DataAccess.Models;
 
@@ -10,9 +10,9 @@ public class UserDb
     public UserDb(Guid id,
         string name,
         string phone,
-        Gender gender,
+        GenderDb gender,
         string passwordHash,
-        UserRole role)
+        UserRoleDb role)
     {
         Id = id;
         Name = name;
@@ -40,7 +40,7 @@ public class UserDb
     /// <summary>
     /// Пол
     /// </summary>
-    public Gender Gender { get; set; }
+    public GenderDb Gender { get; set; }
 
     /// <summary>
     /// Зашифрованный пароль
@@ -50,7 +50,7 @@ public class UserDb
     /// <summary>
     /// Роль
     /// </summary>
-    public UserRole Role { get; set; }
+    public UserRoleDb Role { get; set; }
 
     /// <summary>
     /// Навигационное свойство для связи с регистрациями
