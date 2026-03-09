@@ -1,4 +1,6 @@
-namespace Eventor.Domain.Models;
+using Eventor.Domain.Models;
+
+namespace Domain.Models;
 
 public class Menu
 {

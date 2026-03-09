@@ -1,4 +1,4 @@
-using Domain.Enums;
+using DataAccess.Enums;
 
 namespace DataAccess.Models;
 
@@ -10,7 +10,7 @@ public class RegistrationDb
     public RegistrationDb(Guid id,
         Guid eventId,
         Guid userId,
-        RegistrationType type,
+        RegistrationTypeDb type,
         bool payment)
     {
         Id = id;
@@ -38,7 +38,7 @@ public class RegistrationDb
     /// <summary>
     /// Тип регистрации
     /// </summary>
-    public RegistrationType Type { get; set; }
+    public RegistrationTypeDb Type { get; set; }
 
     /// <summary>
     /// Факт оплаты

@@ -26,4 +26,4 @@ public class Registration
     public bool Payment { get; set; }
     
     public List<Day> Days { get; set; } = [];
-}
+} 
