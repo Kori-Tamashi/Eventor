@@ -50,17 +50,20 @@ jobs:
             exit 1
           fi
 
-      - name: Create DeepSeek credential via n8n API
+      - name: Create DeepSeek credential JSON and import to n8n
         run: |
-          curl -X POST http://localhost:5678/api/v1/credentials \
-            -H "Content-Type: application/json" \
-            -d '{
-              "name": "DeepSeek account",
-              "type": "deepSeekApi",
-              "data": {
-                "apiKey": "${{ secrets.DEEPSEEK_API_KEY }}"
+          docker exec n8n sh -c "echo '[
+            {
+              \"id\": \""bc0215cb-5e24-414e-8b86-6a93990f2d84"\",
+              \"name\": \"DeepSeek account\",
+              \"type\": \"deepSeekApi\",
+              \"data\": {
+                \"apiKey\": \"${{ secrets.DEEPSEEK_API_KEY }}\"
               }
-            }'
+            }
+          ]' > /tmp/deepseek-credential.json"
+
+          docker exec n8n n8n import:credentials --input=/tmp/deepseek-credential.json
 
       - name: Import workflow to n8n container
         run: |
