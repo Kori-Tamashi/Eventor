@@ -93,3 +93,7 @@ jobs:
 
       - name: Wait n8n workflow
         run: sleep 180
+
+      - name: Show n8n logs for debugging
+        if: always()
+        run: docker logs n8n --tail 150
