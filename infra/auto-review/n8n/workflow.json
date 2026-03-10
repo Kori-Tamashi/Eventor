@@ -80,7 +80,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://api.github.com/repos/{{ $('Webhook').item.json.body.repository }}/pull/{{ $('Webhook').item.json.body.prNumber }}",
+        "url": "=https://api.github.com/repos/{{ $('Webhook').item.json.body.repository }}/issues/{{ $('Webhook').item.json.body.prNumber }}/comments",
         "authentication": "none",
         "sendHeaders": true,
         "headerParameters": {
