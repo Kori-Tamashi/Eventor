@@ -91,8 +91,25 @@ jobs:
               \"token\": \"$GITHUB_TOKEN\"
             }"
 
-      - name: Wait n8n workflow
-        run: sleep 180
+      - name: Wait for execution and check status
+        run: |
+          sleep 20
+          EXECUTIONS=$(curl -s "http://localhost:5678/api/v1/executions?limit=5")
+          echo "Last 5 executions:"
+          echo "$EXECUTIONS" | jq .
+          # Проверяем, есть ли среди них неудачные
+          if echo "$EXECUTIONS" | jq -e '.data[] | select(.status=="error")' > /dev/null; then
+            echo "❌ Found failed execution:"
+            echo "$EXECUTIONS" | jq '.data[] | select(.status=="error")'
+            exit 1
+          else
+            echo "✅ No failed executions found. Checking for success..."
+            if echo "$EXECUTIONS" | jq -e '.data[] | select(.status=="success")' > /dev/null; then
+              echo "✅ Successful execution found. Comment should be posted."
+            else
+              echo "⚠️ No executions found yet (maybe still running or not triggered?)"
+            fi
+          fi
 
       - name: Show n8n logs for debugging
         if: always()
