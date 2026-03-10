@@ -1,8 +1,6 @@
 services:
   database:
-    build:
-      context: ${CONTEXT}
-      dockerfile: ${DOCKER_PATH}/dockerfile.database
+    image: postgres:17
     container_name: database
     environment:
       POSTGRES_PORT: ${POSTGRES_PORT}
