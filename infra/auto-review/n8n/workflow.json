@@ -80,14 +80,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://api.github.com/repos/{{ $json.repository }}/issues/{{ $json.prNumber }}/comments",
+        "url": "=https://api.github.com/repos/{{ $('Webhook').item.json.body.repository }}/pull/{{ $('Webhook').item.json.body.prNumber }}",
         "authentication": "none",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
-              "value": "=Bearer {{ $json.token }}"
+              "value": "=Bearer {{ $('Webhook').item.json.body.token }}"
             },
             {
               "name": "Accept",
@@ -100,7 +100,7 @@
           "parameters": [
             {
               "name": "body",
-              "value": "={{ $json.response }}"
+              "value": "={{ $json.text }}"
             }
           ]
         },
