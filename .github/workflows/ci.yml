@@ -13,6 +13,7 @@ on: [push]
 
 jobs:
   build-database:
+    needs: build-backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -29,7 +30,7 @@ jobs:
       - name: Lifting the database container
         run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database --wait
     
-      - name: Check container status
+      - name: Check database container status
         run: |
           status=$(docker inspect -f '{{.State.Status}}' database)
           if [ "$status" != "running" ]; then
@@ -37,13 +38,39 @@ jobs:
             exit 1
           fi
 
-      - name: Check container health
+      - name: Check database container health
         run: |
           status=$(docker inspect -f '{{.State.Health.Status}}' database)
           if [ "$status" != "healthy" ]; then
             echo "Container is not healthy (status: $status)"
             exit 1
           fi
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check backend container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Build all projects in solution
+        run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
+
+      - name: Run backend application and apply migrations
+        run: docker exec backend dotnet run Web/Web.csproj --urls "http://0.0.0.0:8080" 
+
+      - name: Verify that __EFMigrationsHistory table exists
+        run: |
+          EXISTS=$(docker exec database psql -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -t -c "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = '__EFMigrationsHistory');" | xargs)
+          if [ "$EXISTS" != "t" ]; then
+            echo "Table __EFMigrationsHistory not found!"
+            exit 1
+          fi
+          echo "Table __EFMigrationsHistory exists. Migrations applied successfully."
   
   build-backend:
     runs-on: ubuntu-latest
