@@ -70,6 +70,10 @@ jobs:
           docker exec n8n n8n import:workflow --input=/home/node/.n8n/workflow.json
           docker exec n8n n8n publish:workflow --id="mqn4t33t5gOBrgcd"
 
+      - name: n8n restart
+        run: |
+          docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} restart n8n && sleep 10
+
       - name: Trigger n8n container webhook
         env:
           PR_DIFF: ${{ env.diff }}
