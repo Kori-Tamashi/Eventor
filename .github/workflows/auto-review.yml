@@ -82,14 +82,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DIFF_ESCAPED=$(echo "$PR_DIFF" | jq -Rs .)
-          curl -X POST ${{ env.WEBHOOK_URL }} \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"diff\": $DIFF_ESCAPED,
-              \"prNumber\": $PR_NUMBER,
-              \"repository\": \"$PR_REPO\",
-              \"token\": \"$GITHUB_TOKEN\"
-            }"
+          
 
       - name: Wait for execution and check status
         run: |
