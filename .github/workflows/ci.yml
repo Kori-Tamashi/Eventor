@@ -60,7 +60,7 @@ jobs:
         run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
 
       - name: Run backend application and apply migrations
-        run: docker exec backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" 
+        run: docker exec -d backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" && sleep 10
 
       - name: Verify that __EFMigrationsHistory table exists
         run: |
