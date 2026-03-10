@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
 # 2. Установка рабочей директории
 WORKDIR /app
 
-# 3. Копирование .csproj файла (# TODO: изменить путь к файлу проекта )
+# 3. Копирование .csproj файла
 COPY src/backend/dotnet/ ./
 
 # 4. Установка зависимостей 
