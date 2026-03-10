@@ -13,7 +13,6 @@ services:
       - N8N_HOST=localhost
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
-      - N8N_API_DISABLE_AUTH=test
     volumes:
       - ../n8n/workflow.json:/home/node/.n8n/workflow.json:ro
     healthcheck:
