@@ -80,7 +80,7 @@ jobs:
           PR_DIFF: ${{ env.diff }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_REPO: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.KORI_API_KEY }}
         run: |
           DIFF_ESCAPED=$(echo "$PR_DIFF" | jq -Rs .)
           curl -X POST ${{ env.WEBHOOK_URL }} \
