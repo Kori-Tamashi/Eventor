@@ -90,3 +90,6 @@ jobs:
               \"repository\": \"$PR_REPO\",
               \"token\": \"$GITHUB_TOKEN\"
             }"
+
+      - name: Wait n8n workflow
+        run: sleep 180
