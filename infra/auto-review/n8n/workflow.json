@@ -18,14 +18,8 @@
     },
     {
       "parameters": {
-        "messages": {
-          "messageValues": [
-            {
-              "type": "HumanMessagePromptTemplate",
-              "message": "=Вы - опытный разработчик, проводящий код-ревью. Просмотрите следующий diff и укажите на потенциальные проблемы, стилистические ошибки и дайте рекомендации. Будьте конструктивны.  Дифф: {{ $json.body.diff }}"
-            }
-          ]
-        },
+        "promptType": "define",
+        "text": "=Вы - опытный разработчик, проводящий код-ревью. Просмотрите следующий diff и укажите на потенциальные проблемы, стилистические ошибки и дайте рекомендации. Будьте конструктивны.  Дифф: {{ $json.body.diff }}",
         "batching": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
@@ -81,7 +75,6 @@
       "parameters": {
         "method": "POST",
         "url": "=https://api.github.com/repos/{{ $('Webhook').item.json.body.repository }}/issues/{{ $('Webhook').item.json.body.prNumber }}/comments",
-        "authentication": "none",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -91,7 +84,11 @@
             },
             {
               "name": "Accept",
-              "value": "application/vnd.github.v3+json"
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
             }
           ]
         },
@@ -104,7 +101,6 @@
             }
           ]
         },
-        "jsonBody": true,
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
