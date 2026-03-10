@@ -14,10 +14,10 @@ services:
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
     volumes:
-      - ../n8n:/home/node/.n8n
+      - ../n8n/workflow.json:/home/node/.n8n/workflow.json:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5678/healthz"]
-      interval: 30s
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5678/healthz"]
+      interval: 90s
       timeout: 10s
       retries: 3
       start_period: 10s
