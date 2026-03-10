@@ -33,15 +33,16 @@ services:
     volumes:
       - ../pgadmin/servers.json:/pgadmin4/servers.json:ro
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider http://localhost:80 || exit 1"]
-      start_period: 30s
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"]
+      start_period: 90s
       interval: 5s
       timeout: 5s
       retries: 5
     tmpfs:
       - /var/lib/pgadmin
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     networks:
       - eventor-network
 
@@ -69,18 +70,14 @@ services:
       context: ${CONTEXT}
       dockerfile: ${DOCKER_PATH}/dockerfile.backend
     container_name: backend
-    command: dotnet run --project Web/Web.csproj --urls=http://0.0.0.0:8080
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: dotnet run --project Web/Web.csproj --urls=http://0.0.0.0:8080 --ConnectionStrings:DefaultConnection="Host=database;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
     ports:
       - "8080:8080"
     volumes:
       - ${CONTEXT}/${BACKEND_PATH}/dotnet/:/app
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     networks:
       - eventor-network
 
