@@ -10,7 +10,7 @@ up: database database-interface web-server backend
 	@echo "The local working stand has been successfully raised"
 
 down:
-	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) down --rmi local
+	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) down
 	@echo "The local work stand has been successfully dismantled"
 
 restart: down | up
