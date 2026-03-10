@@ -67,9 +67,8 @@ jobs:
 
       - name: Import workflow and activate
         run: |
-          WORKFLOW_ID=$(docker exec n8n n8n import:workflow --input=/home/node/.n8n/workflow.json --output=id-only)
-          echo "Imported workflow ID: $WORKFLOW_ID"
-          docker exec n8n n8n publish:workflow --id="$WORKFLOW_ID"
+          docker exec n8n n8n import:workflow --input=/home/node/.n8n/workflow.json
+          docker exec n8n n8n publish:workflow --id="mqn4t33t5gOBrgcd"
 
       - name: Trigger n8n container webhook
         env:
