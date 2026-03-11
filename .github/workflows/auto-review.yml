@@ -2,19 +2,15 @@ name: Auto Code Review
 env:
   DOCKER_COMPOSE_PATH: infra/auto-review/docker/docker-compose.yml
   WEBHOOK_URL: http://localhost:5678/webhook/code-review
+  WORKFLOW_ID: mqn4t33t5gOBrgcd
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  review:
+  autoreview:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      issues: write
-      contents: read
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -69,7 +65,7 @@ jobs:
       - name: Import workflow and activate
         run: |
           docker exec n8n n8n import:workflow --input=/home/node/.n8n/workflow.json
-          docker exec n8n n8n publish:workflow --id="mqn4t33t5gOBrgcd"
+          docker exec n8n n8n publish:workflow --id="${{ env.WORKFLOW_ID }}"
 
       - name: n8n restart
         run: |
