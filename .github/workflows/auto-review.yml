@@ -90,4 +90,4 @@ jobs:
 
       - name: Wait for execution
         run: |
-          sleep 120
+          sleep 180
