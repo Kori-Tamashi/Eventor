@@ -1,0 +1,162 @@
+{
+  "name": "AI Code-Review (fixed)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "code-review",
+        "options": {
+          "binaryPropertyName": "="
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-32, 0],
+      "id": "8f2d6b8d-bc04-4228-8766-f372dffcd7fe",
+      "name": "Webhook",
+      "webhookId": "d6f59c49-a4e4-4d56-acc0-7798bdcdfa57"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Вы - опытный разработчик, проводящий код-ревью. Просмотрите следующий diff и укажите на потенциальные проблемы, стилистические ошибки и дайте рекомендации. Будьте конструктивны.  Дифф: {{ $json.body.diff }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [288, 0],
+      "id": "bc9a44e1-6a11-4f5a-b06f-74e0bded17e0",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-reasoner",
+        "options": {
+          "responseFormat": "text",
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [288, 176],
+      "id": "bc0215cb-5e24-414e-8b86-6a93990f2d84",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Получение изменений\nПолучение изменений из POST запроса в Github Actions",
+        "height": 432,
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [-160, -112],
+      "typeVersion": 1,
+      "id": "a72e7464-529b-49ab-819d-c99f0f843159",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Получение код-ревью\nОтправка промпта с изменениями в языковую модель",
+        "height": 432,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [208, -112],
+      "typeVersion": 1,
+      "id": "6e758edd-7bf5-4695-8e97-3e218567c479",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $('Webhook').item.json.body.repository }}/issues/{{ $('Webhook').item.json.body.prNumber }}/comments",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Webhook').item.json.body.token }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "body",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [816, 0],
+      "id": "ca6cf268-1c44-4593-9bc3-0c24fc83e280",
+      "name": "Post comment via HTTP"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Post comment via HTTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "277b3205-b625-4233-b7ac-5bc5181757df",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8eb9a2c7df767cd78b453ad55ab5bae4661b81ab712c71c7ede551ee2f14f8bf"
+  },
+  "id": "mqn4t33t5gOBrgcd",
+  "tags": []
+}

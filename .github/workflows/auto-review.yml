@@ -1,0 +1,93 @@
+name: Auto Code Review
+env:
+  DOCKER_COMPOSE_PATH: infra/auto-review/docker/docker-compose.yml
+  WEBHOOK_URL: http://localhost:5678/webhook/code-review
+  WORKFLOW_ID: mqn4t33t5gOBrgcd
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  autoreview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Get PR diff
+        id: diff
+        run: |
+          git fetch origin develop
+          DIFF=$(git diff origin/develop...HEAD)
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "diff<<$EOF" >> $GITHUB_ENV
+          echo "$DIFF" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
+
+      - name: Start n8n container
+        run: |
+          docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d n8n --wait
+
+      - name: Check n8n container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' n8n)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Create DeepSeek credential JSON and import to n8n
+        run: |
+          docker exec n8n sh -c "echo '[
+            {
+              \"id\": \""bc0215cb-5e24-414e-8b86-6a93990f2d84"\",
+              \"name\": \"DeepSeek account\",
+              \"type\": \"deepSeekApi\",
+              \"data\": {
+                \"apiKey\": \"${{ secrets.DEEPSEEK_API_KEY }}\"
+              }
+            }
+          ]' > /tmp/deepseek-credential.json"
+
+          docker exec n8n n8n import:credentials --input=/tmp/deepseek-credential.json
+
+      - name: Import workflow and activate
+        run: |
+          docker exec n8n n8n import:workflow --input=/home/node/.n8n/workflow.json
+          docker exec n8n n8n publish:workflow --id="${{ env.WORKFLOW_ID }}"
+
+      - name: n8n restart
+        run: |
+          docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} restart n8n && sleep 10
+
+      - name: Trigger n8n container webhook
+        env:
+          PR_DIFF: ${{ env.diff }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.KORI_API_KEY }}
+        run: |
+          DIFF_ESCAPED=$(echo "$PR_DIFF" | jq -Rs .)
+          curl -X POST ${{ env.WEBHOOK_URL }} \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"diff\": $DIFF_ESCAPED,
+              \"prNumber\": $PR_NUMBER,
+              \"repository\": \"$PR_REPO\",
+              \"token\": \"$GITHUB_TOKEN\"
+            }"
+
+      - name: Wait for execution
+        run: |
+          sleep 180
