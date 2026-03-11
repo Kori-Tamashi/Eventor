@@ -17,13 +17,13 @@ restart: down | up
 
 # Docker-containers
 database:
-	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d database
+	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d database --wait
 
 database-interface: database
-	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d database-interface
+	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d database-interface --wait
 
 web-server:
-	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d web-server
+	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d web-server --wait
 
 backend: database
-	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d backend
+	docker compose --env-file $(ENV_FILE) -f $(DOCKER_COMPOSE_FILE) up -d backend --wait
