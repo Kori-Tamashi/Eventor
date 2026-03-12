@@ -23,3 +23,16 @@ html, body {
 body {
   background: var(--eventor-bg);
 }
+
+:root {
+  --ui-bg: var(--eventor-surface);
+  --ui-stroke: var(--eventor-border);
+  --ui-radius: 14px;
+}
+
+.ui-surface {
+  background: var(--ui-bg);
+  border: 1px solid var(--ui-stroke);
+  border-radius: var(--ui-radius);
+  box-shadow: none;
+}
