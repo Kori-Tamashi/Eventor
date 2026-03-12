@@ -47,13 +47,6 @@
   gap: 8px;
 }
 
-.count {
-  padding: 8px 10px;
-  font-size: 12px;
-  color: #64748b;
-  border-radius: 10px;
-}
-
 .table-placeholder {
   flex: 1;
   padding: 14px;
@@ -74,7 +67,52 @@
   width: 38px;
   height: 38px;
   border-radius: 10px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   box-shadow: none;
+}
+
+:host ::ng-deep .icon-btn .p-button-icon {
+  color: #64748b;
+}
+
+:host ::ng-deep .icon-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+:host ::ng-deep .icon-btn:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+:host ::ng-deep button.icon-btn.p-button:hover,
+:host ::ng-deep button.icon-btn.p-button:active,
+:host ::ng-deep button.icon-btn.p-button:focus {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep button.icon-btn.p-button:hover .p-button-icon,
+:host ::ng-deep button.icon-btn.p-button:active .p-button-icon,
+:host ::ng-deep button.icon-btn.p-button:focus .p-button-icon {
+  color: #64748b !important;
+}
+
+.page-count {
+  width: 72px;
+  height: 38px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  color: #64748b;
+  user-select: none;
 }
 
 .search {
@@ -117,4 +155,11 @@
   border-color: #cbd5e1;
   outline: none;
   box-shadow: none;
+}
+
+.v-sep {
+  width: 1px;
+  height: 26px;
+  background: #e2e8f0;
+  margin: 0 2px;
 }
