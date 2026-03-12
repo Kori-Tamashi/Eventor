@@ -12,9 +12,8 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 14px;
   margin-bottom: 18px;
 }
 
@@ -38,7 +37,8 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .pager {
