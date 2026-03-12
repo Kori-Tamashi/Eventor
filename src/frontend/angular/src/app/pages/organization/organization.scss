@@ -1,0 +1,87 @@
+.page {
+  padding: 0;
+}
+
+.page-card {
+  height: calc(100vh - 36px);
+  padding: 22px 22px 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.title-block {
+  min-width: 280px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #020617;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search {
+  width: 190px;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #64748b;
+  border-radius: 10px;
+}
+
+.table-placeholder {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.thead {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.4fr 0.8fr 0.7fr 0.9fr 0.7fr 0.7fr;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+:host ::ng-deep .icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+:host ::ng-deep .p-inputtext {
+  width: 100%;
+  border-radius: 10px;
+}
