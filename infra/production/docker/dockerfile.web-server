@@ -1,0 +1,36 @@
+# --- Стадия установки зависимостей для фронтенда ---
+# 1. Установка базового образа для работы фронтенда
+FROM node:20-alpine AS frontend-builder
+
+# 2. Установка рабочей директории
+WORKDIR /app
+
+# 3. Копирование кода фронтенда
+COPY src/frontend/angular .
+
+# 4. Установка зависимостей и компилирование кода
+RUN npm install && npx ng build
+
+# --- Стадия запуска веб-сервера ---
+# 1. Установка базового образа для веб сервера
+FROM nginx:1.28-alpine AS frontend-final
+
+# 2. Установка рабочей директории
+WORKDIR /app
+
+# 3. Копирование конфигурационных файлов веб-сервера
+COPY shared/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY shared/nginx/eventor.conf /etc/nginx/conf.d/eventor.conf
+
+# 4. Копирование собранных зависимостей из стадии сборки фронтенда
+COPY --from=frontend-builder /app/dist/eventor-frontend /var/www/eventor
+
+# 5. Открытие порта
+EXPOSE 80
+
+# 6. Проверка здоровья
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:80/ || exit 1
+
+# 7. Запуск веб-сервера
+CMD ["nginx", "-g", "daemon off;"]
