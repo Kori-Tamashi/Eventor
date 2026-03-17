@@ -189,6 +189,9 @@ jobs:
   deploy-backend:
     needs: deploy-database
     runs-on: ubuntu-latest
+    env:
+        DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+        DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
     steps:
       - name: Run backend container
         uses: appleboy/ssh-action@v1.0.0
@@ -199,10 +202,7 @@ jobs:
           port: 22
           envs: DOCKER_HUB_USER,DOCKER_BACKEND_REPOSITORY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d backend --wait
-          env:
-            DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
-            DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
-
+          
       - name: Check backend container status
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -234,6 +234,9 @@ jobs:
   deploy-webserver:
     needs: deploy-configs
     runs-on: ubuntu-latest
+    env:
+        DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+        DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
     steps:
       - name: Run webserver container
         uses: appleboy/ssh-action@v1.0.0
@@ -244,10 +247,7 @@ jobs:
           port: 22
           envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d web-server --wait
-          env:
-            DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
-            DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
-
+          
       - name: Check webserver container status
         uses: appleboy/ssh-action@v1.0.0
         with:
