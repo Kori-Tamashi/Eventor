@@ -13,11 +13,17 @@ env:
   SERVER_PGADMIN_PATH: /root/test-stand/pgadmin
   SERVER_TIMEOUT: 300s
 
-on: [push]
+on:
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types:
+      - completed
+    branches: [develop]
 
 jobs:
   build-backend:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,6 +50,7 @@ jobs:
 
   build-webserver:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
