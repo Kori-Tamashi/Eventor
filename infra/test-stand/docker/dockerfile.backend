@@ -16,7 +16,7 @@ RUN dotnet publish Web/Web.csproj --configuration Release -o /publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS backend-final
 
 # 2. Установка сurl
-RUN apk add --no-cache curl=8.17.0
+RUN apk add --no-cache curl=8.17.0-r1
 
 # 3. Установка рабочей директории
 WORKDIR /app
