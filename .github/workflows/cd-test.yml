@@ -11,6 +11,7 @@ env:
   SERVER_INFRA_PATH: /root/test-stand
   SERVER_DOCKER_PATH: /root/test-stand/docker
   SERVER_PGADMIN_PATH: /root/test-stand/pgadmin
+  SERVER_TIMEOUT: 300s
 
 on: [push]
 
@@ -83,6 +84,7 @@ jobs:
           port: 22
           source: "${{ env.DOCKER_PATH }}/docker-compose.yml"
           target: "${{ env.SERVER_DOCKER_PATH }}"
+          timeout: ${{ env.SERVER_TIMEOUT }}
           strip_components: 3
 
       - name: Copy pgadmin settings file to server
@@ -94,6 +96,7 @@ jobs:
           port: 22
           source: "${{ env.PGADMIN_PATH }}"
           target: "${{ env.SERVER_PGADMIN_PATH }}"
+          timeout: ${{ env.SERVER_TIMEOUT }}
           strip_components: 3
 
       - name: Copy settings file to server
@@ -104,7 +107,8 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           source: "${{ env.INFRA_PATH }}/settings.conf"
-          target: "${{ env.SERVER_INFRA_PATH }}"   
+          target: "${{ env.SERVER_INFRA_PATH }}"  
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           strip_components: 2
 
   deploy-database:
@@ -122,6 +126,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d database --wait
 
@@ -132,6 +137,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Status}}' eventor-database)
             if [ "$status" != "running" ]; then
@@ -146,6 +152,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Health.Status}}' eventor-database)
             if [ "$status" != "healthy" ]; then
@@ -168,6 +175,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d database-interface --wait
 
@@ -178,6 +186,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Status}}' eventor-database-interface)
             if [ "$status" != "running" ]; then
@@ -192,6 +201,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Health.Status}}' eventor-database-interface)
             if [ "$status" != "healthy" ]; then
@@ -214,6 +224,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d backend --wait
           
@@ -224,6 +235,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
             if [ "$status" != "running" ]; then
@@ -238,6 +250,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Health.Status}}' eventor-backend)
             if [ "$status" != "healthy" ]; then
@@ -260,6 +273,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d web-server --wait
           
@@ -270,6 +284,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Status}}' eventor-webserver)
             if [ "$status" != "running" ]; then
@@ -284,6 +299,7 @@ jobs:
           username: ${{ secrets.TEST_SERVER_SSH_USER }}
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
           script: |
             status=$(docker inspect -f '{{.State.Health.Status}}' eventor-webserver)
             if [ "$status" != "healthy" ]; then
