@@ -94,7 +94,7 @@ jobs:
           port: 22
           source: "${{ env.PGADMIN_PATH }}"
           target: "${{ env.SERVER_PGADMIN_PATH }}"
-          strip_components: 2
+          strip_components: 3
 
       - name: Copy settings file to server
         uses: appleboy/scp-action@v0.1.4
