@@ -9,7 +9,7 @@ WORKDIR /app
 COPY src/backend/dotnet .
 
 # 4. Публикация проекта
-RUN dotnet publish --project Web/Web.csproj --configuration Release -o /publish
+RUN dotnet publish Web/Web.csproj --configuration Release -o /publish
 
 # --- Стадия запуска серврной части ---
 # 1. Установка финального образа

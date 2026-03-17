@@ -1,6 +1,6 @@
 name: Continuous Deployment (Test server)
 env:
-  CONTEXT_PATH: ../../..
+  CONTEXT_PATH: .
   INFRA_PATH: infra/test-stand
   DOCKER_PATH: infra/test-stand/docker
   PGADMIN_PATH: infra/test-stand/pgadmin
@@ -30,7 +30,7 @@ jobs:
         run: docker --version
 
       - name: Build backend image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_BACKEND_REPOSITORY }}:latest -f ${{ env.DOCKER_PATH }}/dockerfile.backend .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_BACKEND_REPOSITORY }}:latest -f ${{ env.DOCKER_PATH }}/dockerfile.backend ${{ env.CONTEXT_PATH }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -56,7 +56,7 @@ jobs:
         run: docker --version
 
       - name: Build webserver image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}:latest -f ${{ env.DOCKER_PATH }}/dockerfile.web-server .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}:latest -f ${{ env.DOCKER_PATH }}/dockerfile.web-server ${{ env.CONTEXT_PATH }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
