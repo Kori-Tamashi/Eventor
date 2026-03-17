@@ -60,7 +60,7 @@ services:
       - eventor-test-network
 
   backend:
-    image: ${DOCKER_HUB_USER}/${DOCKER_BACKEND_REPOSITORY}:latest:latest
+    image: ${DOCKER_HUB_USER}/${DOCKER_BACKEND_REPOSITORY}:latest
     container_name: eventor-backend
     restart: unless-stopped
     ports:
