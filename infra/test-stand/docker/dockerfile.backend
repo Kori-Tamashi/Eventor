@@ -1,0 +1,32 @@
+# --- Стадия установки зависимостей для серврной части ---
+# 1. Установка базового образа
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS backend-build
+
+# 2. Установка рабочей директории
+WORKDIR /app
+
+# 3. Копирование файлов проекта 
+COPY src/backend/dotnet .
+
+# 4. Публикация проекта
+RUN dotnet publish --project Web/Web.csproj --configuration Release -o /publish
+
+# --- Стадия запуска серврной части ---
+# 1. Установка финального образа
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS backend-final
+
+# 2. Установка рабочей директории
+WORKDIR /app
+
+# 3. Копирование собранного приложения
+COPY --from=backend-build /publish /app
+
+# 4. Открытие порта
+EXPOSE 8080
+
+# 5. Проверка здоровья
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/ || exit 1
+
+# 6. Запуск приложения
+CMD ["dotnet", "Web.dll", "--urls=http://0.0.0.0:8080"]

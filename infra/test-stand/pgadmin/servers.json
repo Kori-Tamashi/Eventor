@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Eventor Local Database",
+      "Group": "Servers",
+      "Host": "database",
+      "Port": 5432,
+      "MaintenanceDB": "eventor",
+      "Username": "postgres",
+      "Password": "postgres",
+      "SSLMode": "prefer"
+    }
+  }
+}
