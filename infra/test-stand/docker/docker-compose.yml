@@ -4,7 +4,6 @@ services:
     container_name: eventor-database
     restart: unless-stopped
     environment:
-      POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -13,8 +12,8 @@ services:
     volumes:
       - ../${POSTGRES_DATA}:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -p 5432"]
-      start_period: 15s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} || exit 1"]
+      start_period: 30s
       interval: 3s
       timeout: 3s
       retries: 3
@@ -61,14 +60,14 @@ services:
       - eventor-test-network
 
   backend:
-    image: ${DOCKER_HUB_USER}/${DOCKER_BACKEND_REPOSITORY}:latest
+    image: ${DOCKER_HUB_USER}/${DOCKER_BACKEND_REPOSITORY}:latest:latest
     container_name: eventor-backend
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT}:8080"
     command: dotnet Web.dll --urls=http://0.0.0.0:8080 --ConnectionStrings:DefaultConnection="Host=eventor-database;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Port=5432"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
       start_period: 30s
       interval: 5s  
       timeout: 5s
