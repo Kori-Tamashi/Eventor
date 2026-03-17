@@ -15,13 +15,16 @@ RUN dotnet publish Web/Web.csproj --configuration Release -o /publish
 # 1. Установка финального образа
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS backend-final
 
-# 2. Установка рабочей директории
+# 2. Установка сurl
+RUN apk add --no-cache curl=8.17.0
+
+# 3. Установка рабочей директории
 WORKDIR /app
 
-# 3. Копирование собранного приложения
+# 4. Копирование собранного приложения
 COPY --from=backend-build /publish /app
 
-# 4. Открытие порта
+# 5. Открытие порта
 EXPOSE 8080
 
 # 6. Запуск приложения
