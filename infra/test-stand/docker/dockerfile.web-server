@@ -28,9 +28,5 @@ COPY --from=frontend-builder /app/dist/eventor-frontend /var/www/eventor
 # 5. Открытие порта
 EXPOSE 80
 
-# 6. Проверка здоровья
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:80/ || exit 1
-
 # 7. Запуск веб-сервера
 CMD ["nginx", "-g", "daemon off;"]
