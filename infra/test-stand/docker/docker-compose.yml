@@ -1,7 +1,7 @@
 services:
   database:
     image: ${POSTGRES_IMAGE}
-    container_name: ${POSTGRES_CONTAINER_NAME}
+    container_name: eventor-database
     restart: unless-stopped
     environment:
       POSTGRES_PORT: 5432
@@ -23,7 +23,7 @@ services:
 
   database-interface:
     image: ${PGADMIN_IMAGE}
-    container_name: ${PGADMIN_CONTAINER_NAME}
+    container_name: eventor-database-interface
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
@@ -47,7 +47,7 @@ services:
 
   web-server:
     image: ${DOCKER_HUB_USER}/${DOCKER_WEBSERVER_REPOSITORY}:latest
-    container_name: ${WEBSERVER_CONTAINER_NAME}
+    container_name: eventor-webserver
     restart: unless-stopped
     ports:
       - "${WEBSERVER_PORT}:80"
@@ -62,7 +62,7 @@ services:
 
   backend:
     image: ${DOCKER_HUB_USER}/${DOCKER_BACKEND_REPOSITORY}:latest
-    container_name: ${BACKEND_CONTAINER_NAME}
+    container_name: eventor-backend
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT}:8080"

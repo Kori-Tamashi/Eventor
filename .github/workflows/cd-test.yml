@@ -133,7 +133,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Status}}' database)
+            status=$(docker inspect -f '{{.State.Status}}' eventor-database)
             if [ "$status" != "running" ]; then
               echo "Container is not running (status: $status)"
               exit 1
@@ -147,7 +147,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Health.Status}}' database)
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-database)
             if [ "$status" != "healthy" ]; then
               echo "Container is not healthy (status: $status)"
               exit 1
@@ -179,7 +179,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Status}}' database-interface)
+            status=$(docker inspect -f '{{.State.Status}}' eventor-database-interface)
             if [ "$status" != "running" ]; then
               echo "Container is not running (status: $status)"
               exit 1
@@ -193,7 +193,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Health.Status}}' database-interface)
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-database-interface)
             if [ "$status" != "healthy" ]; then
               echo "Container is not healthy (status: $status)"
               exit 1
@@ -225,7 +225,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Status}}' backend)
+            status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
             if [ "$status" != "running" ]; then
               echo "Container is not running (status: $status)"
               exit 1
@@ -239,7 +239,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Health.Status}}' backend)
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-backend)
             if [ "$status" != "healthy" ]; then
               echo "Container is not healthy (status: $status)"
               exit 1
@@ -271,7 +271,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Status}}' web-server)
+            status=$(docker inspect -f '{{.State.Status}}' eventor-webserver)
             if [ "$status" != "running" ]; then
               echo "Container is not running (status: $status)"
               exit 1
@@ -285,7 +285,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           script: |
-            status=$(docker inspect -f '{{.State.Health.Status}}' web-server)
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-webserver)
             if [ "$status" != "healthy" ]; then
               echo "Container is not healthy (status: $status)"
               exit 1
