@@ -83,7 +83,7 @@ jobs:
           port: 22
           source: "${{ env.DOCKER_PATH }}/docker-compose.yml"
           target: "${{ env.SERVER_DOCKER_PATH }}"
-          strip_components: 1
+          strip_components: 3
 
       - name: Copy pgadmin settings file to server
         uses: appleboy/scp-action@v0.1.4
@@ -94,7 +94,7 @@ jobs:
           port: 22
           source: "${{ env.PGADMIN_PATH }}"
           target: "${{ env.SERVER_PGADMIN_PATH }}"
-          strip_components: 1
+          strip_components: 2
 
       - name: Copy settings file to server
         uses: appleboy/scp-action@v0.1.4
@@ -105,7 +105,7 @@ jobs:
           port: 22
           source: "${{ env.INFRA_PATH }}/settings.conf"
           target: "${{ env.SERVER_INFRA_PATH }}"   
-          strip_components: 1   
+          strip_components: 2
 
   deploy-database:
     needs: deploy-configs
