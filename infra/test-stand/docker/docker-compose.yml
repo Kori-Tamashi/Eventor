@@ -66,8 +66,7 @@ services:
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT}:8080"
-    environment:
-      - "ConnectionStrings__Default=Host=eventor-database;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+    command: dotnet Web.dll --urls=http://0.0.0.0:8080 --ConnectionStrings:DefaultConnection="Host=eventor-database;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
       start_period: 15s
