@@ -154,7 +154,7 @@ jobs:
             fi
 
   deploy-database-interface:
-    needs: deploy-database
+    needs: deploy-webserver
     runs-on: ubuntu-latest
     env:
         DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
@@ -246,7 +246,7 @@ jobs:
             fi
 
   deploy-webserver:
-    needs: deploy-configs
+    needs: deploy-backend
     runs-on: ubuntu-latest
     env:
         DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
