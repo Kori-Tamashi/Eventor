@@ -23,9 +23,3 @@ WORKDIR /app
 
 # 4. Копирование собранного приложения
 COPY --from=backend-build /publish /app
-
-# 5. Открытие порта
-EXPOSE 8080
-
-# 6. Запуск приложения
-CMD ["dotnet", "Web.dll", "--urls=http://0.0.0.0:8080"]
