@@ -19,7 +19,7 @@ services:
       timeout: 3s
       retries: 3
     networks:
-      - ${DOCKER_NETWORK_NAME}
+      - eventor-test-network
 
   database-interface:
     image: ${PGADMIN_IMAGE}
@@ -43,7 +43,7 @@ services:
       database:
         condition: service_healthy
     networks:
-      - ${DOCKER_NETWORK_NAME}
+      - eventor-test-network
 
   web-server:
     image: ${DOCKER_HUB_USER}/${DOCKER_WEBSERVER_REPOSITORY}:latest
@@ -58,7 +58,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - ${DOCKER_NETWORK_NAME}
+      - eventor-test-network
 
   backend:
     image: ${DOCKER_HUB_USER}/${DOCKER_BACKEND_REPOSITORY}:latest
@@ -75,9 +75,8 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - ${DOCKER_NETWORK_NAME}
+      - eventor-test-network
 
 networks:
-  app_network:                  
-    name: ${DOCKER_NETWORK_NAME}
+  eventor-test-network:                  
     driver: bridge
