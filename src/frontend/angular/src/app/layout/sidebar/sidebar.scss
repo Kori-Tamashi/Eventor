@@ -1,21 +1,21 @@
 .sidebar {
-  width: 78px;
+  width: var(--sidebar-width);
 
-  height: calc(100vh - 36px);
-  margin: 18px 0 18px 18px;
+  height: calc(100vh - (var(--shell-gutter) * 2));
+  margin: var(--shell-gutter) 0 var(--shell-gutter) var(--shell-gutter);
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  padding: 14px 10px;
+  padding: var(--space-4) var(--space-3);
 }
 
 .brand {
   font-size: var(--text-h6);
-  font-weight: 600;
+  font-weight: var(--font-weight-h6);
   color: var(--eventor-selected);
-  margin: 6px 0 0;
+  margin: var(--space-2) 0 0;
 }
 
 .nav {
@@ -24,16 +24,16 @@
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
   width: 100%;
   align-items: center;
 }
 
 .nav-item {
-  width: 44px;
-  height: 44px;
+  width: var(--sidebar-icon-hit);
+  height: var(--sidebar-icon-hit);
 
-  border-radius: calc(var(--ui-radius) - 2px);
+  border-radius: var(--radius-md);
 
   display: grid;
   place-items: center;
@@ -56,7 +56,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  padding-top: 12px;
+  padding-top: var(--space-3);
   margin-top: auto;
   border-top: 1px solid var(--eventor-border);
 }

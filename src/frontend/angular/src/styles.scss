@@ -31,9 +31,30 @@
   --font-weight-body: 400;
   --font-weight-caption: 400;
 
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 18px;
+  --space-6: 20px;
+  --space-7: 24px;
+  --space-8: 32px;
+
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+
+  --control-height: 38px;
+  --icon-btn-size: 38px;
+
+  --sidebar-width: 78px;
+  --sidebar-icon-hit: 44px;
+  --shell-gutter: 18px;
+
   --ui-bg: var(--eventor-surface);
   --ui-stroke: var(--eventor-border);
-  --ui-radius: 14px;
+  --ui-radius: var(--radius-lg);
 }
 
 html,
@@ -125,9 +146,9 @@ body {
 }
 
 .page {
-  padding: 2rem;
+  padding: var(--space-8);
 }
 
 .page-actions {
-  margin-top: 1rem;
+  margin-top: var(--space-4);
 }

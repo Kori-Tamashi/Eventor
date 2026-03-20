@@ -6,9 +6,9 @@
 
 .main {
   flex: 1;
-  padding: 18px;
+  padding: var(--shell-gutter);
 }
 
 .content {
-  padding-top: 14px;
+  padding-top: var(--space-4);
 }
