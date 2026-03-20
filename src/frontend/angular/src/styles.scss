@@ -1,12 +1,15 @@
 @import "primeicons/primeicons.css";
 
 :root {
-  --eventor-bg: #f8fafc;
+  --eventor-bg: #ffffff;
   --eventor-surface: #ffffff;
   --eventor-border: #e2e8f0;
   --eventor-text: #0f172a;
   --eventor-muted: #64748b;
   --eventor-selected: #020617;
+
+  --sidebar-bg: #f1f5f9;
+  --sidebar-stroke: #f1f5f9;
 
   --text-h1: 24px;
   --text-h2: 20px;
@@ -49,6 +52,13 @@ body {
 .ui-surface {
   background: var(--ui-bg);
   border: 1px solid var(--ui-stroke);
+  border-radius: var(--ui-radius);
+  box-shadow: none;
+}
+
+.ui-sidebar-surface {
+  background: var(--sidebar-bg);
+  border: 1px solid var(--sidebar-stroke);
   border-radius: var(--ui-radius);
   box-shadow: none;
 }
