@@ -12,9 +12,9 @@
 }
 
 .brand {
-  font-size: 12px;
+  font-size: var(--text-h6);
   font-weight: 600;
-  color: #020617;
+  color: var(--eventor-selected);
   margin: 6px 0 0;
 }
 
@@ -32,23 +32,24 @@
 .nav-item {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+
+  border-radius: calc(var(--ui-radius) - 2px);
 
   display: grid;
   place-items: center;
 
-  color: #64748b;
+  color: var(--eventor-muted);
   text-decoration: none;
   border: 1px solid transparent;
 }
 
 .nav-item i {
-  font-size: 18px;
+  font-size: var(--text-h3);
 }
 
 .nav-item.active {
-  background: #020617;
-  color: #ffffff;
+  background: var(--eventor-selected);
+  color: var(--eventor-surface);
 }
 
 .bottom {
@@ -57,5 +58,5 @@
   justify-content: center;
   padding-top: 12px;
   margin-top: auto;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--eventor-border);
 }
