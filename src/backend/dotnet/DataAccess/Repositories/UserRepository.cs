@@ -34,7 +34,9 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.UserRepository.GetById failed for UserId {UserId}", id);
+            _logger.LogError(ex, 
+                "DataAccess.UserRepository.GetById failed for UserId {UserId}", 
+                id);
             throw;
         }
     }
@@ -44,6 +46,7 @@ public class UserRepository : IUserRepository
         try
         {
             IQueryable<UserDb> query = _context.Users.AsNoTracking();
+            
             if (filter != null)
             {
                 if (!string.IsNullOrWhiteSpace(filter.NameContains))
@@ -59,11 +62,9 @@ public class UserRepository : IUserRepository
             }
             query = query.OrderBy(u => u.Name);
             if (filter is { PageNumber: > 0, PageSize: > 0 })
-            {
                 query = query
                     .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
                     .Take(filter.PageSize.Value);
-            }
 
             var entities = await query.ToListAsync();
             
@@ -75,7 +76,9 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.UserRepository.GetUsersAsync failed with filter {@Filter}", filter);
+            _logger.LogError(ex, 
+                "DataAccess.UserRepository.GetUsersAsync failed with filter {@Filter}", 
+                filter);
             throw;
         }
     }
@@ -89,7 +92,9 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.UserRepository.CreateAsync failed for UserId {UserId}", user.Id);
+            _logger.LogError(ex, 
+                "DataAccess.UserRepository.CreateAsync failed for UserId {UserId}", 
+                user.Id);
             throw;
         }
     }
@@ -98,11 +103,12 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+            var entity = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+            
             if (entity == null)
-            {
-                throw new KeyNotFoundException($"User {user.Id} not found in UserRepository.UpdateAsync");
-            }
+                throw new KeyNotFoundException(
+                    $"User {user.Id} not found in DataAccess.UserRepository.UpdateAsync");
 
             entity.Name = user.Name;
             entity.Phone = user.Phone;
@@ -114,7 +120,9 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.UserRepository.UpdateAsync failed for UserId {UserId}", user.Id);
+            _logger.LogError(ex, 
+                "DataAccess.UserRepository.UpdateAsync failed for UserId {UserId}", 
+                user.Id);
             throw;
         }
     }
@@ -123,17 +131,21 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var entity = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+            
             if (entity == null)
-            {
-                throw new KeyNotFoundException($"User {id} not found in UserRepository.DeleteAsync");
-            }
+                throw new KeyNotFoundException(
+                    $"User {id} not found in DataAccess.UserRepository.DeleteAsync");
+            
             _context.Users.Remove(entity);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.UserRepository.DeleteAsync failed for UserId {UserId}", id);
+            _logger.LogError(ex, 
+                "DataAccess.UserRepository.DeleteAsync failed for UserId {UserId}", 
+                id);
             throw;
         }
     }

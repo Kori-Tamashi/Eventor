@@ -27,35 +27,38 @@ namespace DataAccess.Repositories
             try
             {
                 IQueryable<RegistrationDb> query = _context.Registrations.AsNoTracking();
+                
                 if (includeDays)
-                {
                     query = query
                         .Include(r => r.Participations)
                         .ThenInclude(p => p.Day);
-                }
-                var registrationDb = await query.FirstOrDefaultAsync(r => r.Id == id);
                 
-                return RegistrationConverter.ToDomain(registrationDb);
+                var entity = await query.FirstOrDefaultAsync(r => r.Id == id);
+                
+                return RegistrationConverter.ToDomain(entity);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, 
-                    "DataAccess.RegistrationRepository.GetByIdAsync failed for RegistrationId {RegistrationId}", id);
+                    "DataAccess.RegistrationRepository.GetByIdAsync failed for RegistrationId {RegistrationId}", 
+                    id);
                 throw;
             }
         }
 
-        public async Task<List<Registration>> GetRegistrationsAsync(RegistrationFilter? filter = null, bool includeDays = false)
+        public async Task<List<Registration>> GetRegistrationsAsync(
+            RegistrationFilter? filter = null, 
+            bool includeDays = false)
         {
             try
             {
                 IQueryable<RegistrationDb> query = _context.Registrations.AsNoTracking();
+                
                 if (includeDays)
-                {
                     query = query
                         .Include(r => r.Participations)
                         .ThenInclude(p => p.Day);
-                }
+                
                 if (filter != null)
                 {
                     if (filter.EventId.HasValue)
@@ -63,17 +66,16 @@ namespace DataAccess.Repositories
                     if (filter.UserId.HasValue)
                         query = query.Where(r => r.UserId == filter.UserId.Value);
                     if (filter.Type.HasValue)
-                        query = query.Where(r => r.Type == RegistrationTypeConverter.ToDb(filter.Type.Value));
+                        query = query.Where(
+                            r => r.Type == RegistrationTypeConverter.ToDb(filter.Type.Value));
                     if (filter.Payment.HasValue)
                         query = query.Where(r => r.Payment == filter.Payment.Value);
                 }
                 query = query.OrderBy(r => r.Id);
                 if (filter is { PageNumber: > 0, PageSize: > 0 })
-                {
                     query = query
                         .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
                         .Take(filter.PageSize.Value);
-                }
                 
                 var entities = await query.ToListAsync();
                 
@@ -86,7 +88,8 @@ namespace DataAccess.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, 
-                    "DataAccess.RegistrationRepository.GetRegistrationsAsync failed with filter {@Filter}", filter);
+                    "DataAccess.RegistrationRepository.GetRegistrationsAsync failed with filter {@Filter}", 
+                    filter);
                 throw;
             }
         }
@@ -101,7 +104,8 @@ namespace DataAccess.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, 
-                    "DataAccess.RegistrationRepository.CreateAsync failed for RegistrationId {RegistrationId}", registration.Id);
+                    "DataAccess.RegistrationRepository.CreateAsync failed for RegistrationId {RegistrationId}", 
+                    registration.Id);
                 throw;
             }
         }
@@ -112,9 +116,10 @@ namespace DataAccess.Repositories
             {
                 var entity = await _context.Registrations
                     .FirstOrDefaultAsync(r => r.Id == registration.Id);
+                
                 if (entity == null)
                     throw new KeyNotFoundException(
-                        $"Registration {registration.Id} not found in RegistrationRepository.UpdateAsync");
+                        $"Registration {registration.Id} not found in DataAccess.RegistrationRepository.UpdateAsync");
 
                 entity.EventId = registration.EventId;
                 entity.UserId = registration.UserId;
@@ -126,7 +131,8 @@ namespace DataAccess.Repositories
             catch (Exception ex) when (ex is not KeyNotFoundException)
             {
                 _logger.LogError(ex, 
-                    "DataAccess.RegistrationRepository.UpdateAsync failed for RegistrationId {RegistrationId}", registration.Id);
+                    "DataAccess.RegistrationRepository.UpdateAsync failed for RegistrationId {RegistrationId}", 
+                    registration.Id);
                 throw;
             }
         }
@@ -137,9 +143,10 @@ namespace DataAccess.Repositories
             {
                 var entity = await _context.Registrations
                     .FirstOrDefaultAsync(r => r.Id == id);
+                
                 if (entity == null)
                     throw new KeyNotFoundException(
-                        $"Registration {id} not found in RegistrationRepository.DeleteAsync");
+                        $"Registration {id} not found in DataAccess.RegistrationRepository.DeleteAsync");
 
                 _context.Registrations.Remove(entity);
                 await _context.SaveChangesAsync();
@@ -147,7 +154,8 @@ namespace DataAccess.Repositories
             catch (Exception ex) when (ex is not KeyNotFoundException)
             {
                 _logger.LogError(ex, 
-                    "DataAccess.RegistrationRepository.DeleteAsync failed for RegistrationId {RegistrationId}", id);
+                    "DataAccess.RegistrationRepository.DeleteAsync failed for RegistrationId {RegistrationId}", 
+                    id);
                 throw;
             }
         }

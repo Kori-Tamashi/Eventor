@@ -33,7 +33,9 @@ public class LocationRepository: ILocationRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.LocationRepository.GetById failed for LocationId {LocationId}", id);
+            _logger.LogError(ex, 
+                "DataAccess.LocationRepository.GetById failed for LocationId {LocationId}", 
+                id);
             throw;
         }
     }
@@ -61,11 +63,9 @@ public class LocationRepository: ILocationRepository
             }
             query = query.OrderBy(l => l.Title);
             if (filter is { PageNumber: > 0, PageSize: > 0 })
-            {
                 query = query
                     .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
                     .Take(filter.PageSize.Value);
-            }
             
             var entities = await query.ToListAsync();
             
@@ -78,7 +78,8 @@ public class LocationRepository: ILocationRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.LocationRepository.GetAsync failed with filter {@Filter}", filter);
+                "DataAccess.LocationRepository.GetAsync failed with filter {@Filter}", 
+                filter);
             throw;
         }
     }
@@ -93,7 +94,8 @@ public class LocationRepository: ILocationRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.LocationRepository.CreateAsync failed for LocationId {LocationId}", location.Id);
+                "DataAccess.LocationRepository.CreateAsync failed for LocationId {LocationId}", 
+                location.Id);
             throw;
         }
     }
@@ -102,9 +104,12 @@ public class LocationRepository: ILocationRepository
     {
         try
         {
-            var entity = await _context.Locations.FirstOrDefaultAsync(l => l.Id == location.Id);
+            var entity = await _context.Locations
+                .FirstOrDefaultAsync(l => l.Id == location.Id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Location {location.Id} not found in LocationRepository.UpdateAsync");
+                throw new KeyNotFoundException(
+                    $"Location {location.Id} not found in DataAccess.LocationRepository.UpdateAsync");
 
             entity.Title = location.Title;
             entity.Description = location.Description;
@@ -116,7 +121,8 @@ public class LocationRepository: ILocationRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.LocationRepository.UpdateAsync failed for LocationId {LocationId}", location.Id);
+                "DataAccess.LocationRepository.UpdateAsync failed for LocationId {LocationId}", 
+                location.Id);
             throw;
         }
     }
@@ -125,9 +131,12 @@ public class LocationRepository: ILocationRepository
     {
         try
         {
-            var entity = await _context.Locations.FirstOrDefaultAsync(l => l.Id == id);
+            var entity = await _context.Locations
+                .FirstOrDefaultAsync(l => l.Id == id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Location {id} not found in LocationRepository.DeleteAsync");
+                throw new KeyNotFoundException(
+                    $"Location {id} not found in DataAccess.LocationRepository.DeleteAsync");
 
             _context.Locations.Remove(entity);
             await _context.SaveChangesAsync();
@@ -135,7 +144,8 @@ public class LocationRepository: ILocationRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.LocationRepository.DeleteAsync failed for LocationId {LocationId}", id);
+                "DataAccess.LocationRepository.DeleteAsync failed for LocationId {LocationId}", 
+                id);
             throw;
         }
     }

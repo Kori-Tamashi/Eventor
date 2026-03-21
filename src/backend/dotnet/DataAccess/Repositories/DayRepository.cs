@@ -35,7 +35,8 @@ public class DayRepository : IDayRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.DayRepository.GetByIdAsync failed for DayId {DayId}", dayId);
+                "DataAccess.DayRepository.GetByIdAsync failed for DayId {DayId}", 
+                dayId);
             throw;
         }
     }
@@ -55,11 +56,10 @@ public class DayRepository : IDayRepository
             }
             query = query.OrderBy(d => d.Id);
             if (filter is { PageNumber: > 0, PageSize: > 0 })
-            {
                 query = query
                     .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
                     .Take(filter.PageSize.Value);
-            }
+            
             var entities = await query.ToListAsync();
             
             return entities
@@ -71,7 +71,8 @@ public class DayRepository : IDayRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.DayRepository.GetAsync failed with filter {@Filter}", filter);
+                "DataAccess.DayRepository.GetAsync failed with filter {@Filter}", 
+                filter);
             throw;
         }
     }
@@ -86,7 +87,8 @@ public class DayRepository : IDayRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.DayRepository.CreateAsync failed for DayId {DayId}", day.Id);
+                "DataAccess.DayRepository.CreateAsync failed for DayId {DayId}", 
+                day.Id);
             throw;
         }
     }
@@ -95,9 +97,12 @@ public class DayRepository : IDayRepository
     {
         try
         {
-            var entity = await _context.Days.FirstOrDefaultAsync(d => d.Id == day.Id);
+            var entity = await _context.Days
+                .FirstOrDefaultAsync(d => d.Id == day.Id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Day {day.Id} not found in DayRepository.UpdateAsync");
+                throw new KeyNotFoundException(
+                    $"Day {day.Id} not found in DayRepository.UpdateAsync");
 
             entity.Title = day.Title;
             entity.Description = day.Description;
@@ -110,7 +115,8 @@ public class DayRepository : IDayRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.DayRepository.UpdateAsync failed for DayId {DayId}", day.Id);
+                "DataAccess.DayRepository.UpdateAsync failed for DayId {DayId}", 
+                day.Id);
             throw;
         }
     }
@@ -119,9 +125,12 @@ public class DayRepository : IDayRepository
     {
         try
         {
-            var entity = await _context.Days.FirstOrDefaultAsync(d => d.Id == dayId);
+            var entity = await _context.Days
+                .FirstOrDefaultAsync(d => d.Id == dayId);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Day {dayId} not found in DayRepository.DeleteAsync");
+                throw new KeyNotFoundException(
+                    $"Day {dayId} not found in DayRepository.DeleteAsync");
 
             _context.Days.Remove(entity);
             await _context.SaveChangesAsync();
@@ -129,7 +138,8 @@ public class DayRepository : IDayRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.DayRepository.DeleteAsync failed for DayId {DayId}", dayId);
+                "DataAccess.DayRepository.DeleteAsync failed for DayId {DayId}", 
+                dayId);
             throw;
         }
     }

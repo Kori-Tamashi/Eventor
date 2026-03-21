@@ -23,16 +23,17 @@ public class RegistrationDayRepository : IRegistrationDayRepository
     {
         try
         {
-            var participation = new ParticipationDb(dayId, registrationId);
+            var entity = new ParticipationDb(dayId, registrationId);
 
-            await _context.Participations.AddAsync(participation);
+            await _context.Participations.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,
                 "DataAccess.RegistrationDayRepository.AddDayAsync failed for RegistrationId {RegistrationId}, DayId {DayId}",
-                registrationId, dayId);
+                registrationId, 
+                dayId);
             throw;
         }
     }
@@ -41,21 +42,22 @@ public class RegistrationDayRepository : IRegistrationDayRepository
     {
         try
         {
-            var participation = await _context.Participations
+            var entity = await _context.Participations
                 .FirstOrDefaultAsync(p => p.RegistrationId == registrationId && p.DayId == dayId);
 
-            if (participation == null)
+            if (entity == null)
                 throw new KeyNotFoundException(
-                    $"Participation not found for RegistrationId {registrationId} and DayId {dayId}");
+                    $"Participation not found for RegistrationId {registrationId} and DayId {dayId} in DataAccess.RegistrationRepository.DeleteAsync");
 
-            _context.Participations.Remove(participation);
+            _context.Participations.Remove(entity);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex,
                 "DataAccess.RegistrationDayRepository.RemoveDayAsync failed for RegistrationId {RegistrationId}, DayId {DayId}",
-                registrationId, dayId);
+                registrationId, 
+                dayId);
             throw;
         }
     }
