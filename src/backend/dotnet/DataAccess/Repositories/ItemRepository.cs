@@ -35,7 +35,8 @@ public class ItemRepository : IItemRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.ItemRepository.GetByIdAsync failed for ItemId {ItemId}", id);
+                "DataAccess.ItemRepository.GetByIdAsync failed for ItemId {ItemId}", 
+                id);
             throw;
         }
     }
@@ -54,10 +55,9 @@ public class ItemRepository : IItemRepository
             }
             query = query.OrderBy(i => i.Title);
             if (filter is { PageNumber: > 0, PageSize: > 0 })
-            {
-                var skip = (filter.PageNumber.Value - 1) * filter.PageSize.Value;
-                query = query.Skip(skip).Take(filter.PageSize.Value);
-            }
+                query = query
+                    .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+                    .Take(filter.PageSize.Value);
             
             var entities = await query.ToListAsync();
             
@@ -70,7 +70,8 @@ public class ItemRepository : IItemRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.ItemRepository.GetAsync failed with filter {@Filter}", filter);
+                "DataAccess.ItemRepository.GetAsync failed with filter {@Filter}", 
+                filter);
             throw;
         }
     }
@@ -85,7 +86,8 @@ public class ItemRepository : IItemRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.ItemRepository.CreateAsync failed for ItemId {ItemId}", item.Id);
+                "DataAccess.ItemRepository.CreateAsync failed for ItemId {ItemId}", 
+                item.Id);
             throw;
         }
     }
@@ -94,9 +96,12 @@ public class ItemRepository : IItemRepository
     {
         try
         {
-            var entity = await _context.Items.FirstOrDefaultAsync(i => i.Id == item.Id);
+            var entity = await _context.Items
+                .FirstOrDefaultAsync(i => i.Id == item.Id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Item {item.Id} not found in ItemRepository.UpdateAsync");
+                throw new KeyNotFoundException(
+                    $"Item {item.Id} not found in DataAccess.ItemRepository.UpdateAsync");
 
             entity.Title = item.Title;
             entity.Cost = item.Cost;
@@ -106,7 +111,8 @@ public class ItemRepository : IItemRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.ItemRepository.UpdateAsync failed for ItemId {ItemId}", item.Id);
+                "DataAccess.ItemRepository.UpdateAsync failed for ItemId {ItemId}", 
+                item.Id);
             throw;
         }
     }
@@ -115,9 +121,12 @@ public class ItemRepository : IItemRepository
     {
         try
         {
-            var entity = await _context.Items.FirstOrDefaultAsync(i => i.Id == id);
+            var entity = await _context.Items
+                .FirstOrDefaultAsync(i => i.Id == id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Item {id} not found in ItemRepository.DeleteAsync");
+                throw new KeyNotFoundException(
+                    $"Item {id} not found in DataAccess.ItemRepository.DeleteAsync");
 
             _context.Items.Remove(entity);
             await _context.SaveChangesAsync();
@@ -125,7 +134,8 @@ public class ItemRepository : IItemRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.ItemRepository.DeleteAsync failed for ItemId {ItemId}", id);
+                "DataAccess.ItemRepository.DeleteAsync failed for ItemId {ItemId}", 
+                id);
             throw;
         }
     }

@@ -35,7 +35,8 @@ public class EventRepository : IEventRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.EventRepository.GetByIdAsync failed for EventId {EventId}", id);
+                "DataAccess.EventRepository.GetByIdAsync failed for EventId {EventId}", 
+                id);
             throw;
         }
     }
@@ -60,11 +61,10 @@ public class EventRepository : IEventRepository
             }
             query = query.OrderBy(e => e.StartDate).ThenBy(e => e.Id);
             if (filter is { PageNumber: > 0, PageSize: > 0 })
-            {
                 query = query
                     .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
                     .Take(filter.PageSize.Value);
-            }
+            
             var entities = await query.ToListAsync();
             
             return entities
@@ -75,7 +75,9 @@ public class EventRepository : IEventRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.EventRepository.GetAsync failed with filter {@Filter}", filter);
+            _logger.LogError(ex, 
+                "DataAccess.EventRepository.GetAsync failed with filter {@Filter}", 
+                filter);
             throw;
         }
     }
@@ -90,7 +92,8 @@ public class EventRepository : IEventRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.EventRepository.CreateAsync failed for EventId {EventId}", ev.Id);
+                "DataAccess.EventRepository.CreateAsync failed for EventId {EventId}", 
+                ev.Id);
             throw;
         }
     }
@@ -99,9 +102,12 @@ public class EventRepository : IEventRepository
     {
         try
         {
-            var entity = await _context.Events.FirstOrDefaultAsync(e => e.Id == ev.Id);
+            var entity = await _context.Events
+                .FirstOrDefaultAsync(e => e.Id == ev.Id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Event {ev.Id} not found in EventRepository.UpdateAsync");
+                throw new KeyNotFoundException(
+                    $"Event {ev.Id} not found in EventRepository.UpdateAsync");
 
             entity.Title = ev.Title;
             entity.Description = ev.Description;
@@ -115,7 +121,8 @@ public class EventRepository : IEventRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.EventRepository.UpdateAsync failed for EventId {EventId}", ev.Id);
+                "DataAccess.EventRepository.UpdateAsync failed for EventId {EventId}", 
+                ev.Id);
             throw;
         }
     }
@@ -124,9 +131,12 @@ public class EventRepository : IEventRepository
     {
         try
         {
-            var entity = await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
+            var entity = await _context.Events
+                .FirstOrDefaultAsync(e => e.Id == id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Event {id} not found in EventRepository.DeleteAsync");
+                throw new KeyNotFoundException(
+                    $"Event {id} not found in EventRepository.DeleteAsync");
 
             _context.Events.Remove(entity);
             await _context.SaveChangesAsync();
@@ -134,7 +144,8 @@ public class EventRepository : IEventRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.EventRepository.DeleteAsync failed for EventId {EventId}", id);
+                "DataAccess.EventRepository.DeleteAsync failed for EventId {EventId}", 
+                id);
             throw;
         }
     }

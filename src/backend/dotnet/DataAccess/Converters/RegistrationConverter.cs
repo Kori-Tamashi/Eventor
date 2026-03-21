@@ -15,12 +15,13 @@ public static class RegistrationConverter
             db.UserId,
             RegistrationTypeConverter.ToDomain(db.Type),
             db.Payment
-        );
-        
-        registration.Days = db.Participations?
-            .Select(p => DayConverter.ToDomain(p.Day))
-            .OfType<Day>()
-            .ToList() ?? [];
+        )
+        {
+            Days = db.Participations?
+                .Select(p => DayConverter.ToDomain(p.Day))
+                .OfType<Day>()
+                .ToList() ?? []
+        };
 
         return registration;
     }

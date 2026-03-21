@@ -35,7 +35,8 @@ public class FeedbackRepository : IFeedbackRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.FeedbackRepository.GetByIdAsync failed for FeedbackId {FeedbackId}", id);
+                "DataAccess.FeedbackRepository.GetByIdAsync failed for FeedbackId {FeedbackId}", 
+                id);
             throw;
         }
     }
@@ -44,13 +45,10 @@ public class FeedbackRepository : IFeedbackRepository
     {
         try
         {
-            IQueryable<FeedbackDb> query = _context.Feedbacks
-                .AsNoTracking();
+            IQueryable<FeedbackDb> query = _context.Feedbacks.AsNoTracking();
 
             if (filter?.RegistrationId.HasValue == true)
-            {
                 query = query.Where(f => f.RegistrationId == filter.RegistrationId.Value);
-            }
             query = filter?.SortByRate switch
             {
                 Domain.Enums.FeedbackSortByRate.Asc => query
@@ -61,12 +59,10 @@ public class FeedbackRepository : IFeedbackRepository
                     .ThenBy(f => f.Id),
                 _ => query.OrderBy(f => f.Id)
             };
-            if (filter is { PageNumber: > 0, PageSize: > 0 })
-            {
+            if (filter is { PageNumber: > 0, PageSize: > 0 }) 
                 query = query
                     .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
                     .Take(filter.PageSize.Value);
-            }
 
             var entities = await query.ToListAsync();
             
@@ -79,7 +75,8 @@ public class FeedbackRepository : IFeedbackRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.FeedbackRepository.GetAsync failed with filter {@Filter}", filter);
+                "DataAccess.FeedbackRepository.GetAsync failed with filter {@Filter}", 
+                filter);
             throw;
         }
     }
@@ -94,7 +91,8 @@ public class FeedbackRepository : IFeedbackRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, 
-                "DataAccess.FeedbackRepository.CreateAsync failed for FeedbackId {FeedbackId}", feedback.Id);
+                "DataAccess.FeedbackRepository.CreateAsync failed for FeedbackId {FeedbackId}", 
+                feedback.Id);
             throw;
         }
     }
@@ -103,9 +101,12 @@ public class FeedbackRepository : IFeedbackRepository
     {
         try
         {
-            var entity = await _context.Feedbacks.FirstOrDefaultAsync(f => f.Id == feedback.Id);
+            var entity = await _context.Feedbacks
+                .FirstOrDefaultAsync(f => f.Id == feedback.Id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Feedback {feedback.Id} not found in FeedbackRepository.UpdateAsync");
+                throw new KeyNotFoundException(
+                    $"Feedback {feedback.Id} not found in DataAccess.FeedbackRepository.UpdateAsync");
 
             entity.Comment = feedback.Comment;
             entity.Rate = feedback.Rate;
@@ -116,7 +117,8 @@ public class FeedbackRepository : IFeedbackRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.FeedbackRepository.UpdateAsync failed for FeedbackId {FeedbackId}", feedback.Id);
+                "DataAccess.FeedbackRepository.UpdateAsync failed for FeedbackId {FeedbackId}", 
+                feedback.Id);
             throw;
         }
     }
@@ -125,9 +127,12 @@ public class FeedbackRepository : IFeedbackRepository
     {
         try
         {
-            var entity = await _context.Feedbacks.FirstOrDefaultAsync(f => f.Id == id);
+            var entity = await _context.Feedbacks
+                .FirstOrDefaultAsync(f => f.Id == id);
+            
             if (entity == null)
-                throw new KeyNotFoundException($"Feedback {id} not found in FeedbackRepository.DeleteAsync");
+                throw new KeyNotFoundException(
+                    $"Feedback {id} not found in DataAccess.FeedbackRepository.DeleteAsync");
 
             _context.Feedbacks.Remove(entity);
             await _context.SaveChangesAsync();
@@ -135,7 +140,8 @@ public class FeedbackRepository : IFeedbackRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, 
-                "DataAccess.FeedbackRepository.DeleteAsync failed for FeedbackId {FeedbackId}", id);
+                "DataAccess.FeedbackRepository.DeleteAsync failed for FeedbackId {FeedbackId}", 
+                id);
             throw;
         }
     }
