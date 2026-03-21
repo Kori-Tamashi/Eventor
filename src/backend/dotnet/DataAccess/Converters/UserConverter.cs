@@ -8,6 +8,7 @@ public static class UserConverter
     public static User? ToDomain(UserDb? db)
     {
         if (db == null) return null;
+        
         return new User(
             db.Id,
             db.Name,
@@ -21,6 +22,7 @@ public static class UserConverter
     public static UserDb? ToDb(User? user)
     {
         if (user == null) return null;
+        
         return new UserDb(
             user.Id,
             user.Name,

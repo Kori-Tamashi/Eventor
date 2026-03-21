@@ -13,7 +13,7 @@ public static class RegistrationTypeConverter
         _ => throw new ArgumentOutOfRangeException(
             nameof(type),
             type,
-            null)
+            $"Unknown type value: {type}")
     };
 
     public static RegistrationType ToDomain(RegistrationTypeDb type) => type switch
@@ -24,6 +24,6 @@ public static class RegistrationTypeConverter
         _ => throw new ArgumentOutOfRangeException(
             nameof(type),
             type,
-            null)
+            $"Unknown type value: {type}")
     };
 }

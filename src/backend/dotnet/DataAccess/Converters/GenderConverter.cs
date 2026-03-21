@@ -12,7 +12,7 @@ public static class GenderConverter
         _ => throw new ArgumentOutOfRangeException(
             nameof(gender),
             gender,
-            null)
+            $"Unknown gender value: {gender}")
     };
 
     public static Gender ToDomain(GenderDb gender) => gender switch
@@ -22,6 +22,6 @@ public static class GenderConverter
         _ => throw new ArgumentOutOfRangeException(
             nameof(gender),
             gender,
-            null)
+            $"Unknown gender value: {gender}")
     };
 }
