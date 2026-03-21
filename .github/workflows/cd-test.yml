@@ -1,0 +1,315 @@
+name: Continuous Deployment (Test server)
+env:
+  CONTEXT_PATH: .
+  INFRA_PATH: infra/test-stand
+  DOCKER_PATH: infra/test-stand/docker
+  PGADMIN_PATH: infra/test-stand/pgadmin
+  BACKEND_PATH: src/backend/dotnet
+  FRONTEND_PATH: src/frontend/angular
+  WEBSERVER_PATH: shared/nginx
+
+  SERVER_INFRA_PATH: /root/test-stand
+  SERVER_DOCKER_PATH: /root/test-stand/docker
+  SERVER_PGADMIN_PATH: /root/test-stand/pgadmin
+  SERVER_TIMEOUT: 300s
+
+on:
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types:
+      - completed
+    branches: [develop]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Build backend image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_BACKEND_REPOSITORY }}:latest -f ${{ env.DOCKER_PATH }}/dockerfile.backend ${{ env.CONTEXT_PATH }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Push backend image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_BACKEND_REPOSITORY }}:latest
+
+  build-webserver:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Build webserver image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}:latest -f ${{ env.DOCKER_PATH }}/dockerfile.web-server ${{ env.CONTEXT_PATH }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Push webserver image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_HUB_USER }}/${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}:latest
+
+  deploy-configs:
+    needs: [build-backend, build-webserver]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose file to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          source: "${{ env.DOCKER_PATH }}/docker-compose.yml"
+          target: "${{ env.SERVER_DOCKER_PATH }}"
+          timeout: ${{ env.SERVER_TIMEOUT }}
+          strip_components: 3
+
+      - name: Copy pgadmin settings file to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          source: "${{ env.PGADMIN_PATH }}"
+          target: "${{ env.SERVER_PGADMIN_PATH }}"
+          timeout: ${{ env.SERVER_TIMEOUT }}
+          strip_components: 3
+
+      - name: Copy settings file to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          source: "${{ env.INFRA_PATH }}/settings.conf"
+          target: "${{ env.SERVER_INFRA_PATH }}"  
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          strip_components: 2
+
+  deploy-database:
+    needs: deploy-configs
+    runs-on: ubuntu-latest
+    env:
+        DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+        DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
+        DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+    steps:
+      - name: Run database container
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
+          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d database --wait
+
+      - name: Check database container status
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Status}}' eventor-database)
+            if [ "$status" != "running" ]; then
+              echo "Container is not running (status: $status)"
+              exit 1
+            fi
+
+      - name: Check database container health
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-database)
+            if [ "$status" != "healthy" ]; then
+              echo "Container is not healthy (status: $status)"
+              exit 1
+            fi
+
+  deploy-database-interface:
+    needs: deploy-webserver
+    runs-on: ubuntu-latest
+    env:
+        DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+        DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
+        DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+    steps:
+      - name: Run database-interface container
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
+          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d database-interface --wait
+
+      - name: Check database-interface container status
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Status}}' eventor-database-interface)
+            if [ "$status" != "running" ]; then
+              echo "Container is not running (status: $status)"
+              exit 1
+            fi
+
+      - name: Check database-interface container health
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-database-interface)
+            if [ "$status" != "healthy" ]; then
+              echo "Container is not healthy (status: $status)"
+              exit 1
+            fi
+
+  deploy-backend:
+    needs: deploy-database
+    runs-on: ubuntu-latest
+    env:
+        DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+        DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
+        DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+    steps:
+      - name: Run backend container
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
+          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d backend --pull always --wait
+          
+      - name: Check backend container status
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
+            if [ "$status" != "running" ]; then
+              echo "Container is not running (status: $status)"
+              exit 1
+            fi
+
+      - name: Check backend container health
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-backend)
+            if [ "$status" != "healthy" ]; then
+              echo "Container is not healthy (status: $status)"
+              exit 1
+            fi
+
+  deploy-webserver:
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+    env:
+        DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+        DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
+        DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+    steps:
+      - name: Run webserver container
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
+          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d web-server --pull always --wait
+          
+      - name: Check webserver container status
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Status}}' eventor-webserver)
+            if [ "$status" != "running" ]; then
+              echo "Container is not running (status: $status)"
+              exit 1
+            fi
+
+      - name: Check webserver container health
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.TEST_SERVER_SSH_HOST }}
+          username: ${{ secrets.TEST_SERVER_SSH_USER }}
+          password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
+          port: 22
+          timeout: ${{ env.SERVER_TIMEOUT }} 
+          script: |
+            status=$(docker inspect -f '{{.State.Health.Status}}' eventor-webserver)
+            if [ "$status" != "healthy" ]; then
+              echo "Container is not healthy (status: $status)"
+              exit 1
+            fi
