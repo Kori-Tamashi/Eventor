@@ -34,7 +34,8 @@ public class ItemRepository : IItemRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.ItemRepository.GetByIdAsync failed for ItemId {ItemId}", id);
+            _logger.LogError(ex, 
+                "DataAccess.ItemRepository.GetByIdAsync failed for ItemId {ItemId}", id);
             throw;
         }
     }
@@ -43,30 +44,33 @@ public class ItemRepository : IItemRepository
     {
         try
         {
-            IQueryable<ItemDb> query = _context.Items
-                .AsNoTracking()
-                .OrderBy(i => i.Title);
+            IQueryable<ItemDb> query = _context.Items.AsNoTracking();
 
-            if (filter != null)
+            if (!string.IsNullOrWhiteSpace(filter?.TitleContains))
             {
-                if (!string.IsNullOrWhiteSpace(filter.TitleContains))
-                    query = query.Where(i => EF.Functions.ILike(
-                        i.Title, $"%{filter.TitleContains}%"));
-                if (filter is { PageNumber: > 0, PageSize: > 0 })
-                    query = query
-                        .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
-                        .Take(filter.PageSize.Value);
+                query = query.Where(i => EF.Functions.ILike(
+                    i.Title, 
+                    $"%{filter.TitleContains}%"));
             }
-
+            query = query.OrderBy(i => i.Title);
+            if (filter is { PageNumber: > 0, PageSize: > 0 })
+            {
+                var skip = (filter.PageNumber.Value - 1) * filter.PageSize.Value;
+                query = query.Skip(skip).Take(filter.PageSize.Value);
+            }
+            
             var entities = await query.ToListAsync();
+            
             return entities
                 .Select(ItemConverter.ToDomain)
-                .OfType<Item>()
+                .Where(i => i != null)
+                .Cast<Item>()
                 .ToList();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.ItemRepository.GetAsync failed with filter {@Filter}", filter);
+            _logger.LogError(ex, 
+                "DataAccess.ItemRepository.GetAsync failed with filter {@Filter}", filter);
             throw;
         }
     }
@@ -80,7 +84,8 @@ public class ItemRepository : IItemRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.ItemRepository.CreateAsync failed for ItemId {ItemId}", item.Id);
+            _logger.LogError(ex, 
+                "DataAccess.ItemRepository.CreateAsync failed for ItemId {ItemId}", item.Id);
             throw;
         }
     }
@@ -100,7 +105,8 @@ public class ItemRepository : IItemRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.ItemRepository.UpdateAsync failed for ItemId {ItemId}", item.Id);
+            _logger.LogError(ex, 
+                "DataAccess.ItemRepository.UpdateAsync failed for ItemId {ItemId}", item.Id);
             throw;
         }
     }
@@ -118,7 +124,8 @@ public class ItemRepository : IItemRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.ItemRepository.DeleteAsync failed for ItemId {ItemId}", id);
+            _logger.LogError(ex, 
+                "DataAccess.ItemRepository.DeleteAsync failed for ItemId {ItemId}", id);
             throw;
         }
     }

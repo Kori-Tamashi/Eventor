@@ -34,7 +34,8 @@ public class EventRepository : IEventRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.EventRepository.GetByIdAsync failed for EventId {EventId}", id);
+            _logger.LogError(ex, 
+                "DataAccess.EventRepository.GetByIdAsync failed for EventId {EventId}", id);
             throw;
         }
     }
@@ -43,9 +44,7 @@ public class EventRepository : IEventRepository
     {
         try
         {
-            IQueryable<EventDb> query = _context.Events
-                .AsNoTracking()
-                .OrderBy(e => e.StartDate);
+            IQueryable<EventDb> query = _context.Events.AsNoTracking();
 
             if (filter != null)
             {
@@ -58,18 +57,20 @@ public class EventRepository : IEventRepository
                 if (!string.IsNullOrWhiteSpace(filter.TitleContains))
                     query = query.Where(e => EF.Functions.ILike(
                         e.Title, $"%{filter.TitleContains}%"));
-                if (filter is { PageNumber: > 0, PageSize: > 0 })
-                {
-                    query = query
-                        .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
-                        .Take(filter.PageSize.Value);
-                }
             }
-
+            query = query.OrderBy(e => e.StartDate).ThenBy(e => e.Id);
+            if (filter is { PageNumber: > 0, PageSize: > 0 })
+            {
+                query = query
+                    .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+                    .Take(filter.PageSize.Value);
+            }
             var entities = await query.ToListAsync();
+            
             return entities
                 .Select(EventConverter.ToDomain)
-                .OfType<Event>()
+                .Where(e => e != null)
+                .Cast<Event>()
                 .ToList();
         }
         catch (Exception ex)
@@ -88,7 +89,8 @@ public class EventRepository : IEventRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.EventRepository.CreateAsync failed for EventId {EventId}", ev.Id);
+            _logger.LogError(ex, 
+                "DataAccess.EventRepository.CreateAsync failed for EventId {EventId}", ev.Id);
             throw;
         }
     }
@@ -112,7 +114,8 @@ public class EventRepository : IEventRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.EventRepository.UpdateAsync failed for EventId {EventId}", ev.Id);
+            _logger.LogError(ex, 
+                "DataAccess.EventRepository.UpdateAsync failed for EventId {EventId}", ev.Id);
             throw;
         }
     }
@@ -130,7 +133,8 @@ public class EventRepository : IEventRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.EventRepository.DeleteAsync failed for EventId {EventId}", id);
+            _logger.LogError(ex, 
+                "DataAccess.EventRepository.DeleteAsync failed for EventId {EventId}", id);
             throw;
         }
     }
