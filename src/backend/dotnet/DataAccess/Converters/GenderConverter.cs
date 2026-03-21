@@ -5,29 +5,23 @@ namespace DataAccess.Converters;
 
 public static class GenderConverter
 {
-    public static GenderDb ToDb(Gender gender)
+    public static GenderDb ToDb(Gender gender) => gender switch
     {
-        return gender switch
-        {
-            Gender.Male => GenderDb.Male,
-            Gender.Female => GenderDb.Female,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(gender), 
-                gender, 
-                null)
-        };
-    }
+        Gender.Male => GenderDb.Male,
+        Gender.Female => GenderDb.Female,
+        _ => throw new ArgumentOutOfRangeException(
+            nameof(gender),
+            gender,
+            null)
+    };
 
-    public static Gender ToDomain(GenderDb gender)
+    public static Gender ToDomain(GenderDb gender) => gender switch
     {
-        return gender switch
-        {
-            GenderDb.Male => Gender.Male,
-            GenderDb.Female => Gender.Female,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(gender), 
-                gender, 
-                null)
-        };
-    }
+        GenderDb.Male => Gender.Male,
+        GenderDb.Female => Gender.Female,
+        _ => throw new ArgumentOutOfRangeException(
+            nameof(gender),
+            gender,
+            null)
+    };
 }

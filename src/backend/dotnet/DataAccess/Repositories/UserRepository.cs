@@ -30,13 +30,12 @@ public class UserRepository : IUserRepository
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
 
-            return entity != null ? UserConverter.ToDomain(entity) : null;
+            return UserConverter.ToDomain(entity);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex,
-                "DataAccess.UserRepository.GetById failed for UserId {UserId}", id);
-            throw new Exception($"Failed to fetch user {id} in UserRepository.GetById", ex);
+            _logger.LogError(ex, "DataAccess.UserRepository.GetById failed for UserId {UserId}", id);
+            throw;
         }
     }
 
@@ -46,14 +45,14 @@ public class UserRepository : IUserRepository
         {
             IQueryable<UserDb> query = _context.Users
                 .AsNoTracking()
-                .OrderBy(u => u.Name.Substring(0, 1));
+                .OrderBy(u => u.Name);
             if (filter != null)
             {
-                if (filter.NameContains != null)
+                if (!string.IsNullOrWhiteSpace(filter.NameContains))
                     query = query.Where(u => EF.Functions.ILike(
-                        u.Name,
+                        u.Name, 
                         $"%{filter.NameContains}%"));
-                if (filter.Phone != null)
+                if (!string.IsNullOrWhiteSpace(filter.Phone))
                     query = query.Where(u => u.Phone == filter.Phone);
                 if (filter.Role.HasValue)
                     query = query.Where(u => u.Role == UserRoleConverter.ToDb(filter.Role.Value));
@@ -68,12 +67,15 @@ public class UserRepository : IUserRepository
             }
 
             var entities = await query.ToListAsync();
-            return entities.Select(UserConverter.ToDomain).ToList();
+            return entities
+                .Select(UserConverter.ToDomain)
+                .OfType<User>()
+                .ToList();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "DataAccess.UserRepository.GetUsersAsync failed with filter {@Filter}", filter);
-            throw new Exception("Failed to fetch users in UserRepository.GetUsersAsync", ex);
+            throw;
         }
     }
 
@@ -81,14 +83,13 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            var entity = UserConverter.ToDb(user);
-            await _context.Users.AddAsync(entity);
+            await _context.Users.AddAsync(UserConverter.ToDb(user)!);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.UserRepository.CreateAsync failed for User {@User}", user);
-            throw new Exception($"Failed to create user in UserRepository.CreateAsync", ex);
+            _logger.LogError(ex, "DataAccess.UserRepository.CreateAsync failed for UserId {UserId}", user.Id);
+            throw;
         }
     }
 
@@ -107,14 +108,13 @@ public class UserRepository : IUserRepository
             entity.Gender = GenderConverter.ToDb(user.Gender);
             entity.Role = UserRoleConverter.ToDb(user.Role);
             entity.PasswordHash = user.PasswordHash;
-
-            _context.Users.Update(entity);
+            
             await _context.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.UserRepository.UpdateAsync failed for User {@User}", user);
-            throw new Exception($"Failed to update user {user.Id} in UserRepository.UpdateAsync", ex);
+            _logger.LogError(ex, "DataAccess.UserRepository.UpdateAsync failed for UserId {UserId}", user.Id);
+            throw;
         }
     }
 
@@ -127,14 +127,13 @@ public class UserRepository : IUserRepository
             {
                 throw new KeyNotFoundException($"User {id} not found in UserRepository.DeleteAsync");
             }
-
             _context.Users.Remove(entity);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, "DataAccess.UserRepository.DeleteAsync failed for UserId {UserId}", id);
-            throw new Exception($"Failed to delete user {id} in UserRepository.DeleteAsync", ex);
+            throw;
         }
     }
 }
