@@ -18,12 +18,11 @@ on:
     workflows: ["Continuous Integration"]
     types:
       - completed
-    branches: [develop]
 
 jobs:
   build-backend:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'develop' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -50,7 +49,7 @@ jobs:
 
   build-webserver:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'develop' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
