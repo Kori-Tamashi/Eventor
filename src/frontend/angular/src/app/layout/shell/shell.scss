@@ -1,0 +1,14 @@
+.shell {
+  min-height: 100vh;
+  background: var(--eventor-bg);
+  display: flex;
+}
+
+.main {
+  flex: 1;
+  padding: var(--shell-gutter);
+}
+
+.content {
+  padding-top: var(--space-4);
+}
