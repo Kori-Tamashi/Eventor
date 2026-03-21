@@ -13,7 +13,7 @@ public static class UserRoleConverter
         _ => throw new ArgumentOutOfRangeException(
             nameof(role),
             role,
-            null)
+            $"Unknown role value: {role}")
     };
 
     public static UserRole ToDomain(UserRoleDb role) => role switch
@@ -24,6 +24,6 @@ public static class UserRoleConverter
         _ => throw new ArgumentOutOfRangeException(
             nameof(role),
             role,
-            null)
+            $"Unknown role value: {role}")
     };
 }
