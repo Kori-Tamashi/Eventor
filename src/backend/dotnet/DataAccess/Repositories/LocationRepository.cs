@@ -42,9 +42,7 @@ public class LocationRepository: ILocationRepository
     {
         try
         {
-            IQueryable<LocationDb> query = _context.Locations
-                .AsNoTracking()
-                .OrderBy(l => l.Title);
+            IQueryable<LocationDb> query = _context.Locations.AsNoTracking();
 
             if (filter != null)
             {
@@ -60,23 +58,27 @@ public class LocationRepository: ILocationRepository
                     query = query.Where(l => l.Capacity >= filter.CapacityFrom.Value);
                 if (filter.CapacityTo.HasValue)
                     query = query.Where(l => l.Capacity <= filter.CapacityTo.Value);
-                if (filter is { PageNumber: > 0, PageSize: > 0 })
-                {
-                    query = query
-                        .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
-                        .Take(filter.PageSize.Value);
-                }
             }
-
+            query = query.OrderBy(l => l.Title);
+            if (filter is { PageNumber: > 0, PageSize: > 0 })
+            {
+                query = query
+                    .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+                    .Take(filter.PageSize.Value);
+            }
+            
             var entities = await query.ToListAsync();
+            
             return entities
                 .Select(LocationConverter.ToDomain)
-                .OfType<Location>()
+                .Where(l => l != null)
+                .Cast<Location>()
                 .ToList();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.LocationRepository.GetAsync failed with filter {@Filter}", filter);
+            _logger.LogError(ex, 
+                "DataAccess.LocationRepository.GetAsync failed with filter {@Filter}", filter);
             throw;
         }
     }

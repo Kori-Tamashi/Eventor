@@ -47,28 +47,33 @@ public class FeedbackRepository : IFeedbackRepository
             IQueryable<FeedbackDb> query = _context.Feedbacks
                 .AsNoTracking();
 
-            if (filter != null)
+            if (filter?.RegistrationId.HasValue == true)
             {
-                if (filter.RegistrationId.HasValue)
-                    query = query.Where(f => f.RegistrationId == filter.RegistrationId.Value);
-                query = filter.SortByRate switch
-                {
-                    Domain.Enums.FeedbackSortByRate.Asc => query.OrderBy(f => f.Rate),
-                    Domain.Enums.FeedbackSortByRate.Desc => query.OrderByDescending(f => f.Rate),
-                    _ => query
-                };
-                if (filter is { PageNumber: > 0, PageSize: > 0 })
-                {
-                    query = query
-                        .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
-                        .Take(filter.PageSize.Value);
-                }
+                query = query.Where(f => f.RegistrationId == filter.RegistrationId.Value);
+            }
+            query = filter?.SortByRate switch
+            {
+                Domain.Enums.FeedbackSortByRate.Asc => query
+                    .OrderBy(f => f.Rate)
+                    .ThenBy(f => f.Id),
+                Domain.Enums.FeedbackSortByRate.Desc => query
+                    .OrderByDescending(f => f.Rate)
+                    .ThenBy(f => f.Id),
+                _ => query.OrderBy(f => f.Id)
+            };
+            if (filter is { PageNumber: > 0, PageSize: > 0 })
+            {
+                query = query
+                    .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+                    .Take(filter.PageSize.Value);
             }
 
             var entities = await query.ToListAsync();
+            
             return entities
                 .Select(FeedbackConverter.ToDomain)
-                .OfType<Feedback>()
+                .Where(f => f != null)
+                .Cast<Feedback>()
                 .ToList();
         }
         catch (Exception ex)

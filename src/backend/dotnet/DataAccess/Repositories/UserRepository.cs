@@ -43,14 +43,12 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            IQueryable<UserDb> query = _context.Users
-                .AsNoTracking()
-                .OrderBy(u => u.Name);
+            IQueryable<UserDb> query = _context.Users.AsNoTracking();
             if (filter != null)
             {
                 if (!string.IsNullOrWhiteSpace(filter.NameContains))
                     query = query.Where(u => EF.Functions.ILike(
-                        u.Name, 
+                        u.Name,
                         $"%{filter.NameContains}%"));
                 if (!string.IsNullOrWhiteSpace(filter.Phone))
                     query = query.Where(u => u.Phone == filter.Phone);
@@ -58,18 +56,21 @@ public class UserRepository : IUserRepository
                     query = query.Where(u => u.Role == UserRoleConverter.ToDb(filter.Role.Value));
                 if (filter.Gender.HasValue)
                     query = query.Where(u => u.Gender == GenderConverter.ToDb(filter.Gender.Value));
-                if (filter is { PageNumber: > 0, PageSize: > 0 })
-                {
-                    query = query
-                        .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
-                        .Take(filter.PageSize.Value);
-                }
+            }
+            query = query.OrderBy(u => u.Name);
+            if (filter is { PageNumber: > 0, PageSize: > 0 })
+            {
+                query = query
+                    .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+                    .Take(filter.PageSize.Value);
             }
 
             var entities = await query.ToListAsync();
+            
             return entities
                 .Select(UserConverter.ToDomain)
-                .OfType<User>()
+                .Where(u => u != null)
+                .Cast<User>()
                 .ToList();
         }
         catch (Exception ex)

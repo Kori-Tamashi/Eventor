@@ -34,7 +34,8 @@ public class DayRepository : IDayRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.DayRepository.GetByIdAsync failed for DayId {DayId}", dayId);
+            _logger.LogError(ex, 
+                "DataAccess.DayRepository.GetByIdAsync failed for DayId {DayId}", dayId);
             throw;
         }
     }
@@ -43,9 +44,7 @@ public class DayRepository : IDayRepository
     {
         try
         {
-            IQueryable<DayDb> query = _context.Days
-                .AsNoTracking()
-                .OrderBy(d => d.Id);
+            IQueryable<DayDb> query = _context.Days.AsNoTracking();
 
             if (filter != null)
             {
@@ -53,23 +52,26 @@ public class DayRepository : IDayRepository
                     query = query.Where(d => d.EventId == filter.EventId.Value);
                 if (filter.MenuId.HasValue)
                     query = query.Where(d => d.MenuId == filter.MenuId.Value);
-                if (filter is { PageNumber: > 0, PageSize: > 0 })
-                {
-                    query = query
-                        .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
-                        .Take(filter.PageSize.Value);
-                }
             }
-            
+            query = query.OrderBy(d => d.Id);
+            if (filter is { PageNumber: > 0, PageSize: > 0 })
+            {
+                query = query
+                    .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+                    .Take(filter.PageSize.Value);
+            }
             var entities = await query.ToListAsync();
+            
             return entities
                 .Select(DayConverter.ToDomain)
-                .OfType<Day>()
+                .Where(d => d != null)
+                .Cast<Day>()
                 .ToList();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.DayRepository.GetAsync failed with filter {@Filter}", filter);
+            _logger.LogError(ex, 
+                "DataAccess.DayRepository.GetAsync failed with filter {@Filter}", filter);
             throw;
         }
     }
@@ -83,7 +85,8 @@ public class DayRepository : IDayRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DataAccess.DayRepository.CreateAsync failed for DayId {DayId}", day.Id);
+            _logger.LogError(ex, 
+                "DataAccess.DayRepository.CreateAsync failed for DayId {DayId}", day.Id);
             throw;
         }
     }
@@ -106,7 +109,8 @@ public class DayRepository : IDayRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.DayRepository.UpdateAsync failed for DayId {DayId}", day.Id);
+            _logger.LogError(ex, 
+                "DataAccess.DayRepository.UpdateAsync failed for DayId {DayId}", day.Id);
             throw;
         }
     }
@@ -124,7 +128,8 @@ public class DayRepository : IDayRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "DataAccess.DayRepository.DeleteAsync failed for DayId {DayId}", dayId);
+            _logger.LogError(ex, 
+                "DataAccess.DayRepository.DeleteAsync failed for DayId {DayId}", dayId);
             throw;
         }
     }
