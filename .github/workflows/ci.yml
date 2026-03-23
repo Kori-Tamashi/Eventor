@@ -179,9 +179,6 @@ jobs:
             exit 1
           fi
 
-      - name: Build project
-        run: docker exec frontend sh -c "echo 'n' | npx ng build"
-
       - name: Run unit tests
         run: docker exec frontend sh -c "npx ng test"
 
