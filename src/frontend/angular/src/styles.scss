@@ -233,6 +233,13 @@ button.ui-icon-btn.p-button:focus-visible .p-button-icon {
   border-color: var(--eventor-hover-border);
 }
 
+.ui-search .p-inputtext:focus,
+.ui-search .p-inputtext:focus-visible {
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .ui-primary-btn.p-button {
   height: var(--control-height);
   border-radius: var(--radius-sm);
