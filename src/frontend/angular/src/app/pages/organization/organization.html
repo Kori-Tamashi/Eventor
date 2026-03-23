@@ -19,13 +19,13 @@
 
           <span class="v-sep" aria-hidden="true"></span>
 
-          <div class="page-count ui-surface">1 из 15</div>
+          <div class="page-count ui-surface">{{ pageLabel() }}</div>
 
-          <button pButton type="button" class="ui-icon-btn" aria-label="Prev">
+          <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
             <span pButtonIcon class="pi pi-chevron-left"></span>
           </button>
 
-          <button pButton type="button" class="ui-icon-btn" aria-label="Next">
+          <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
             <span pButtonIcon class="pi pi-chevron-right"></span>
           </button>
 
@@ -37,7 +37,7 @@
       </div>
     </header>
 
-    <p-table [value]="rows" styleClass="ui-table">
+    <p-table [value]="pagedRows()" styleClass="ui-table">
       <ng-template pTemplate="header">
         <tr>
           <th>Название</th>
