@@ -153,9 +153,6 @@ body {
   margin-top: var(--space-4);
 }
 
-/* PrimeNG overrides (scoped by our classes, no ng-deep) */
-
-/* Icon-only buttons */
 .ui-icon-btn.p-button {
   width: var(--icon-btn-size);
   height: var(--icon-btn-size);
