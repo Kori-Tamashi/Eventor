@@ -359,6 +359,14 @@ jobs:
       - name: Check backend API availability
         run: docker exec backend curl -s -f http://localhost:8080/
 
+      - name: Check container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' backend)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
+
   run-webserver:
     needs: build-webserver
     runs-on: ubuntu-latest
