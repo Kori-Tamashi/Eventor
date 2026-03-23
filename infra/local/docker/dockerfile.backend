@@ -1,0 +1,25 @@
+# --- Стадия установки зависимостей для серврной части ---
+# 1. Установка базового образа
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS backend-build
+
+# 2. Установка рабочей директории
+WORKDIR /app
+
+# 3. Копирование файлов проекта 
+COPY src/backend/dotnet .
+
+# 4. Установка зависимостей 
+RUN dotnet restore Eventor.sln --verbosity normal
+
+# --- Стадия сохранения зависимостей для серврной части ---
+# 1. Установка финального образа
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS backend-final
+
+# 2. Установка рабочей директории
+WORKDIR /app
+
+# 3. Копирование зависимостей проекта
+COPY --from=backend-build /root/.nuget/packages /root/.nuget/packages
+
+# 4. Удержание контейнера запущенным
+CMD ["tail", "-f", "/dev/null"]

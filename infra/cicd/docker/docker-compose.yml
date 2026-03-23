@@ -1,0 +1,64 @@
+services:
+  database:
+    image: postgres:17
+    container_name: database
+    environment:
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      start_period: 15s
+      interval: 3s
+      timeout: 3s
+      retries: 3
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - eventor-network
+
+  frontend:
+    build:
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.frontend
+    container_name: frontend
+    networks:
+      - eventor-network
+
+  backend:
+    build:
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.backend
+    container_name: backend
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=database;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - eventor-network
+
+  web-server:
+    build:
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.web-server
+    container_name: web-server
+    ports:
+      - "80:80"
+    volumes:
+      - ${CONTEXT}/${NGINX_PATH}/eventor.conf:/etc/nginx/conf.d/eventor.conf:ro
+      - ${CONTEXT}/${NGINX_PATH}/nginx.conf:/etc/nginx/nginx.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      start_period: 15s
+      interval: 3s
+      timeout: 3s
+      retries: 3
+    networks:
+      - eventor-network
+
+networks:
+  eventor-network:
+    driver: bridge

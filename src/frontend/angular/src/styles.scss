@@ -1,10 +1,68 @@
 @import "primeicons/primeicons.css";
 
-html, body {
+:root {
+  --eventor-bg: #ffffff;
+  --eventor-surface: #ffffff;
+  --eventor-border: #e2e8f0;
+  --eventor-text: #0f172a;
+  --eventor-muted: #64748b;
+  --eventor-selected: #020617;
+
+  --sidebar-bg: #f1f5f9;
+  --sidebar-stroke: #f1f5f9;
+
+  --text-h1: 24px;
+  --text-h2: 20px;
+  --text-h3: 18px;
+  --text-h4: 16px;
+  --text-h5: 14px;
+  --text-h6: 12px;
+
+  --text-body: 14px;
+  --text-caption: 12px;
+
+  --font-weight-h1: 700;
+  --font-weight-h2: 700;
+  --font-weight-h3: 700;
+  --font-weight-h4: 600;
+  --font-weight-h5: 600;
+  --font-weight-h6: 600;
+
+  --font-weight-body: 400;
+  --font-weight-caption: 400;
+
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 18px;
+  --space-6: 20px;
+  --space-7: 24px;
+  --space-8: 32px;
+
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+
+  --control-height: 38px;
+  --icon-btn-size: 38px;
+
+  --sidebar-width: 78px;
+  --sidebar-icon-hit: 44px;
+  --shell-gutter: 18px;
+
+  --ui-bg: var(--eventor-surface);
+  --ui-stroke: var(--eventor-border);
+  --ui-radius: var(--radius-lg);
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--eventor-bg);
+  color: var(--eventor-text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -12,27 +70,85 @@ html, body {
   box-sizing: border-box;
 }
 
-:root {
-  --eventor-bg: #f8fafc;
-  --eventor-surface: #ffffff;
-  --eventor-border: #e2e8f0;
-  --eventor-text: #0f172a;
-  --eventor-muted: #64748b;
-}
-
-body {
-  background: var(--eventor-bg);
-}
-
-:root {
-  --ui-bg: var(--eventor-surface);
-  --ui-stroke: var(--eventor-border);
-  --ui-radius: 14px;
-}
-
 .ui-surface {
   background: var(--ui-bg);
   border: 1px solid var(--ui-stroke);
   border-radius: var(--ui-radius);
   box-shadow: none;
+}
+
+.ui-sidebar-surface {
+  background: var(--sidebar-bg);
+  border: 1px solid var(--sidebar-stroke);
+  border-radius: var(--ui-radius);
+  box-shadow: none;
+}
+
+.h1 {
+  margin: 0;
+  font-size: var(--text-h1);
+  font-weight: var(--font-weight-h1);
+  color: var(--eventor-text);
+}
+
+.h2 {
+  margin: 0;
+  font-size: var(--text-h2);
+  font-weight: var(--font-weight-h2);
+  color: var(--eventor-text);
+}
+
+.h3 {
+  margin: 0;
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-h3);
+  color: var(--eventor-text);
+}
+
+.h4 {
+  margin: 0;
+  font-size: var(--text-h4);
+  font-weight: var(--font-weight-h4);
+  color: var(--eventor-text);
+}
+
+.h5 {
+  margin: 0;
+  font-size: var(--text-h5);
+  font-weight: var(--font-weight-h5);
+  color: var(--eventor-text);
+}
+
+.h6 {
+  margin: 0;
+  font-size: var(--text-h6);
+  font-weight: var(--font-weight-h6);
+  color: var(--eventor-text);
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-caption);
+  color: var(--eventor-muted);
+}
+
+.body {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-body);
+  color: var(--eventor-text);
+}
+
+.caption {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-caption);
+  color: var(--eventor-muted);
+}
+
+.page {
+  padding: var(--space-8);
+}
+
+.page-actions {
+  margin-top: var(--space-4);
 }

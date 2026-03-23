@@ -1,12 +1,12 @@
 .shell {
   min-height: 100vh;
-  background: #f8fafc;
+  background: var(--eventor-bg);
   display: flex;
 }
 
 .main {
   flex: 1;
-  margin: 18px 18px 18px 14px;
+  margin: var(--shell-gutter) var(--shell-gutter) var(--shell-gutter) var(--space-4);
   padding: 0;
 }
 

@@ -1,59 +1,59 @@
 # EventorFrontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
+Этот проект создан с помощью [Angular CLI](https://github.com/angular/angular-cli) версии 21.1.4.
 
-## Development server
+## Сервер разработки
 
-To start a local development server, run:
+Чтобы запустить локальный сервер разработки, выполните:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+После запуска откройте браузер и перейдите по адресу `http://localhost:4200/`. Приложение будет автоматически перезагружаться при изменении исходных файлов.
 
-## Code scaffolding
+## Генерация кода (scaffolding)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Angular CLI включает мощные инструменты генерации шаблонного кода. Чтобы создать новый компонент, выполните:
 
 ```bash
 ng generate component component-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Чтобы посмотреть полный список доступных схем (например, `components`, `directives`, `pipes`), выполните:
 
 ```bash
 ng generate --help
 ```
 
-## Building
+## Сборка проекта
 
-To build the project run:
+Чтобы собрать проект, выполните:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Команда скомпилирует проект и сохранит артефакты сборки в директорию `dist/`. По умолчанию production-сборка оптимизирует приложение по скорости и производительности.
 
-## Running unit tests
+## Запуск unit-тестов
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Чтобы выполнить unit-тесты с помощью тест-раннера [Vitest](https://vitest.dev/), используйте команду:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Запуск end-to-end тестов
 
-For end-to-end (e2e) testing, run:
+Для end-to-end (e2e) тестирования выполните:
 
 ```bash
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+По умолчанию Angular CLI не поставляется с e2e-фреймворком, поэтому вы можете выбрать подходящий инструмент под ваши задачи.
 
-## Additional Resources
+## Дополнительные ресурсы
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Подробнее об использовании Angular CLI, включая справочник команд, смотрите на странице [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).

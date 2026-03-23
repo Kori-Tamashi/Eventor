@@ -1,0 +1,84 @@
+services:
+  database:
+    image: postgres:17
+    container_name: database
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      start_period: 20s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - eventor-network
+
+  database-interface:
+    image: dpage/pgadmin4:9
+    container_name: database-interface
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "3002:80"
+    volumes:
+      - ../pgadmin/servers.json:/pgadmin4/servers.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"]
+      start_period: 90s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    tmpfs:
+      - /var/lib/pgadmin
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - eventor-network
+
+  web-server:
+    build:
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.web-server
+    container_name: web-server
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/eventor.conf:/etc/nginx/conf.d/eventor.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      start_period: 15s
+      interval: 5s  
+      timeout: 5s
+      retries: 5
+    networks:
+      - eventor-network
+
+  backend:
+    build:
+      context: ${CONTEXT}
+      dockerfile: ${DOCKER_PATH}/dockerfile.backend
+    container_name: backend
+    command: dotnet run --project Web/Web.csproj --urls=http://0.0.0.0:8080 --ConnectionStrings:DefaultConnection="Host=database;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${CONTEXT}/${BACKEND_PATH}/dotnet/:/app
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - eventor-network
+
+networks:
+  eventor-network:
+    driver: bridge

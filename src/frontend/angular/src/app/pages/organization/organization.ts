@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule} from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-organization',
@@ -9,6 +9,4 @@ import { ButtonModule} from 'primeng/button';
   templateUrl: './organization.html',
   styleUrl: './organization.scss',
 })
-export class Organization {
-
-}
+export class Organization {}
