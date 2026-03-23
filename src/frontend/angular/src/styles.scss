@@ -8,6 +8,10 @@
   --eventor-muted: #64748b;
   --eventor-selected: #020617;
 
+  --eventor-hover-primary: #1e293b;
+  --eventor-hover-surface: #f8fafc;
+  --eventor-hover-border: #94a3b8;
+
   --sidebar-bg: #f1f5f9;
   --sidebar-stroke: #f1f5f9;
 
@@ -167,12 +171,20 @@ body {
   color: var(--eventor-muted);
 }
 
-.ui-icon-btn.p-button:hover,
-.ui-icon-btn.p-button:active,
-.ui-icon-btn.p-button:focus {
-  background: var(--sidebar-bg);
-  border-color: var(--eventor-border);
-  box-shadow: none;
+button.ui-icon-btn.p-button:hover,
+button.ui-icon-btn.p-button:active,
+button.ui-icon-btn.p-button:focus,
+button.ui-icon-btn.p-button:focus-visible {
+  background: var(--eventor-hover-surface) !important;
+  border-color: var(--eventor-border) !important;
+  box-shadow: none !important;
+}
+
+button.ui-icon-btn.p-button:hover .p-button-icon,
+button.ui-icon-btn.p-button:active .p-button-icon,
+button.ui-icon-btn.p-button:focus .p-button-icon,
+button.ui-icon-btn.p-button:focus-visible .p-button-icon {
+  color: var(--eventor-muted) !important;
 }
 
 .ui-search {
@@ -213,4 +225,39 @@ body {
   border-color: var(--eventor-border);
   outline: none;
   box-shadow: none;
+}
+
+.ui-search .p-inputtext:hover {
+  border-color: var(--eventor-hover-border);
+}
+
+.ui-primary-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+
+  background: var(--eventor-selected);
+  border: 1px solid var(--eventor-selected);
+  color: var(--eventor-surface);
+
+  box-shadow: none;
+}
+
+button.ui-primary-btn.p-button:hover,
+button.ui-primary-btn.p-button:active,
+button.ui-primary-btn.p-button:focus,
+button.ui-primary-btn.p-button:focus-visible {
+  background: var(--eventor-hover-primary) !important;
+  border-color: var(--eventor-hover-primary) !important;
+  box-shadow: none !important;
+}
+
+button.ui-primary-btn.p-button:hover .p-button-icon,
+button.ui-primary-btn.p-button:hover .p-button-label,
+button.ui-primary-btn.p-button:active .p-button-icon,
+button.ui-primary-btn.p-button:active .p-button-label,
+button.ui-primary-btn.p-button:focus .p-button-icon,
+button.ui-primary-btn.p-button:focus .p-button-label,
+button.ui-primary-btn.p-button:focus-visible .p-button-icon,
+button.ui-primary-btn.p-button:focus-visible .p-button-label {
+  color: var(--eventor-surface) !important;
 }
