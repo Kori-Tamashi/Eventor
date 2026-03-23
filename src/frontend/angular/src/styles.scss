@@ -298,3 +298,9 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 .ui-table.p-datatable .p-datatable-tbody {
   background: var(--eventor-surface);
 }
+
+.ui-table.p-datatable .p-datatable-thead > tr > th,
+.ui-table.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+  vertical-align: middle;
+}
