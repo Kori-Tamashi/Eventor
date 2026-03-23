@@ -261,3 +261,27 @@ button.ui-primary-btn.p-button:focus-visible .p-button-icon,
 button.ui-primary-btn.p-button:focus-visible .p-button-label {
   color: var(--eventor-surface) !important;
 }
+
+.ui-table.p-datatable {
+  border: 1px solid var(--eventor-border);
+  border-radius: var(--ui-radius);
+  overflow: hidden;
+  background: var(--eventor-surface);
+}
+
+.ui-table.p-datatable .p-datatable-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ui-table.p-datatable .p-datatable-thead > tr > th {
+  border-bottom: 1px solid var(--eventor-border);
+}
+
+.ui-table.p-datatable .p-datatable-tbody > tr > td {
+  border-bottom: 1px solid var(--eventor-border);
+}
+
+.ui-table.p-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: 0;
+}
