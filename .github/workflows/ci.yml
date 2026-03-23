@@ -289,3 +289,56 @@ jobs:
       
       - name: Run E2E tests
         run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=E2E" --verbosity=normal
+
+  run-backend:
+    needs: [e2e-tests-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          version: '29.2.1'
+
+      - name: Verify Docker installation
+        run: docker --version
+
+      - name: Lifting the database container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d database --wait
+    
+      - name: Check database container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' database)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Check database container health
+        run: |
+          status=$(docker inspect -f '{{.State.Health.Status}}' database)
+          if [ "$status" != "healthy" ]; then
+            echo "Container is not healthy (status: $status)"
+            exit 1
+          fi
+
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check backend container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
+      - name: Run backend
+        run: |
+          docker exec -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
+          sleep 15
+
+      - name: Check backend swagger availability
+        run: docker exec backend curl -s -f http://localhost:8080/
