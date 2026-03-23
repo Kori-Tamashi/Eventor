@@ -152,3 +152,68 @@ body {
 .page-actions {
   margin-top: var(--space-4);
 }
+
+/* PrimeNG overrides (scoped by our classes, no ng-deep) */
+
+/* Icon-only buttons */
+.ui-icon-btn.p-button {
+  width: var(--icon-btn-size);
+  height: var(--icon-btn-size);
+  border-radius: var(--radius-sm);
+
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  box-shadow: none;
+}
+
+.ui-icon-btn.p-button .p-button-icon {
+  color: var(--eventor-muted);
+}
+
+.ui-icon-btn.p-button:hover,
+.ui-icon-btn.p-button:active,
+.ui-icon-btn.p-button:focus {
+  background: var(--sidebar-bg);
+  border-color: var(--eventor-border);
+  box-shadow: none;
+}
+
+.ui-search {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.ui-search .p-inputtext {
+  height: var(--control-height);
+  line-height: var(--control-height);
+  padding-left: 2.5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  border-radius: var(--radius-sm);
+
+  color: var(--eventor-text);
+  box-shadow: none;
+}
+
+.ui-search .p-inputtext::placeholder {
+  color: var(--eventor-muted);
+}
+
+.ui-search.p-input-icon-left > i {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--eventor-muted);
+  pointer-events: none;
+}
+
+.ui-search .p-inputtext:focus {
+  border-color: var(--eventor-border);
+  outline: none;
+  box-shadow: none;
+}

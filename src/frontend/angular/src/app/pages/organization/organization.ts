@@ -9,4 +9,6 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './organization.html',
   styleUrl: './organization.scss',
 })
-export class Organization {}
+export class Organization {
+
+}
