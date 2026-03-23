@@ -1,12 +1,12 @@
 name: Continuous Integration
 env:
-  CICD_PATH: infra/cicd
-  DOCKER_PATH: infra/cicd/docker
+  CICD_PATH: infra/ci
+  DOCKER_PATH: infra/ci/docker
   BACKEND_PATH: src/backend/dotnet
   FRONTEND_PATH: src/frontend/angular
 
-  ENV_FILE: infra/cicd/settings.conf
-  DOCKER_COMPOSE_PATH: infra/cicd/docker/docker-compose.yml
+  ENV_FILE: infra/ci/settings.conf
+  DOCKER_COMPOSE_PATH: infra/ci/docker/docker-compose.yml
   POSTGRES_PORT: 5432
   POSTGRES_DB: eventor
   POSTGRES_USER: postgres
