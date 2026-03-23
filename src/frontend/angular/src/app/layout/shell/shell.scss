@@ -6,9 +6,10 @@
 
 .main {
   flex: 1;
-  padding: var(--shell-gutter);
+  margin: var(--shell-gutter) var(--shell-gutter) var(--shell-gutter) var(--space-4);
+  padding: 0;
 }
 
 .content {
-  padding-top: var(--space-4);
+  height: 100%;
 }
