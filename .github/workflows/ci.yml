@@ -16,6 +16,7 @@ on: [push]
 
 jobs:
   build-database:
+    name: Applying migrations to the database
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -75,6 +76,7 @@ jobs:
           echo "Table __EFMigrationsHistory exists. Migrations applied successfully."
   
   build-backend:
+    name: Building a backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -103,6 +105,7 @@ jobs:
         run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
 
   build-frontend:
+    name: Building a frontend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -131,6 +134,7 @@ jobs:
         run: docker exec frontend sh -c "echo 'n' | npx ng build"
 
   build-webserver:
+    name: Building a web-server
     needs: unit-tests-frontend
     runs-on: ubuntu-latest
     steps:
@@ -149,6 +153,7 @@ jobs:
         run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} build web-server
 
   unit-tests-frontend:
+    name: Running frontend unit tests
     needs: build-frontend
     runs-on: ubuntu-latest
     steps:
@@ -181,6 +186,7 @@ jobs:
         run: docker exec frontend sh -c "npx ng test"
 
   unit-tests-backend:
+    name: Running backend unit tests
     needs: build-backend
     runs-on: ubuntu-latest
     steps:
@@ -210,6 +216,7 @@ jobs:
         run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Unit" --verbosity=normal
 
   integration-tests-backend:
+    name: Running backend integration tests
     needs: [build-database, build-backend, unit-tests-backend]
     runs-on: ubuntu-latest
     steps:
@@ -258,6 +265,7 @@ jobs:
         run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Integration" --verbosity=normal
 
   e2e-tests-backend:
+    name: Running backend end-to-end tests
     needs: [integration-tests-backend]
     runs-on: ubuntu-latest
     steps:
@@ -306,6 +314,7 @@ jobs:
         run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=E2E" --verbosity=normal
 
   run-backend:
+    name: Running backend
     needs: [e2e-tests-backend]
     runs-on: ubuntu-latest
     steps:
@@ -356,7 +365,7 @@ jobs:
           sleep 15
 
       - name: Check backend API availability
-        run: docker exec backend curl -s -f http://localhost:8080/
+        run: docker exec backend curl -f http://localhost:8080/
 
       - name: Check container health
         run: |
@@ -367,6 +376,7 @@ jobs:
           fi
 
   run-webserver:
+    name: Running web-server
     needs: build-webserver
     runs-on: ubuntu-latest
     steps:
