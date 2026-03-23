@@ -16,7 +16,6 @@ on: [push]
 
 jobs:
   build-database:
-    needs: build-backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
