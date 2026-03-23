@@ -19,7 +19,7 @@ type DashboardRow = {
 })
 export class Dashboard {
 
-  readonly pageSize = signal<number>(10);
+  readonly pageSize = signal<number>(9);
 
   readonly pageIndex = signal<number>(0);
 

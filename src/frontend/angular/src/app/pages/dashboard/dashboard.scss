@@ -1,5 +1,8 @@
 .page {
   padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .welcome {
@@ -7,21 +10,25 @@
 }
 
 .welcome-kicker {
-  font-size: var(--text-caption);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-body);
   color: var(--eventor-muted);
 }
 
 .welcome-title {
   margin: var(--space-1) 0 0;
-  font-size: var(--text-h2);
-  font-weight: var(--font-weight-h2);
+  font-size: var(--text-h1);
+  font-weight: var(--font-weight-h1);
   color: var(--eventor-text);
 }
 
 .page-card {
-  height: calc(100vh - (var(--shell-gutter) * 2));
+  flex: 1;
+  min-height: 0;
+
   padding: var(--space-7) var(--space-7) var(--space-5);
   overflow: hidden;
+
   display: flex;
   flex-direction: column;
 }
@@ -39,9 +46,9 @@
 
 .title {
   margin: 0;
-  font-size: var(--text-h4);
-  font-weight: var(--font-weight-h4);
-  color: var(--eventor-text);
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-h3);
+  color: var(--eventor-selected);
 }
 
 .subtitle {
