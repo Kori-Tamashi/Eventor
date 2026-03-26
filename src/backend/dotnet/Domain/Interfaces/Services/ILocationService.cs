@@ -1,12 +1,13 @@
-using Eventor.Domain.Models;
+using Domain.Filters;
+using Domain.Models;
 
-namespace Eventor.Domain.Interfaces.Services;
+namespace Domain.Interfaces.Services;
 
 public interface ILocationService
 {
-    Task<Location> CreateAsync(Location location);
     Task<Location?> GetByIdAsync(Guid id);
-    Task<IEnumerable<Location>> GetAllAsync();
+    Task<List<Location>> GetAsync(LocationFilter? filter = null);
+    Task<Location> CreateAsync(Location location);
     Task UpdateAsync(Location location);
     Task DeleteAsync(Guid id);
 }

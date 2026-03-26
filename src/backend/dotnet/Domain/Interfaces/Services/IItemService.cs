@@ -1,12 +1,13 @@
-using Eventor.Domain.Models;
+using Domain.Filters;
+using Domain.Models;
 
-namespace Eventor.Domain.Interfaces.Services;
+namespace Domain.Interfaces.Services;
 
 public interface IItemService
 {
-    Task<Item> CreateAsync(Item item);
     Task<Item?> GetByIdAsync(Guid id);
-    Task<IEnumerable<Item>> GetAllAsync();
+    Task<List<Item>> GetAsync(ItemFilter? filter = null);
+    Task<Item> CreateAsync(Item item);
     Task UpdateAsync(Item item);
     Task DeleteAsync(Guid id);
 }

@@ -1,14 +1,19 @@
-using Eventor.Domain.Models;
+using Domain.Filters;
+using Domain.Models;
 
-namespace Eventor.Domain.Interfaces.Services;
+namespace Domain.Interfaces.Services;
 
 public interface IEventService
 {
-    Task<Event> CreateAsync(Event ev);
     Task<Event?> GetByIdAsync(Guid id);
-    Task<IEnumerable<Event>> GetAllAsync();
-    Task<IEnumerable<Event>> GetByLocationIdAsync(Guid locationId);
-    Task<IEnumerable<Event>> GetByDateRangeAsync(DateOnly from, DateOnly to);
+    Task<List<Event>> GetAsync(EventFilter? filter = null);
+    Task<Event> CreateAsync(Event ev);
     Task UpdateAsync(Event ev);
     Task DeleteAsync(Guid id);
+
+    Task<List<Event>> GetByParticipantUserIdAsync(Guid userId, PaginationFilter? filter = null);
+    Task<List<Event>> GetByOrganizerUserIdAsync(Guid userId, PaginationFilter? filter = null);
+
+    Task<List<Day>> GetDaysAsync(Guid eventId, PaginationFilter? filter = null);
+    Task<Day> AddDayAsync(Guid eventId, Day day);
 }

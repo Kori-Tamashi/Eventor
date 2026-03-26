@@ -1,13 +1,13 @@
-using Eventor.Domain.Models;
+using Domain.Filters;
+using Domain.Models;
 
-namespace Eventor.Domain.Interfaces.Services;
+namespace Domain.Interfaces.Services;
 
 public interface IUserService
 {
-    Task<User> CreateAsync(User user);
     Task<User?> GetByIdAsync(Guid id);
-    Task<User?> GetByPhoneAsync(string phone);
-    Task<IEnumerable<User>> GetAllAsync();
+    Task<List<User>> GetAsync(UserFilter? filter = null);
+    Task<User> CreateAsync(User user);
     Task UpdateAsync(User user);
     Task DeleteAsync(Guid id);
 }

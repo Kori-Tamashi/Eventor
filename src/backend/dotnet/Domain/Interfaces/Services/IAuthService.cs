@@ -1,9 +1,10 @@
-using Eventor.Domain.Models;
+using Domain.Enums;
+using Domain.Models;
 
-namespace Eventor.Domain.Interfaces.Services;
+namespace Domain.Interfaces.Services;
 
 public interface IAuthService
 {
-    Task Register(User user, string password);
-    Task<User> Login(string phone, string password);
+    Task<User> RegisterAsync(string name, string phone, Gender gender, string password);
+    Task<string> LoginAsync(string phone, string password);
 }
