@@ -33,7 +33,7 @@ public class MenuRepository : IMenuRepository
             
             var entity = await query.FirstOrDefaultAsync(m => m.Id == id);
             
-            return MenuConverter.ToDomain(entity);
+            return MenuConverter.ToDomain(entity, includeItems);
         }
         catch (Exception ex)
         {
@@ -65,7 +65,7 @@ public class MenuRepository : IMenuRepository
             var entities = await query.ToListAsync();
             
             return entities
-                .Select(MenuConverter.ToDomain)
+                .Select(db => MenuConverter.ToDomain(db, includeItems))
                 .Where(m => m != null)
                 .Cast<Menu>()
                 .ToList();
@@ -105,6 +105,9 @@ public class MenuRepository : IMenuRepository
             if (entity == null)
                 throw new KeyNotFoundException(
                     $"Menu {menu.Id} not found in DataAccess.MenuRepository.UpdateAsync");
+            
+            entity.Title = menu.Title;
+            entity.Description = menu.Description;
             
             await _context.SaveChangesAsync();
         }

@@ -5,7 +5,7 @@ namespace DataAccess.Converters;
 
 public static class RegistrationConverter
 {
-    public static Registration? ToDomain(RegistrationDb? db)
+    public static Registration? ToDomain(RegistrationDb? db, bool includeDays)
     {
         if (db == null) return null;
 
@@ -15,13 +15,15 @@ public static class RegistrationConverter
             db.UserId,
             RegistrationTypeConverter.ToDomain(db.Type),
             db.Payment
-        )
+        );
+
+        if (includeDays)
         {
-            Days = db.Participations?
+            registration.Days = db.Participations?
                 .Select(p => DayConverter.ToDomain(p.Day))
                 .OfType<Day>()
-                .ToList() ?? []
-        };
+                .ToList() ?? [];
+        }
 
         return registration;
     }

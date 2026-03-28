@@ -35,7 +35,7 @@ namespace DataAccess.Repositories
                 
                 var entity = await query.FirstOrDefaultAsync(r => r.Id == id);
                 
-                return RegistrationConverter.ToDomain(entity);
+                return RegistrationConverter.ToDomain(entity, includeDays);
             }
             catch (Exception ex)
             {
@@ -80,7 +80,7 @@ namespace DataAccess.Repositories
                 var entities = await query.ToListAsync();
                 
                 return entities
-                    .Select(RegistrationConverter.ToDomain)
+                    .Select(e => RegistrationConverter.ToDomain(e, includeDays))
                     .Where(r => r != null)
                     .Cast<Registration>()
                     .ToList();

@@ -5,7 +5,7 @@ namespace DataAccess.Converters;
 
 public static class MenuConverter
 {
-    public static Menu? ToDomain(MenuDb? db)
+    public static Menu? ToDomain(MenuDb? db, bool includeItems = false)
     {
         if (db == null) return null;
 
@@ -13,13 +13,15 @@ public static class MenuConverter
             db.Id,
             db.Title,
             db.Description
-        )
+        );
+
+        if (includeItems)
         {
-            MenuItems = db.MenuItems?
+            menu.MenuItems = db.MenuItems?
                 .Select(MenuItemConverter.ToDomain)
                 .OfType<MenuItem>()
-                .ToList() ?? []
-        };
+                .ToList() ?? [];
+        }
 
         return menu;
     }
