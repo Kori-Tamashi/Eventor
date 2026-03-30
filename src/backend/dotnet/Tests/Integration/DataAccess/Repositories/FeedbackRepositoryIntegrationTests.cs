@@ -14,6 +14,7 @@ using Tests.Core.Fixtures;
 namespace Tests.Integration.DataAccess.Repositories;
 
 [TestClass]
+[TestCategory("Integration")]
 public class FeedbackRepositoryIntegrationTests : DatabaseIntegrationTestBase
 {
     private FeedbackRepository _sutRepository = null!;

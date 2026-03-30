@@ -8,6 +8,7 @@ using Tests.Core.DatabaseIntegration;
 namespace Tests.Integration.DataAccess.Repositories;
 
 [TestClass]
+[TestCategory("Integration")]
 public class MenuItemIntegrationTests : DatabaseIntegrationTestBase
 {
     private MenuItemRepository _sutRepository = null!;

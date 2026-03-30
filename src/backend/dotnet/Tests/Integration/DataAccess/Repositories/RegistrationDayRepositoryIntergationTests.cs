@@ -11,6 +11,7 @@ using Tests.Core.DatabaseIntegration;
 namespace Tests.Integration.DataAccess.Repositories;
 
 [TestClass]
+[TestCategory("Integration")]
 public class RegistrationDayRepositoryIntergationTests : DatabaseIntegrationTestBase
 {
     private RegistrationDayRepository _sutRepository = null!;

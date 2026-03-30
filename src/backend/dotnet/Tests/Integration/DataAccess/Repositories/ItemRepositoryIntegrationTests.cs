@@ -8,6 +8,7 @@ using Tests.Core.Fixtures;
 namespace Tests.Integration.DataAccess.Repositories;
 
 [TestClass]
+[TestCategory("Integration")]
 public class ItemRepositoryIntegrationTests : DatabaseIntegrationTestBase
 {
     private ItemRepository _sutRepository = null!;

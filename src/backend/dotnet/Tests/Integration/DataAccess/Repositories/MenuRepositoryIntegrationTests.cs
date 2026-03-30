@@ -9,6 +9,7 @@ using Tests.Core.Fixtures;
 namespace Tests.Integration.DataAccess.Repositories;
 
 [TestClass]
+[TestCategory("Integration")]
 public class MenuRepositoryIntegrationTests : DatabaseIntegrationTestBase
 {
     private MenuRepository _sutRepository = null!;

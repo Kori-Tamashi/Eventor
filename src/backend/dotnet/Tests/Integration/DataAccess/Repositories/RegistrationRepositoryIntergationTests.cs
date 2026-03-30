@@ -12,6 +12,7 @@ using Tests.Core.Fixtures;
 namespace Tests.Integration.DataAccess.Repositories;
 
 [TestClass]
+[TestCategory("Integration")]
 public class RegistrationRepositoryIntergationTests : DatabaseIntegrationTestBase
 {
     private RegistrationRepository _sutRepository = null!;

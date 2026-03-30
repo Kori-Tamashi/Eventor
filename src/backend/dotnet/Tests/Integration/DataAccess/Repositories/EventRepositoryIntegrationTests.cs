@@ -8,7 +8,8 @@ using Tests.Core.Fixtures;
 
 namespace Tests.Integration.DataAccess.Repositories;
 
-[TestClass] 
+[TestClass]
+[TestCategory("Integration")]
 public class EventRepositoryIntegrationTests : DatabaseIntegrationTestBase
 {
     private EventRepository _sutRepository = null!;
