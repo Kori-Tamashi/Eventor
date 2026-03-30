@@ -6,7 +6,7 @@ namespace DataAccess.Enums;
 public enum RegistrationTypeDb
 {
     [PgName("Cтандартный")]
-    Standart,
+    Standard,
 
     [PgName("VIP")]
     Vip,

@@ -11,15 +11,15 @@ public class UserDb
         string name,
         string phone,
         GenderDb gender,
-        string passwordHash,
-        UserRoleDb role)
+        UserRoleDb role,
+        string passwordHash)
     {
         Id = id;
         Name = name;
         Phone = phone;
         Gender = gender;
-        PasswordHash = passwordHash;
         Role = role;
+        PasswordHash = passwordHash;
     }
 
     /// <summary>

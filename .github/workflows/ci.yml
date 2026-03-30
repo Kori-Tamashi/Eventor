@@ -210,7 +210,7 @@ jobs:
           fi
       
       - name: Run unit tests
-        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Unit" --verbosity=normal
+        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Unit" --verbosity=normal
 
   integration-tests-backend:
     name: Running backend integration tests
@@ -259,7 +259,7 @@ jobs:
           fi
       
       - name: Run integration tests
-        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=Integration" --verbosity=normal
+        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Integration" --verbosity=normal
 
   e2e-tests-backend:
     name: Running backend end-to-end tests
@@ -308,7 +308,7 @@ jobs:
           fi
       
       - name: Run E2E tests
-        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "Category=E2E" --verbosity=normal
+        run: docker exec backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
 
   run-backend:
     name: Running backend

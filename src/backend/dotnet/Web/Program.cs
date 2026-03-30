@@ -1,17 +1,17 @@
 using DataAccess.Context;
+using DataAccess.Repositories;
+using Domain.Enums;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<EventorDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (string.IsNullOrWhiteSpace(connectionString))
-        throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json");
-    options.UseLazyLoadingProxies().UseNpgsql(connectionString);
-});
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json");
 
+builder.Services.AddDataAccess(connectionString);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
