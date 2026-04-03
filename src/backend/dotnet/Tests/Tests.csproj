@@ -10,6 +10,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="MSTest" />
         <PackageReference Include="MSTest.TestAdapter" />
@@ -33,6 +34,7 @@
 
     <ItemGroup>
       <Folder Include="Integration\" />
+	  <Folder Include="Unit\" />
     </ItemGroup>
 
 </Project>
