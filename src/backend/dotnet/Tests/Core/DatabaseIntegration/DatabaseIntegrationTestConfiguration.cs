@@ -4,26 +4,32 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.Core.DatabaseIntegration;
 
-[TestClass]
 public static class DatabaseIntegrationTestConfiguration
 {
     private static EventorDbContext? _context;
-
-    [AssemblyInitialize]
-    public static void Initialize(TestContext context)
-    {
-        var services = new ServiceCollection();
-        var connectionString = DatabaseIntegrationTestInitializer.GetConnectionString();
-        if (string.IsNullOrWhiteSpace(connectionString))
-            throw new InvalidOperationException("Test connection string not found");
-        services.AddDataAccess(connectionString);
-        var serviceProvider = services.BuildServiceProvider();
-        _context = serviceProvider.GetRequiredService<EventorDbContext>();
-        _context.Database.Migrate();
-    }
+    private static readonly object _lock = new();
 
     public static EventorDbContext GetDbContext()
     {
-        return _context ?? throw new InvalidOperationException();
+        if (_context != null)
+            return _context;
+
+        lock (_lock)
+        {
+            if (_context != null)
+                return _context;
+
+            var connectionString = DatabaseIntegrationTestInitializer.GetConnectionString();
+            if (string.IsNullOrWhiteSpace(connectionString))
+                throw new InvalidOperationException("Test connection string not found");
+
+            var services = new ServiceCollection();
+            services.AddDataAccess(connectionString);
+            var serviceProvider = services.BuildServiceProvider();
+            _context = serviceProvider.GetRequiredService<EventorDbContext>();
+            _context.Database.Migrate();
+        }
+
+        return _context;
     }
 }
