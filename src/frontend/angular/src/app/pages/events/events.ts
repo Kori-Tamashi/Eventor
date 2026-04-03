@@ -10,7 +10,7 @@ type EventsRow = {
   peopleCount: number;
   daysCount: number;
   rating: number;
-}
+};
 
 @Component({
   selector: 'app-events',
@@ -39,22 +39,38 @@ export class Events {
     { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
   ]);
 
-  readonly totalPages = computed(() => {
-    const total = this.allRows().length;
+  private readonly paginationState = computed(() => {
+    const all = this.allRows();
     const size = this.pageSize();
-    return Math.max(1, Math.ceil(total / size));
+    const index = this.pageIndex();
+    return { all, size, index };
   });
 
-  readonly pageLabel = computed(() => `${this.pageIndex() + 1} из ${this.totalPages()}`);
+  readonly totalPages = computed(() => {
+    const { all, size } = this.paginationState();
+    return Math.max(1, Math.ceil(all.length / size));
+  });
+
+  readonly pageLabel = computed(() => {
+    const { index } = this.paginationState();
+    return `${index + 1} из ${this.totalPages()}`;
+  });
 
   readonly pagedRows = computed(() => {
-    const size = this.pageSize();
-    const start = this.pageIndex() * size;
-    return this.allRows().slice(start, start + size);
+    const { all, size, index } = this.paginationState();
+    const start = index * size;
+    return all.slice(start, start + size);
   });
 
-  readonly canPrev = computed(() => this.pageIndex() > 0);
-  readonly canNext = computed(() => this.pageIndex() < this.totalPages() - 1);
+  readonly canPrev = computed(() => {
+    const { index } = this.paginationState();
+    return index > 0;
+  });
+
+  readonly canNext = computed(() => {
+    const { index } = this.paginationState();
+    return index < this.totalPages() - 1;
+  });
 
   prevPage(): void {
     if (!this.canPrev())
