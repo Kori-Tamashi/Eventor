@@ -12,6 +12,8 @@
   --eventor-hover-surface: #f8fafc;
   --eventor-hover-border: #94a3b8;
 
+  --eventor-text-body: #334155;
+
   --sidebar-bg: #f1f5f9;
   --sidebar-stroke: #f1f5f9;
 
@@ -231,6 +233,13 @@ button.ui-icon-btn.p-button:focus-visible .p-button-icon {
   border-color: var(--eventor-hover-border);
 }
 
+.ui-search .p-inputtext:focus,
+.ui-search .p-inputtext:focus-visible {
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .ui-primary-btn.p-button {
   height: var(--control-height);
   border-radius: var(--radius-sm);
@@ -260,4 +269,45 @@ button.ui-primary-btn.p-button:focus .p-button-label,
 button.ui-primary-btn.p-button:focus-visible .p-button-icon,
 button.ui-primary-btn.p-button:focus-visible .p-button-label {
   color: var(--eventor-surface) !important;
+}
+
+.ui-table.p-datatable {
+  border: 1px solid var(--eventor-border);
+  border-radius: var(--ui-radius);
+  overflow: hidden;
+  background: var(--eventor-surface);
+}
+
+.ui-table.p-datatable .p-datatable-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ui-table.p-datatable .p-datatable-thead > tr > th {
+  border-bottom: 1px solid var(--eventor-border);
+  color: var(--eventor-text);
+  background: var(--eventor-surface) !important;
+}
+
+.ui-table.p-datatable .p-datatable-tbody > tr > td {
+  border-bottom: 1px solid var(--eventor-border);
+  color: var(--eventor-text-body);
+  background: var(--eventor-surface) !important;
+}
+
+.ui-table.p-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+.ui-table.p-datatable,
+.ui-table.p-datatable .p-datatable-table,
+.ui-table.p-datatable .p-datatable-thead,
+.ui-table.p-datatable .p-datatable-tbody {
+  background: var(--eventor-surface);
+}
+
+.ui-table.p-datatable .p-datatable-thead > tr > th,
+.ui-table.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+  vertical-align: middle;
 }
