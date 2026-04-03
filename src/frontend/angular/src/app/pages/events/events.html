@@ -1,1 +1,65 @@
-<p>events works!</p>
+<div class="page">
+  <div class="ui-surface page-card">
+    <header class="header">
+      <div class="title-block">
+        <h1 class="title">Мероприятия</h1>
+        <p class="subtitle">Доступные для вас мероприятия</p>
+      </div>
+
+      <div class="actions">
+        <span class="search ui-search p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" placeholder="Поиск мероприятий" />
+        </span>
+
+        <div class="pager">
+          <button pButton type="button" class="ui-icon-btn" aria-label="Filter">
+            <span pButtonIcon class="pi pi-filter"></span>
+          </button>
+
+          <span class="v-sep" aria-hidden="true"></span>
+
+          <div class="page-count ui-surface">{{ pageLabel() }}</div>
+
+          <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
+            <span pButtonIcon class="pi pi-chevron-left"></span>
+          </button>
+
+          <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
+            <span pButtonIcon class="pi pi-chevron-right"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <p-table [value]="pagedRows()" styleClass="ui-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Название</th>
+          <th>Описание</th>
+          <th>Дата</th>
+          <th>Количество человек</th>
+          <th>Количество дней</th>
+          <th>Рейтинг</th>
+          <th>Детали</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>{{ row.description }}</td>
+          <td>{{ row.date }}</td>
+          <td>{{ row.peopleCount }}</td>
+          <td>{{ row.daysCount }}</td>
+          <td>{{ row.rating }}</td>
+          <td class="details-cell">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Details">
+              <span pButtonIcon class="pi pi-search"></span>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
