@@ -2,6 +2,8 @@ import {Component, computed, signal} from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { DrawerModule } from 'primeng/drawer';
+import { TabsModule } from 'primeng/tabs';
 
 type OrganizationEventRow = {
   name: string;
@@ -12,19 +14,17 @@ type OrganizationEventRow = {
   daysCount: number;
   markup: number;
   rating: number;
-}
+};
 
 @Component({
   selector: 'app-organization',
   standalone: true,
-  imports: [InputTextModule, ButtonModule, TableModule],
+  imports: [InputTextModule, ButtonModule, TableModule, DrawerModule, TabsModule],
   templateUrl: './organization.html',
   styleUrl: './organization.scss',
 })
 export class Organization {
-
   readonly pageSize = signal<number>(10);
-
   readonly pageIndex = signal<number>(0);
 
   readonly allRows = signal<OrganizationEventRow[]>([
@@ -84,5 +84,17 @@ export class Organization {
     if (!this.canNext())
       return;
     this.pageIndex.update((v) => v + 1);
+  }
+
+  readonly drawerOpen = signal<boolean>(false);
+  readonly selectedRow = signal<OrganizationEventRow | null>(null);
+
+  openDetails(row: OrganizationEventRow): void {
+    this.selectedRow.set(row);
+    this.drawerOpen.set(true);
+  }
+
+  closeDetails(): void {
+    this.drawerOpen.set(false);
   }
 }

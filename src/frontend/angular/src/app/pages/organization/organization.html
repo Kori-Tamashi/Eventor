@@ -63,7 +63,7 @@
           <td>{{ row.markup }}</td>
           <td>{{ row.rating }}</td>
           <td class="details-cell">
-            <button pButton type="button" class="ui-icon-btn" aria-label="Details">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
               <span pButtonIcon class="pi pi-search"></span>
             </button>
           </td>
@@ -71,4 +71,49 @@
       </ng-template>
     </p-table>
   </div>
+
+  <p-drawer
+    position="right"
+    [visible]="drawerOpen()"
+    (visibleChange)="drawerOpen.set($event)"
+    styleClass="event-drawer"
+  >
+    <div class="drawer-header">
+      <div class="drawer-title">
+        {{ selectedRow()?.name || 'Название мероприятия' }}
+      </div>
+
+      <button pButton type="button" class="ui-icon-btn" aria-label="Close" (click)="closeDetails()">
+        <span pButtonIcon class="pi pi-times"></span>
+      </button>
+    </div>
+
+    <p-tabs value="info">
+      <p-tablist>
+        <p-tab value="info">Информация</p-tab>
+        <p-tab value="reviews">Отзывы</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="info">
+          <div class="drawer-section ui-surface">
+            <div class="drawer-section-title">Информация</div>
+            <div class="drawer-placeholder">Placeholder</div>
+          </div>
+
+          <div class="drawer-section ui-surface">
+            <div class="drawer-section-title">Участники</div>
+            <div class="drawer-placeholder">Placeholder</div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="reviews">
+          <div class="drawer-section ui-surface">
+            <div class="drawer-section-title">Отзывы</div>
+            <div class="drawer-placeholder">Placeholder</div>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </p-drawer>
 </div>

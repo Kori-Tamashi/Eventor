@@ -311,3 +311,37 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   text-align: center;
   vertical-align: middle;
 }
+
+.event-drawer.p-drawer,
+.event-drawer.p-drawer .p-drawer-content,
+.event-drawer.p-drawer .p-drawer-header {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+}
+
+
+.event-drawer.p-drawer {
+  width: 40vw !important;
+  max-width: 40vw !important;
+
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.p-drawer-mask {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.event-drawer.p-drawer .p-drawer-content,
+.event-drawer.p-drawer .p-drawer-header {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.event-drawer.p-drawer * {
+  outline: none !important;
+}
