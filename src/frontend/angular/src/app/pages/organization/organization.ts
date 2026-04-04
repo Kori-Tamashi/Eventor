@@ -17,6 +17,12 @@ type OrganizationEventRow = {
   rating: number;
 };
 
+type DayRow = {
+  name: string;
+  price: string;
+  participants: number;
+};
+
 @Component({
   selector: 'app-organization',
   standalone: true,
@@ -40,6 +46,12 @@ export class Organization {
     { name: 'Название', location: 'Локация', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, markup: 0, rating: 0 },
     { name: 'Название', location: 'Локация', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, markup: 0, rating: 0 },
     { name: 'Название', location: 'Локация', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, markup: 0, rating: 0 },
+  ]);
+
+  readonly dayRows = signal<DayRow[]>([
+    { name: 'День 1 - Название', price: 'N', participants: 4 },
+    { name: 'День 2 - Название', price: 'N', participants: 4 },
+    { name: 'День 3 - Название', price: 'N', participants: 4 },
   ]);
 
   private readonly paginationState = computed(() => {

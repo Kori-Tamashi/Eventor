@@ -1,7 +1,8 @@
-<div class="card">
-  <div class="card-title">{{ title() }}</div>
+<div class="drawer-card">
+  <div class="drawer-card__title">{{ title() }}</div>
 
-  <div class="card-body" [class.stat]="variant() === 'stat'">
+  <div class="drawer-card__inner" [class.drawer-card__inner--stat]="variant() === 'stat'"
+       [class.drawer-card__inner--table]="variant() === 'table'">
     <ng-content></ng-content>
   </div>
 </div>

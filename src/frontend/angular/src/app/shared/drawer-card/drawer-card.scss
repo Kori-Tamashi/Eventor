@@ -1,32 +1,35 @@
-.card {
+.drawer-card {
   background: var(--sidebar-bg);
-  border: 1px solid var(--sidebar-bg);
   border-radius: var(--ui-radius);
   padding: var(--space-4);
 }
 
-.card-title {
-  font-size: var(--text-caption);
+.drawer-card__title {
+  font-size: var(--drawer-card-title);
   font-weight: var(--font-weight-h6);
   color: var(--eventor-text);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
-.card-body {
+.drawer-card__inner {
   background: var(--eventor-surface);
-  border: 0;
   border-radius: var(--radius-md);
   padding: var(--space-4);
 }
 
-.card-body.stat {
-  min-height: 68px;
+.drawer-card__inner--stat {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-5);
 
-  font-size: var(--text-h3);
+  padding: var(--space-4);
+
+  font-size: var(--drawer-stat-value);
   font-weight: var(--font-weight-h3);
   color: var(--eventor-text);
+}
+
+.drawer-card__inner--table {
+  padding: 0;
+  overflow: hidden;
 }

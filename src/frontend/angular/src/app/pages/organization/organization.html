@@ -106,8 +106,32 @@
             </app-drawer-card>
           </div>
 
-          <app-drawer-card title="Информация о днях">
-            <div class="drawer-placeholder">Placeholder</div>
+          <app-drawer-card title="Информация о днях" variant="table">
+            <p-table [value]="dayRows()" styleClass="ui-table ui-drawer-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Номер</th>
+                  <th>Название</th>
+                  <th>Цена</th>
+                  <th>Количество участников</th>
+                  <th>Детали участников</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-row let-i="rowIndex">
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ row.name }}</td>
+                  <td>{{ row.price }}</td>
+                  <td>{{ row.participants }}</td>
+                  <td>
+                    <button pButton type="button" class="ui-icon-btn" aria-label="Details">
+                      <span pButtonIcon class="pi pi-search"></span>
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
           </app-drawer-card>
         </p-tabpanel>
 

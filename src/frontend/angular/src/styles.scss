@@ -61,6 +61,12 @@
   --ui-bg: var(--eventor-surface);
   --ui-stroke: var(--eventor-border);
   --ui-radius: var(--radius-lg);
+
+  --drawer-card-title: 17px;
+  --drawer-stat-value: 30px;
+
+  --drawer-table-head: 15px;
+  --drawer-table-row: 14px;
 }
 
 html,
@@ -354,8 +360,9 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 .event-drawer .p-tablist {
   background: var(--sidebar-bg) !important;
   border-radius: var(--radius-lg) !important;
-  padding: var(--space-1) !important;
+  padding: 5px !important;
   border: 0 !important;
+  box-shadow: none !important;
 }
 
 .event-drawer .p-tab {
@@ -366,7 +373,10 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   background: transparent !important;
   color: var(--eventor-muted) !important;
 
-  font-size: var(--text-body);
+  min-height: 32px !important;
+  padding: 6px 14px !important;
+  font-size: 13px !important;
+  line-height: 20px !important;
   font-weight: var(--font-weight-h4);
 }
 
@@ -386,37 +396,6 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   display: none !important;
 }
 
-.event-drawer .p-tabs .p-tablist {
-  border-bottom: 0 !important;
-}
-
-.event-drawer .p-tabs .p-tab {
-  border-bottom: 0 !important;
-}
-
-.event-drawer .p-tab::after,
-.event-drawer .p-tab::before,
-.event-drawer .p-tablist::after,
-.event-drawer .p-tablist::before,
-.event-drawer .p-tabs::after,
-.event-drawer .p-tabs::before {
-  content: none !important;
-  display: none !important;
-}
-
-.event-drawer .p-tab,
-.event-drawer .p-tab.p-tab-active,
-.event-drawer .p-tablist {
-  border-bottom: 0 !important;
-  box-shadow: none !important;
-}
-
-.event-drawer [class*="ink"],
-.event-drawer [class*="underline"],
-.event-drawer [class*="highlight"] {
-  display: none !important;
-}
-
 .event-drawer {
   --p-tabs-active-bar-height: 0px !important;
   --p-tabs-active-bar-background: transparent !important;
@@ -424,28 +403,9 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   --p-tabs-tab-active-border-color: transparent !important;
   --p-tabs-tab-border-color: transparent !important;
   --p-tabs-tab-border-width: 0px !important;
-}
 
-.event-drawer {
   --p-tabs-tablist-border-color: transparent !important;
   --p-tabs-tablist-border-width: 0px !important;
-}
-
-.event-drawer .p-tablist {
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-.event-drawer .p-tablist {
-  padding: 5px !important;
-  border-radius: var(--radius-lg) !important;
-}
-
-.event-drawer .p-tab {
-  min-height: 32px !important;
-  padding: 6px 14px !important;
-  font-size: 13px !important;
-  line-height: 20px !important;
 }
 
 .event-drawer .p-tabpanels,
@@ -465,4 +425,71 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 
 .event-drawer .p-tabpanel > :first-child {
   margin-top: var(--space-4);
+}
+
+.event-drawer .ui-drawer-table.p-datatable {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-header,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-footer,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  background: var(--eventor-surface) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th {
+  padding: var(--space-2) var(--space-3) !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  font-size: var(--drawer-table-head) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  padding: var(--space-2) var(--space-3) !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  font-size: var(--drawer-table-row) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th {
+  border-bottom: 1px solid var(--eventor-border) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  border-bottom: 1px solid var(--eventor-border) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: 0 !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable th:nth-child(2),
+.event-drawer .ui-drawer-table.p-datatable td:nth-child(2) {
+  text-align: left !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable th:last-child,
+.event-drawer .ui-drawer-table.p-datatable td:last-child {
+  text-align: center !important;
+  width: 70px;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr {
+  height: auto !important;
 }
