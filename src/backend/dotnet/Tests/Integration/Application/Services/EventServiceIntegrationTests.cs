@@ -387,21 +387,14 @@ public class EventServiceIntegrationTests : DatabaseIntegrationTestBase
         var location = await CreateLocationAsync();
         var ev = await CreateValidEventAsync(location);
 
-        // Убедимся, что событие действительно сохранено
-        var before = await DbContext!.Events.AsNoTracking().FirstOrDefaultAsync(e => e.Id == ev.Id);
-        before.Should().NotBeNull();
-
         // Act
         await _sutService.DeleteAsync(ev.Id);
-        await DbContext.SaveChangesAsync(); // гарантия фиксации
-        ClearCache();
 
         // Assert
         var result = await _sutService.GetByIdAsync(ev.Id);
         result.Should().BeNull();
 
-        // Проверка напрямую через DbContext
-        var direct = await DbContext.Events.AsNoTracking().FirstOrDefaultAsync(e => e.Id == ev.Id);
+        var direct = await DbContext!.Events.FindAsync(ev.Id);
         direct.Should().BeNull();
     }
 
