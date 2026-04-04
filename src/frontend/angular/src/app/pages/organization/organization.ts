@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DrawerModule } from 'primeng/drawer';
 import { TabsModule } from 'primeng/tabs';
+import { DrawerCard } from '../../shared/drawer-card/drawer-card';
 
 type OrganizationEventRow = {
   name: string;
@@ -19,7 +20,7 @@ type OrganizationEventRow = {
 @Component({
   selector: 'app-organization',
   standalone: true,
-  imports: [InputTextModule, ButtonModule, TableModule, DrawerModule, TabsModule],
+  imports: [InputTextModule, ButtonModule, TableModule, DrawerModule, TabsModule, DrawerCard],
   templateUrl: './organization.html',
   styleUrl: './organization.scss',
 })

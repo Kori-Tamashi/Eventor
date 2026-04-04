@@ -96,22 +96,25 @@
 
       <p-tabpanels>
         <p-tabpanel value="info">
-          <div class="drawer-section ui-surface">
-            <div class="drawer-section-title">Информация</div>
-            <div class="drawer-placeholder">Placeholder</div>
+          <div class="drawer-grid">
+            <app-drawer-card title="Количество дней" variant="stat">
+              0
+            </app-drawer-card>
+
+            <app-drawer-card title="Количество участников" variant="stat">
+              0
+            </app-drawer-card>
           </div>
 
-          <div class="drawer-section ui-surface">
-            <div class="drawer-section-title">Участники</div>
+          <app-drawer-card title="Информация о днях">
             <div class="drawer-placeholder">Placeholder</div>
-          </div>
+          </app-drawer-card>
         </p-tabpanel>
 
         <p-tabpanel value="reviews">
-          <div class="drawer-section ui-surface">
-            <div class="drawer-section-title">Отзывы</div>
+          <app-drawer-card title="Отзывы">
             <div class="drawer-placeholder">Placeholder</div>
-          </div>
+          </app-drawer-card>
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>

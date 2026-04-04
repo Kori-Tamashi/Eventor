@@ -1,0 +1,7 @@
+<div class="card">
+  <div class="card-title">{{ title() }}</div>
+
+  <div class="card-body" [class.stat]="variant() === 'stat'">
+    <ng-content></ng-content>
+  </div>
+</div>

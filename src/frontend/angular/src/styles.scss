@@ -346,3 +346,123 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   outline: none !important;
   box-shadow: none !important;
 }
+
+.event-drawer .p-tabs {
+  width: 100%;
+}
+
+.event-drawer .p-tablist {
+  background: var(--sidebar-bg) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--space-1) !important;
+  border: 0 !important;
+}
+
+.event-drawer .p-tab {
+  flex: 1;
+  justify-content: center;
+
+  border-radius: calc(var(--radius-lg) - var(--space-1)) !important;
+  background: transparent !important;
+  color: var(--eventor-muted) !important;
+
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-h4);
+}
+
+.event-drawer .p-tab.p-tab-active {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .p-tab:focus,
+.event-drawer .p-tab:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .p-tabs .p-tablist-ink-bar {
+  display: none !important;
+}
+
+.event-drawer .p-tabs .p-tablist {
+  border-bottom: 0 !important;
+}
+
+.event-drawer .p-tabs .p-tab {
+  border-bottom: 0 !important;
+}
+
+.event-drawer .p-tab::after,
+.event-drawer .p-tab::before,
+.event-drawer .p-tablist::after,
+.event-drawer .p-tablist::before,
+.event-drawer .p-tabs::after,
+.event-drawer .p-tabs::before {
+  content: none !important;
+  display: none !important;
+}
+
+.event-drawer .p-tab,
+.event-drawer .p-tab.p-tab-active,
+.event-drawer .p-tablist {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.event-drawer [class*="ink"],
+.event-drawer [class*="underline"],
+.event-drawer [class*="highlight"] {
+  display: none !important;
+}
+
+.event-drawer {
+  --p-tabs-active-bar-height: 0px !important;
+  --p-tabs-active-bar-background: transparent !important;
+
+  --p-tabs-tab-active-border-color: transparent !important;
+  --p-tabs-tab-border-color: transparent !important;
+  --p-tabs-tab-border-width: 0px !important;
+}
+
+.event-drawer {
+  --p-tabs-tablist-border-color: transparent !important;
+  --p-tabs-tablist-border-width: 0px !important;
+}
+
+.event-drawer .p-tablist {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .p-tablist {
+  padding: 5px !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+.event-drawer .p-tab {
+  min-height: 32px !important;
+  padding: 6px 14px !important;
+  font-size: 13px !important;
+  line-height: 20px !important;
+}
+
+.event-drawer .p-tabpanels,
+.event-drawer .p-tabpanel {
+  background: var(--eventor-surface) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .p-tabpanels {
+  padding: 0 !important;
+}
+
+.event-drawer .p-tabpanel {
+  padding: 0 !important;
+}
+
+.event-drawer .p-tabpanel > :first-child {
+  margin-top: var(--space-4);
+}

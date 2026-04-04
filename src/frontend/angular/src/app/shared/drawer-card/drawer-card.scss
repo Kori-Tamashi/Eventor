@@ -1,0 +1,32 @@
+.card {
+  background: var(--sidebar-bg);
+  border: 1px solid var(--sidebar-bg);
+  border-radius: var(--ui-radius);
+  padding: var(--space-4);
+}
+
+.card-title {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-h6);
+  color: var(--eventor-text);
+  margin-bottom: var(--space-3);
+}
+
+.card-body {
+  background: var(--eventor-surface);
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.card-body.stat {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-h3);
+  color: var(--eventor-text);
+}
