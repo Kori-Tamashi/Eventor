@@ -6,7 +6,7 @@ public static class DatabaseIntegrationTestInitializer
     {
         var host = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost";
         var port = Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
-        var db = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "EventorTestDb";
+        var db = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "eventor";
         var user = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "postgres";
         var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? "postgres";
 
