@@ -10,7 +10,7 @@ public abstract class DatabaseIntegrationTestBase
     [TestInitialize]
     public void TestInitialize()
     {
-        DbContext = DatabaseIntegrationTestConfiguration.GetDbContext();
+        DbContext = DatabaseIntegrationTestConfiguration.CreateDbContext();
         TestCleanup();
     }
 
@@ -31,5 +31,11 @@ public abstract class DatabaseIntegrationTestBase
         DbContext.Users.RemoveRange(DbContext.Users);
 
         DbContext.SaveChanges();
+        DbContext.ChangeTracker.Clear();
+    }
+
+    public void Dispose()
+    {
+        DbContext?.Dispose();
     }
 }

@@ -6,30 +6,33 @@ namespace Tests.Core.DatabaseIntegration;
 
 public static class DatabaseIntegrationTestConfiguration
 {
-    private static EventorDbContext? _context;
+    private static DbContextOptions<EventorDbContext>? _options;
     private static readonly object _lock = new();
+    private static bool _migrationApplied = false;
 
-    public static EventorDbContext GetDbContext()
+    public static EventorDbContext CreateDbContext()
     {
-        if (_context != null)
-            return _context;
+        EnsureOptions();
+        var context = new EventorDbContext(_options!);
+        if (!_migrationApplied)
+        {
+            context.Database.Migrate();
+            _migrationApplied = true;
+        }
+        return context;
+    }
 
+    private static void EnsureOptions()
+    {
+        if (_options != null) return;
         lock (_lock)
         {
-            if (_context != null)
-                return _context;
-
+            if (_options != null) return;
             var connectionString = DatabaseIntegrationTestInitializer.GetConnectionString();
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new InvalidOperationException("Test connection string not found");
-
             var services = new ServiceCollection();
             services.AddDataAccess(connectionString);
             var serviceProvider = services.BuildServiceProvider();
-            _context = serviceProvider.GetRequiredService<EventorDbContext>();
-            _context.Database.Migrate();
+            _options = serviceProvider.GetRequiredService<DbContextOptions<EventorDbContext>>();
         }
-
-        return _context;
     }
 }
