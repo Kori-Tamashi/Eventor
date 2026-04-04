@@ -2,7 +2,7 @@ namespace Domain.Enums;
 
 public enum RegistrationType
 {
-    Standart,
+    Standard,
     Vip,
     Organizer,
 }

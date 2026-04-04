@@ -34,9 +34,20 @@ services:
       dockerfile: ${DOCKER_PATH}/dockerfile.backend
     container_name: backend
     environment:
-      - ConnectionStrings__DefaultConnection=Host=database;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      POSTGRES_HOST: database
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ConnectionStrings__DefaultConnection: "Host=database;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
+      start_period: 15s
+      interval: 3s
+      timeout: 3s
+      retries: 3
     networks:
       - eventor-network
 
