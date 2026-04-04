@@ -5,6 +5,7 @@ import { TableModule } from 'primeng/table';
 import { DrawerModule } from 'primeng/drawer';
 import { TabsModule } from 'primeng/tabs';
 import { DrawerCard } from '../../shared/drawer-card/drawer-card';
+import { TextareaModule } from 'primeng/textarea';
 
 type OrganizationEventRow = {
   name: string;
@@ -23,10 +24,16 @@ type DayRow = {
   participants: number;
 };
 
+type ReviewRow = {
+  person: string;
+  comment: string;
+  rating: string;
+}
+
 @Component({
   selector: 'app-organization',
   standalone: true,
-  imports: [InputTextModule, ButtonModule, TableModule, DrawerModule, TabsModule, DrawerCard],
+  imports: [InputTextModule, ButtonModule, TableModule, DrawerModule, TabsModule, DrawerCard, TextareaModule],
   templateUrl: './organization.html',
   styleUrl: './organization.scss',
 })
@@ -53,6 +60,30 @@ export class Organization {
     { name: 'День 2 - Название', price: 'N', participants: 4 },
     { name: 'День 3 - Название', price: 'N', participants: 4 },
   ]);
+
+  readonly reviewMaxLen = 250;
+  readonly reviewText = signal<string>('');
+  readonly reviewCountLabel = computed(() => `${this.reviewText().length}/${this.reviewMaxLen}`);
+
+  readonly reviewRows = signal<ReviewRow[]>([
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+  ]);
+
+  onReviewInput(value: string): void {
+    this.reviewText.set(value.slice(0, this.reviewMaxLen));
+  }
+
+  cancelReview(): void {
+    this.reviewText.set('');
+  }
+
+  saveReview(): void {
+    this.reviewText.set('');
+  }
 
   private readonly paginationState = computed(() => {
     const all = this.allRows();
