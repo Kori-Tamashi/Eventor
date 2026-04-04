@@ -312,20 +312,32 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   vertical-align: middle;
 }
 
-.event-drawer.p-drawer,
-.event-drawer.p-drawer .p-drawer-content,
-.event-drawer.p-drawer .p-drawer-header {
-  background: var(--eventor-surface) !important;
-  color: var(--eventor-text) !important;
-}
-
-
-.event-drawer.p-drawer {
+.p-drawer.event-drawer,
+.p-drawer-content.event-drawer {
   width: 40vw !important;
   max-width: 40vw !important;
+}
+
+.p-drawer.event-drawer,
+.p-drawer-content.event-drawer {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
 
   border: 0 !important;
   outline: none !important;
+  box-shadow: none !important;
+
+  border-top-left-radius: var(--ui-radius) !important;
+  border-bottom-left-radius: var(--ui-radius) !important;
+
+  overflow: hidden !important;
+}
+
+.p-drawer.event-drawer .p-drawer-header,
+.p-drawer.event-drawer .p-drawer-content {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+  border: 0 !important;
   box-shadow: none !important;
 }
 
@@ -333,15 +345,4 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   border: 0 !important;
   outline: none !important;
   box-shadow: none !important;
-}
-
-.event-drawer.p-drawer .p-drawer-content,
-.event-drawer.p-drawer .p-drawer-header {
-  border: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.event-drawer.p-drawer * {
-  outline: none !important;
 }
