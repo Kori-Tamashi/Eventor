@@ -4,7 +4,7 @@ using Web.Dtos;
 
 namespace Web.Converters;
 
-public static class MenuConverterExtensions
+public static class MenuConverter
 {
     public static Menu ToDto(this DomainMenu model) => new()
     {

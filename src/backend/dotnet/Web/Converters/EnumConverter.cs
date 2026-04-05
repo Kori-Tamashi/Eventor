@@ -1,9 +1,8 @@
-using Domain.Enums;
 using Web.Dtos;
 
 namespace Web.Converters;
 
-public static class EnumConverterExtensions
+public static class EnumConverter
 {
     public static Gender ToDto(this Domain.Enums.Gender value) => (Gender)(int)value;
     public static Domain.Enums.Gender ToDomain(this Gender value) => (Domain.Enums.Gender)(int)value;

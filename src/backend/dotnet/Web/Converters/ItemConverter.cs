@@ -3,7 +3,7 @@ using Web.Dtos;
 
 namespace Web.Converters;
 
-public static class ItemConverterExtensions
+public static class ItemConverter
 {
     public static Item ToDto(this DomainModel model) => new()
     {

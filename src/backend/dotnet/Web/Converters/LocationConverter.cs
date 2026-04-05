@@ -3,7 +3,7 @@ using Web.Dtos;
 
 namespace Web.Converters;
 
-public static class LocationConverterExtensions
+public static class LocationConverter
 {
     public static Location ToDto(this DomainModel model) => new()
     {

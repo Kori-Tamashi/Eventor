@@ -3,7 +3,7 @@ using Web.Dtos;
 
 namespace Web.Converters;
 
-public static class UserConverterExtensions
+public static class UserConverter
 {
     public static User ToDto(this DomainModel model) => new()
     {
