@@ -4,26 +4,35 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.Core.DatabaseIntegration;
 
-[TestClass]
 public static class DatabaseIntegrationTestConfiguration
 {
-    private static EventorDbContext? _context;
+    private static DbContextOptions<EventorDbContext>? _options;
+    private static readonly object _lock = new();
+    private static bool _migrationApplied = false;
 
-    [AssemblyInitialize]
-    public static void Initialize(TestContext context)
+    public static EventorDbContext CreateDbContext()
     {
-        var services = new ServiceCollection();
-        var connectionString = DatabaseIntegrationTestInitializer.GetConnectionString();
-        if (string.IsNullOrWhiteSpace(connectionString))
-            throw new InvalidOperationException("Test connection string not found");
-        services.AddDataAccess(connectionString);
-        var serviceProvider = services.BuildServiceProvider();
-        _context = serviceProvider.GetRequiredService<EventorDbContext>();
-        _context.Database.Migrate();
+        EnsureOptions();
+        var context = new EventorDbContext(_options!);
+        if (!_migrationApplied)
+        {
+            context.Database.Migrate();
+            _migrationApplied = true;
+        }
+        return context;
     }
 
-    public static EventorDbContext GetDbContext()
+    private static void EnsureOptions()
     {
-        return _context ?? throw new InvalidOperationException();
+        if (_options != null) return;
+        lock (_lock)
+        {
+            if (_options != null) return;
+            var connectionString = DatabaseIntegrationTestInitializer.GetConnectionString();
+            var services = new ServiceCollection();
+            services.AddDataAccess(connectionString);
+            var serviceProvider = services.BuildServiceProvider();
+            _options = serviceProvider.GetRequiredService<DbContextOptions<EventorDbContext>>();
+        }
     }
 }
