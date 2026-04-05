@@ -197,7 +197,7 @@ textarea.review-textarea,
   color: var(--eventor-text) !important;
   box-shadow: none !important;
   outline: none !important;
-  resize: vertical;
+  resize: none;
 }
 
 .review-textarea::placeholder {
@@ -248,19 +248,28 @@ button.review-secondary-btn.p-button:focus-visible {
 }
 
 .review-list {
+  --review-item-height: 80px;
+  --review-list-gap: var(--space-2);
+
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  max-height: 360px;
+  gap: var(--review-list-gap);
+
+  max-height: calc((var(--review-item-height) * 3) + (var(--review-list-gap) * 2));
   overflow-y: auto;
   padding-right: var(--space-1);
 }
 
 .review-item {
+  height: var(--review-item-height);
   padding: var(--space-4);
   border: 1px solid var(--eventor-border);
   border-radius: var(--radius-md);
   background: var(--eventor-surface);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .review-item__head {
