@@ -4,13 +4,29 @@
       <div class="brand">Eventor</div>
 
       <div class="actions">
-        <button pButton type="button" class="welcome-secondary-btn" aria-label="Sign in">
-          <span pButtonLabel>Войти</span>
-        </button>
+        <div class="actions">
+          <button
+            pButton
+            type="button"
+            class="welcome-secondary-btn"
+            aria-label="Sign in"
+            [routerLink]="['/auth']"
+            [queryParams]="{ mode: 'login' }"
+          >
+            <span pButtonLabel>Войти</span>
+          </button>
 
-        <button pButton type="button" class="ui-primary-btn" aria-label="Sign up">
-          <span pButtonLabel>Зарегистрироваться</span>
-        </button>
+          <button
+            pButton
+            type="button"
+            class="ui-primary-btn"
+            aria-label="Sign up"
+            [routerLink]="['/auth']"
+            [queryParams]="{ mode: 'register' }"
+          >
+            <span pButtonLabel>Зарегистрироваться</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
