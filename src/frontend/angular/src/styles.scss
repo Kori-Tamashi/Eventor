@@ -7,6 +7,7 @@
   --eventor-text: #0f172a;
   --eventor-muted: #64748b;
   --eventor-selected: #020617;
+  --eventor-app-bg: #f8fafc;
 
   --eventor-hover-primary: #1e293b;
   --eventor-hover-surface: #f8fafc;
@@ -168,7 +169,6 @@ body {
   margin-top: var(--space-4);
 }
 
-/* Icon-only buttons */
 .ui-icon-btn.p-button {
   width: var(--icon-btn-size);
   height: var(--icon-btn-size);
@@ -199,7 +199,6 @@ button.ui-icon-btn.p-button:focus-visible .p-button-icon {
   color: var(--eventor-muted) !important;
 }
 
-/* Search input */
 .ui-search {
   display: inline-flex;
   align-items: center;
@@ -251,7 +250,6 @@ button.ui-icon-btn.p-button:focus-visible .p-button-icon {
   outline: none !important;
 }
 
-/* Primary (black) button */
 .ui-primary-btn.p-button {
   height: var(--control-height);
   border-radius: var(--radius-sm);
@@ -283,7 +281,6 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   color: var(--eventor-surface) !important;
 }
 
-/* Base DataTable */
 .ui-table.p-datatable {
   border: 1px solid var(--eventor-border);
   border-radius: var(--ui-radius);
@@ -325,7 +322,6 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   vertical-align: middle;
 }
 
-/* Drawer sizing + surface */
 .p-drawer.event-drawer,
 .p-drawer-content.event-drawer {
   width: 40vw !important;
@@ -361,12 +357,10 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   box-shadow: none !important;
 }
 
-/* Drawer title text size */
 .event-drawer .drawer-title {
   font-size: var(--drawer-title) !important;
 }
 
-/* Drawer Tabs */
 .event-drawer .p-tabs {
   width: 100%;
 }
@@ -406,7 +400,6 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   box-shadow: none !important;
 }
 
-/* Remove any underline / ink-bar */
 .event-drawer .p-tabs .p-tablist-ink-bar {
   display: none !important;
 }
@@ -442,7 +435,6 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   margin-top: var(--space-4);
 }
 
-/* Drawer table must merge with DrawerCard (no extra container stroke) */
 .event-drawer .ui-drawer-table.p-datatable {
   border: 0 !important;
   border-radius: 0 !important;

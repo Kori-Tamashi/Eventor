@@ -1,0 +1,72 @@
+.welcome-page {
+  min-height: 100vh;
+  background: var(--eventor-hover-surface);
+}
+
+.welcome-header {
+  background: var(--eventor-surface);
+  border-bottom: 1px solid var(--eventor-border);
+}
+
+.welcome-header-inner {
+  height: 64px;
+  padding: 0 var(--space-7);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-h3);
+  color: var(--eventor-selected);
+  user-select: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.welcome-body {
+  padding: var(--space-8);
+}
+
+.welcome-hero {
+  max-width: 720px;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: var(--text-h1);
+  font-weight: var(--font-weight-h1);
+  color: var(--eventor-text);
+}
+
+.hero-subtitle {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-body);
+  color: var(--eventor-muted);
+}
+
+.welcome-secondary-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  color: var(--eventor-text);
+
+  box-shadow: none;
+}
+
+button.welcome-secondary-btn.p-button:hover,
+button.welcome-secondary-btn.p-button:active,
+button.welcome-secondary-btn.p-button:focus,
+button.welcome-secondary-btn.p-button:focus-visible {
+  background: var(--eventor-hover-surface) !important;
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+}
