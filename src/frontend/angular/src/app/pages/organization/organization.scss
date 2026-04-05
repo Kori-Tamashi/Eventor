@@ -47,15 +47,6 @@
   gap: var(--space-2);
 }
 
-.thead {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1.4fr 0.8fr 0.7fr 0.9fr 0.7fr 0.7fr;
-  gap: var(--space-3);
-  font-size: var(--text-caption);
-  font-weight: var(--font-weight-h6);
-  color: var(--eventor-text);
-}
-
 .page-count {
   width: 72px;
   height: var(--control-height);
@@ -83,4 +74,77 @@
 
 .details-cell {
   text-align: center;
+}
+
+.ui-table {
+  margin-top: var(--space-4);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--eventor-border);
+  margin-bottom: var(--space-4);
+}
+
+.drawer-title {
+  font-weight: var(--font-weight-h3);
+  color: var(--eventor-text);
+}
+
+.drawer-section {
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.drawer-section-title {
+  font-size: var(--text-h4);
+  font-weight: var(--font-weight-h4);
+  color: var(--eventor-text);
+  margin-bottom: var(--space-2);
+}
+
+.drawer-placeholder {
+  font-size: var(--text-body);
+  color: var(--eventor-muted);
+}
+
+.drawer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.event-drawer .ui-drawer-table.p-datatable {
+  border-radius: var(--radius-md);
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  padding: var(--space-2) var(--space-3) !important;
+  font-size: var(--text-caption);
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th {
+  font-weight: var(--font-weight-h6);
+  color: var(--eventor-text);
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  color: var(--eventor-text-body);
+}
+
+.event-drawer .ui-drawer-table.p-datatable th:nth-child(2),
+.event-drawer .ui-drawer-table.p-datatable td:nth-child(2) {
+  text-align: left !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable th:last-child,
+.event-drawer .ui-drawer-table.p-datatable td:last-child {
+  text-align: center !important;
+  width: 70px;
 }

@@ -63,7 +63,7 @@
           <td>{{ row.markup }}</td>
           <td>{{ row.rating }}</td>
           <td class="details-cell">
-            <button pButton type="button" class="ui-icon-btn" aria-label="Details">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
               <span pButtonIcon class="pi pi-search"></span>
             </button>
           </td>
@@ -71,4 +71,70 @@
       </ng-template>
     </p-table>
   </div>
+
+  <p-drawer
+    position="right"
+    [visible]="drawerOpen()"
+    (visibleChange)="drawerOpen.set($event)"
+    styleClass="event-drawer"
+  >
+    <div class="drawer-header">
+      <div class="drawer-title">
+        {{ selectedRow()?.name || 'Название мероприятия' }}
+      </div>
+    </div>
+
+    <p-tabs value="info">
+      <p-tablist>
+        <p-tab value="info">Информация</p-tab>
+        <p-tab value="reviews">Отзывы</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="info">
+          <div class="drawer-grid">
+            <app-drawer-card title="Количество дней" variant="stat">
+              0
+            </app-drawer-card>
+
+            <app-drawer-card title="Количество участников" variant="stat">
+              0
+            </app-drawer-card>
+          </div>
+
+          <app-drawer-card title="Информация о днях" variant="table">
+            <p-table [value]="dayRows()" styleClass="ui-table ui-drawer-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Номер</th>
+                  <th>Название</th>
+                  <th>Цена</th>
+                  <th>Количество участников</th>
+                  <th>Детали участников</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-row let-i="rowIndex">
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ row.name }}</td>
+                  <td>{{ row.price }}</td>
+                  <td>{{ row.participants }}</td>
+                  <td>
+                    <button pButton type="button" class="ui-icon-btn" aria-label="Details">
+                      <span pButtonIcon class="pi pi-search"></span>
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </app-drawer-card>
+        </p-tabpanel>
+
+        <p-tabpanel value="reviews">
+
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </p-drawer>
 </div>

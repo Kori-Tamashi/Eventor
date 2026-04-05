@@ -2,6 +2,10 @@ import {Component, computed, signal} from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { DrawerModule } from 'primeng/drawer';
+import { TabsModule } from 'primeng/tabs';
+import { DrawerCard } from '../../shared/drawer-card/drawer-card';
+import { TextareaModule } from 'primeng/textarea';
 
 type OrganizationEventRow = {
   name: string;
@@ -12,19 +16,29 @@ type OrganizationEventRow = {
   daysCount: number;
   markup: number;
   rating: number;
+};
+
+type DayRow = {
+  name: string;
+  price: string;
+  participants: number;
+};
+
+type ReviewRow = {
+  person: string;
+  comment: string;
+  rating: string;
 }
 
 @Component({
   selector: 'app-organization',
   standalone: true,
-  imports: [InputTextModule, ButtonModule, TableModule],
+  imports: [InputTextModule, ButtonModule, TableModule, DrawerModule, TabsModule, DrawerCard, TextareaModule],
   templateUrl: './organization.html',
   styleUrl: './organization.scss',
 })
 export class Organization {
-
   readonly pageSize = signal<number>(10);
-
   readonly pageIndex = signal<number>(0);
 
   readonly allRows = signal<OrganizationEventRow[]>([
@@ -40,6 +54,36 @@ export class Organization {
     { name: 'Название', location: 'Локация', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, markup: 0, rating: 0 },
     { name: 'Название', location: 'Локация', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, markup: 0, rating: 0 },
   ]);
+
+  readonly dayRows = signal<DayRow[]>([
+    { name: 'День 1 - Название', price: 'N', participants: 4 },
+    { name: 'День 2 - Название', price: 'N', participants: 4 },
+    { name: 'День 3 - Название', price: 'N', participants: 4 },
+  ]);
+
+  readonly reviewMaxLen = 250;
+  readonly reviewText = signal<string>('');
+  readonly reviewCountLabel = computed(() => `${this.reviewText().length}/${this.reviewMaxLen}`);
+
+  readonly reviewRows = signal<ReviewRow[]>([
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+    { person: 'ФИО', comment: 'комментарий', rating: 'N' },
+  ]);
+
+  onReviewInput(value: string): void {
+    this.reviewText.set(value.slice(0, this.reviewMaxLen));
+  }
+
+  cancelReview(): void {
+    this.reviewText.set('');
+  }
+
+  saveReview(): void {
+    this.reviewText.set('');
+  }
 
   private readonly paginationState = computed(() => {
     const all = this.allRows();
@@ -84,5 +128,17 @@ export class Organization {
     if (!this.canNext())
       return;
     this.pageIndex.update((v) => v + 1);
+  }
+
+  readonly drawerOpen = signal<boolean>(false);
+  readonly selectedRow = signal<OrganizationEventRow | null>(null);
+
+  openDetails(row: OrganizationEventRow): void {
+    this.selectedRow.set(row);
+    this.drawerOpen.set(true);
+  }
+
+  closeDetails(): void {
+    this.drawerOpen.set(false);
   }
 }

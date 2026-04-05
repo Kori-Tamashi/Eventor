@@ -61,6 +61,15 @@
   --ui-bg: var(--eventor-surface);
   --ui-stroke: var(--eventor-border);
   --ui-radius: var(--radius-lg);
+
+  --drawer-title: 20px;
+  --drawer-tab-text: 14px;
+
+  --drawer-card-title: 17px;
+  --drawer-stat-value: 30px;
+
+  --drawer-table-head: 15px;
+  --drawer-table-row: 14px;
 }
 
 html,
@@ -159,6 +168,7 @@ body {
   margin-top: var(--space-4);
 }
 
+/* Icon-only buttons */
 .ui-icon-btn.p-button {
   width: var(--icon-btn-size);
   height: var(--icon-btn-size);
@@ -189,6 +199,7 @@ button.ui-icon-btn.p-button:focus-visible .p-button-icon {
   color: var(--eventor-muted) !important;
 }
 
+/* Search input */
 .ui-search {
   display: inline-flex;
   align-items: center;
@@ -240,6 +251,7 @@ button.ui-icon-btn.p-button:focus-visible .p-button-icon {
   outline: none !important;
 }
 
+/* Primary (black) button */
 .ui-primary-btn.p-button {
   height: var(--control-height);
   border-radius: var(--radius-sm);
@@ -271,6 +283,7 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   color: var(--eventor-surface) !important;
 }
 
+/* Base DataTable */
 .ui-table.p-datatable {
   border: 1px solid var(--eventor-border);
   border-radius: var(--ui-radius);
@@ -310,4 +323,189 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 .ui-table.p-datatable .p-datatable-tbody > tr > td {
   text-align: center;
   vertical-align: middle;
+}
+
+/* Drawer sizing + surface */
+.p-drawer.event-drawer,
+.p-drawer-content.event-drawer {
+  width: 40vw !important;
+  max-width: 40vw !important;
+}
+
+.p-drawer.event-drawer,
+.p-drawer-content.event-drawer {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  border-top-left-radius: var(--ui-radius) !important;
+  border-bottom-left-radius: var(--ui-radius) !important;
+
+  overflow: hidden !important;
+}
+
+.p-drawer.event-drawer .p-drawer-header,
+.p-drawer.event-drawer .p-drawer-content {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.p-drawer-mask {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Drawer title text size */
+.event-drawer .drawer-title {
+  font-size: var(--drawer-title) !important;
+}
+
+/* Drawer Tabs */
+.event-drawer .p-tabs {
+  width: 100%;
+}
+
+.event-drawer .p-tablist {
+  background: var(--sidebar-bg) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 5px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .p-tab {
+  flex: 1;
+  justify-content: center;
+
+  border-radius: calc(var(--radius-lg) - var(--space-1)) !important;
+  background: transparent !important;
+  color: var(--eventor-muted) !important;
+
+  min-height: 32px !important;
+  padding: 6px 14px !important;
+  font-size: var(--drawer-tab-text) !important;
+  line-height: 20px !important;
+  font-weight: var(--font-weight-h4);
+}
+
+.event-drawer .p-tab.p-tab-active {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .p-tab:focus,
+.event-drawer .p-tab:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any underline / ink-bar */
+.event-drawer .p-tabs .p-tablist-ink-bar {
+  display: none !important;
+}
+
+.event-drawer {
+  --p-tabs-active-bar-height: 0px !important;
+  --p-tabs-active-bar-background: transparent !important;
+
+  --p-tabs-tab-active-border-color: transparent !important;
+  --p-tabs-tab-border-color: transparent !important;
+  --p-tabs-tab-border-width: 0px !important;
+
+  --p-tabs-tablist-border-color: transparent !important;
+  --p-tabs-tablist-border-width: 0px !important;
+}
+
+.event-drawer .p-tabpanels,
+.event-drawer .p-tabpanel {
+  background: var(--eventor-surface) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .p-tabpanels {
+  padding: 0 !important;
+}
+
+.event-drawer .p-tabpanel {
+  padding: 0 !important;
+}
+
+.event-drawer .p-tabpanel > :first-child {
+  margin-top: var(--space-4);
+}
+
+/* Drawer table must merge with DrawerCard (no extra container stroke) */
+.event-drawer .ui-drawer-table.p-datatable {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-header,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-footer,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  background: var(--eventor-surface) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th {
+  padding: var(--space-2) var(--space-3) !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  font-size: var(--drawer-table-head) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  padding: var(--space-2) var(--space-3) !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  font-size: var(--drawer-table-row) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-thead > tr > th {
+  border-bottom: 1px solid var(--eventor-border) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr > td {
+  border-bottom: 1px solid var(--eventor-border) !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: 0 !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable th:nth-child(2),
+.event-drawer .ui-drawer-table.p-datatable td:nth-child(2) {
+  text-align: left !important;
+}
+
+.event-drawer .ui-drawer-table.p-datatable th:last-child,
+.event-drawer .ui-drawer-table.p-datatable td:last-child {
+  text-align: center !important;
+  width: 70px;
+}
+
+.event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr {
+  height: auto !important;
 }
