@@ -2,7 +2,12 @@
   <div class="auth-card ui-surface">
     <h1 class="auth-title">{{ title() }}</h1>
 
-    <form class="auth-form" autocomplete="on" (submit)="onSubmit($event)">
+    <form
+      class="auth-form"
+      autocomplete="on"
+      [formGroup]="authForm"
+      (submit)="onSubmit($event)"
+    >
       @if (isRegisterMode()) {
         <div class="auth-field">
           <label class="auth-label" for="username">Имя пользователя</label>
@@ -11,7 +16,7 @@
             pInputText
             class="ui-input"
             type="text"
-            name="username"
+            formControlName="username"
             autocomplete="username"
           />
         </div>
@@ -23,7 +28,7 @@
             pInputText
             class="ui-input"
             type="email"
-            name="email"
+            formControlName="email"
             autocomplete="email"
           />
         </div>
@@ -35,7 +40,7 @@
             pInputText
             class="ui-input"
             type="text"
-            name="login"
+            formControlName="login"
             autocomplete="username"
           />
         </div>
@@ -46,13 +51,20 @@
           <label class="auth-label" for="password">Пароль</label>
 
           @if (!isRegisterMode()) {
-            <a class="auth-link" href="#" aria-label="Forgot password">Забыли пароль?</a>
+            <a
+              class="auth-link"
+              href="#"
+              aria-label="Forgot password"
+              (click)="$event.preventDefault()"
+            >
+              Забыли пароль?
+            </a>
           }
         </div>
 
         <p-password
           inputId="password"
-          name="password"
+          formControlName="password"
           [autocomplete]="passwordAutocomplete()"
           [toggleMask]="true"
           [feedback]="false"
@@ -67,7 +79,7 @@
 
           <p-password
             inputId="confirmPassword"
-            name="confirmPassword"
+            formControlName="confirmPassword"
             autocomplete="new-password"
             [toggleMask]="true"
             [feedback]="false"

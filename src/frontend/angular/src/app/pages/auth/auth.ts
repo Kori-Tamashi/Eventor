@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -11,12 +12,20 @@ type AuthMode = 'login' | 'register';
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [RouterLink, InputTextModule, ButtonModule, PasswordModule],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    InputTextModule,
+    ButtonModule,
+    PasswordModule
+  ],
   templateUrl: './auth.html',
   styleUrl: './auth.scss',
 })
 export class Auth {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly fb = inject(NonNullableFormBuilder);
 
   private readonly routeMode = toSignal(
     this.route.queryParamMap.pipe(
@@ -26,7 +35,6 @@ export class Auth {
   );
 
   readonly mode = computed(() => this.routeMode());
-
   readonly isRegisterMode = computed(() => this.mode() === 'register');
 
   readonly title = computed(() =>
@@ -53,8 +61,17 @@ export class Auth {
     this.isRegisterMode() ? 'new-password' : 'current-password'
   );
 
+  readonly authForm = this.fb.group({
+    login: [''],
+    username: [''],
+    email: [''],
+    password: [''],
+    confirmPassword: [''],
+  });
+
   onSubmit(event: Event): void {
     event.preventDefault();
+    this.router.navigate(['/app/dashboard']);
   }
 
   private normalizeMode(value: string | null): AuthMode {

@@ -118,3 +118,12 @@
 .auth-muted {
   color: var(--eventor-muted);
 }
+
+.auth-password {
+  display: block;
+  width: 100%;
+}
+
+.auth-password .p-inputtext {
+  width: 100%;
+}
