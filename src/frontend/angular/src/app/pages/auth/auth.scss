@@ -1,0 +1,120 @@
+.auth-page {
+  min-height: 100vh;
+  background: var(--eventor-hover-surface);
+  display: grid;
+  place-items: center;
+  padding: var(--space-8);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+
+  padding: var(--space-7);
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+
+.auth-title {
+  margin: 0 0 var(--space-6);
+  text-align: center;
+  font-size: var(--text-h2);
+  font-weight: var(--font-weight-h2);
+  color: var(--eventor-text);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.auth-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.auth-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-h6);
+  color: var(--eventor-text);
+}
+
+.auth-link {
+  font-size: var(--text-caption);
+  color: var(--eventor-muted);
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  color: var(--eventor-text);
+  text-decoration: underline;
+}
+
+.auth-password {
+  width: 100%;
+}
+
+:where(.auth-card) .p-inputtext {
+  width: 100%;
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  box-shadow: none;
+}
+
+:where(.auth-card) .p-inputtext:hover {
+  border-color: var(--eventor-hover-border);
+}
+
+:where(.auth-card) .p-inputtext:focus,
+:where(.auth-card) .p-inputtext:focus-visible {
+  border-color: var(--eventor-hover-border);
+  outline: none;
+  box-shadow: none;
+}
+
+.auth-submit {
+  width: 100%;
+}
+
+.auth-divider {
+  margin: var(--space-6) 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.auth-divider-line {
+  height: 1px;
+  background: var(--eventor-border);
+}
+
+.auth-divider-text {
+  font-size: var(--text-caption);
+  color: var(--eventor-muted);
+}
+
+.auth-footer {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  font-size: var(--text-caption);
+}
+
+.auth-muted {
+  color: var(--eventor-muted);
+}

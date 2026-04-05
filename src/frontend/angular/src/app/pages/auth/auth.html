@@ -1,8 +1,103 @@
-<div class="page">
-  <h1 class="h1">Auth page</h1>
-  <p class="subtitle">Route: /auth</p>
+<div class="auth-page">
+  <div class="auth-card ui-surface">
+    <h1 class="auth-title">{{ title() }}</h1>
 
-  <div class="page-actions">
-    <a routerLink="/app/dashboard"><button type="button">Login</button></a>
+    <form class="auth-form" autocomplete="on" (submit)="onSubmit($event)">
+      @if (isRegisterMode()) {
+        <div class="auth-field">
+          <label class="auth-label" for="username">Имя пользователя</label>
+          <input
+            id="username"
+            pInputText
+            class="ui-input"
+            type="text"
+            name="username"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label" for="email">Email</label>
+          <input
+            id="email"
+            pInputText
+            class="ui-input"
+            type="email"
+            name="email"
+            autocomplete="email"
+          />
+        </div>
+      } @else {
+        <div class="auth-field">
+          <label class="auth-label" for="login">Имя пользователя или email</label>
+          <input
+            id="login"
+            pInputText
+            class="ui-input"
+            type="text"
+            name="login"
+            autocomplete="username"
+          />
+        </div>
+      }
+
+      <div class="auth-field">
+        <div class="auth-label-row">
+          <label class="auth-label" for="password">Пароль</label>
+
+          @if (!isRegisterMode()) {
+            <a class="auth-link" href="#" aria-label="Forgot password">Забыли пароль?</a>
+          }
+        </div>
+
+        <p-password
+          inputId="password"
+          name="password"
+          [autocomplete]="passwordAutocomplete()"
+          [toggleMask]="true"
+          [feedback]="false"
+          inputStyleClass="ui-input"
+          styleClass="auth-password"
+        ></p-password>
+      </div>
+
+      @if (isRegisterMode()) {
+        <div class="auth-field">
+          <label class="auth-label" for="confirmPassword">Подтвердите пароль</label>
+
+          <p-password
+            inputId="confirmPassword"
+            name="confirmPassword"
+            autocomplete="new-password"
+            [toggleMask]="true"
+            [feedback]="false"
+            inputStyleClass="ui-input"
+            styleClass="auth-password"
+          ></p-password>
+        </div>
+      }
+
+      <button
+        pButton
+        type="submit"
+        class="ui-primary-btn auth-submit"
+        [attr.aria-label]="submitLabel()"
+      >
+        <span pButtonLabel>{{ submitLabel() }}</span>
+      </button>
+    </form>
+
+    <div class="auth-divider" aria-hidden="true">
+      <span class="auth-divider-line"></span>
+      <span class="auth-divider-text">или</span>
+      <span class="auth-divider-line"></span>
+    </div>
+
+    <div class="auth-footer">
+      <span class="auth-muted">{{ footerText() }}</span>
+      <a class="auth-link" routerLink="/auth" [queryParams]="footerQueryParams()">
+        {{ footerActionText() }}
+      </a>
+    </div>
   </div>
 </div>
