@@ -1,5 +1,10 @@
 <app-drawer-card title="Дни мероприятия" variant="table">
-  <p-table [value]="dayRows()" styleClass="ui-table ui-drawer-table ui-management-days-table">
+  <p-table
+    [value]="dayRows()"
+    [scrollable]="true"
+    [scrollHeight]="'var(--management-days-table-scroll-height)'"
+    styleClass="ui-table ui-drawer-table ui-management-days-table"
+  >
     <ng-template pTemplate="header">
       <tr>
         <th>Номер</th>

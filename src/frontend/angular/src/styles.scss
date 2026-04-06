@@ -87,6 +87,15 @@
   --status-unpaid-text: #dc2626;
 
   --drawer-topbar-padding-top: 12px;
+
+  --management-days-table-max-visible-rows: 11;
+  --management-days-table-head-height: 44px;
+  --management-days-table-row-height: 55.7px;
+
+  --management-days-table-scroll-height: calc(
+    var(--management-days-table-head-height) +
+    (var(--management-days-table-row-height) * var(--management-days-table-max-visible-rows))
+  );
 }
 
 html,
