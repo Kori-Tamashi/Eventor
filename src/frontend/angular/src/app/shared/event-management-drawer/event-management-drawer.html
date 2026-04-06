@@ -25,7 +25,10 @@
       <p-tab value="settings">Настройки</p-tab>
       <p-tab value="days">Дни мероприятия</p-tab>
       <p-tab value="analytics">Анализ мероприятия</p-tab>
-      <p-tab value="reviews">Отзывы</p-tab>
+
+      @if (mode() !== 'create') {
+        <p-tab value="reviews">Отзывы</p-tab>
+      }
     </p-tablist>
 
     <p-tabpanels>
@@ -51,14 +54,16 @@
         </div>
       </p-tabpanel>
 
-      <p-tabpanel value="reviews">
-        <div class="drawer-placeholder-card ui-surface">
-          <div class="drawer-placeholder-title">Отзывы</div>
-          <div class="drawer-placeholder-text">
-            Содержимое этой вкладки будет реализовано на следующем этапе.
+      @if (mode() !== 'create') {
+        <p-tabpanel value="reviews">
+          <div class="drawer-placeholder-card ui-surface">
+            <div class="drawer-placeholder-title">Отзывы</div>
+            <div class="drawer-placeholder-text">
+              Содержимое этой вкладки будет реализовано на следующем этапе.
+            </div>
           </div>
-        </div>
-      </p-tabpanel>
+        </p-tabpanel>
+      }
     </p-tabpanels>
   </p-tabs>
 </p-drawer>

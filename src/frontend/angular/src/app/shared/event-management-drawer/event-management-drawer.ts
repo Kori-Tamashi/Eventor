@@ -27,6 +27,7 @@ export class EventManagementDrawer {
 
   readonly drawerOpen = this.store.isOpen;
   readonly title = this.store.title;
+  readonly mode = this.store.mode;
   readonly activeTab = this.store.activeTab;
   readonly settingsDaysCount = this.store.settingsDaysCount;
   readonly dayRows = this.store.dayRows;
