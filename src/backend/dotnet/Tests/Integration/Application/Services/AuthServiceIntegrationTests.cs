@@ -63,7 +63,6 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
         result.PasswordHash.Should().NotBe(password);
         result.PasswordHash.Should().NotBeNullOrEmpty();
 
-        // Проверка, что пользователь действительно сохранён в БД
         var savedUser = await _userRepository.GetByIdAsync(result.Id);
         savedUser.Should().NotBeNull();
         savedUser!.Phone.Should().Be(phone);
@@ -84,8 +83,10 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
             await _authService.RegisterAsync("New User", phone, Gender.Male, "password");
 
         // Assert
-        await act.Should().ThrowAsync<UserLoginAlreadyExistsException>()
-            .WithMessage($"User with phone '{phone}' already exists.");
+        var exception = await act.Should().ThrowAsync<AuthServiceException>()
+            .WithMessage("Failed to register user.");
+        exception.Which.InnerException.Should().BeOfType<UserLoginAlreadyExistsException>()
+            .Which.Message.Should().Be($"User with phone '{phone}' already exists.");
     }
 
     [TestMethod]
@@ -123,8 +124,10 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
         Func<Task> act = async () => await _authService.LoginAsync(phone, password);
 
         // Assert
-        await act.Should().ThrowAsync<UserLoginNotFoundException>()
-            .WithMessage($"User with phone '{phone}' not found.");
+        var exception = await act.Should().ThrowAsync<AuthServiceException>()
+            .WithMessage("Failed to login user.");
+        exception.Which.InnerException.Should().BeOfType<UserLoginNotFoundException>()
+            .Which.Message.Should().Be($"User with phone '{phone}' not found.");
     }
 
     [TestMethod]
@@ -139,7 +142,9 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
         Func<Task> act = async () => await _authService.LoginAsync(phone, "wrongPassword");
 
         // Assert
-        await act.Should().ThrowAsync<IncorrectPasswordException>()
-            .WithMessage("Incorrect password.");
+        var exception = await act.Should().ThrowAsync<AuthServiceException>()
+            .WithMessage("Failed to login user.");
+        exception.Which.InnerException.Should().BeOfType<IncorrectPasswordException>()
+            .Which.Message.Should().Be("Incorrect password.");
     }
 }

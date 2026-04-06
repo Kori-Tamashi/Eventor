@@ -79,9 +79,10 @@ public class AuthServiceUnitTests
             .ReturnsAsync(new List<User> { existingUser });
 
         // Act & Assert
-        await _authService
+        var exception = await _authService
             .Invoking(s => s.RegisterAsync("Test User", phone, Gender.Male, "password"))
-            .Should().ThrowAsync<UserLoginAlreadyExistsException>();
+            .Should().ThrowAsync<AuthServiceException>();
+        exception.Which.InnerException.Should().BeOfType<UserLoginAlreadyExistsException>();
     }
 
     [TestMethod]
@@ -138,9 +139,10 @@ public class AuthServiceUnitTests
             .ReturnsAsync(new List<User>());
 
         // Act & Assert
-        await _authService
+        var exception = await _authService
             .Invoking(s => s.LoginAsync(phone, "any"))
-            .Should().ThrowAsync<UserLoginNotFoundException>();
+            .Should().ThrowAsync<AuthServiceException>();
+        exception.Which.InnerException.Should().BeOfType<UserLoginNotFoundException>();
     }
 
     [TestMethod]
@@ -162,9 +164,10 @@ public class AuthServiceUnitTests
             .ReturnsAsync(new List<User> { user });
 
         // Act & Assert
-        await _authService
+        var exception = await _authService
             .Invoking(s => s.LoginAsync(phone, "wrong"))
-            .Should().ThrowAsync<IncorrectPasswordException>();
+            .Should().ThrowAsync<AuthServiceException>();
+        exception.Which.InnerException.Should().BeOfType<IncorrectPasswordException>();
     }
 
     [TestMethod]
