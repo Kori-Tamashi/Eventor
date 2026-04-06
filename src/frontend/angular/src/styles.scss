@@ -621,3 +621,43 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   background: var(--status-unpaid-bg);
   color: var(--status-unpaid-text);
 }
+
+.event-drawer .ui-event-details-days-table.p-datatable .p-datatable-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.event-drawer .ui-event-details-days-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-event-details-days-table.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center !important;
+}
+
+.event-drawer .ui-event-details-days-table.p-datatable .p-datatable-thead > tr > th:nth-child(2),
+.event-drawer .ui-event-details-days-table.p-datatable .p-datatable-tbody > tr > td:nth-child(2) {
+  text-align: center !important;
+}
+
+.event-drawer .ui-event-details-days-table.p-datatable .p-datatable-thead > tr > th:last-child,
+.event-drawer .ui-event-details-days-table.p-datatable .p-datatable-tbody > tr > td:last-child {
+  width: auto !important;
+}
+
+.event-drawer .ui-management-days-table.p-datatable .p-datatable-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.event-drawer .ui-management-days-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-management-days-table.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center !important;
+}
+
+.event-drawer .ui-management-days-table.p-datatable .p-datatable-thead > tr > th:nth-child(2),
+.event-drawer .ui-management-days-table.p-datatable .p-datatable-tbody > tr > td:nth-child(2) {
+  text-align: center !important;
+}
+
+.event-drawer .ui-management-days-table.p-datatable .p-datatable-thead > tr > th:last-child,
+.event-drawer .ui-management-days-table.p-datatable .p-datatable-tbody > tr > td:last-child {
+  width: auto !important;
+}

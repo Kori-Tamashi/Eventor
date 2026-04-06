@@ -30,28 +30,23 @@
 
     <p-tabpanels>
       <p-tabpanel value="settings">
-        <div class="drawer-placeholder-card ui-surface">
-          <div class="drawer-placeholder-title">Настройки</div>
-          <div class="drawer-placeholder-text">
-            settings
-          </div>
-        </div>
+        <app-event-management-settings-tab
+          [daysCount]="settingsDaysCount()"
+          (daysCountChange)="onSettingsDaysCountChange($event)"
+        ></app-event-management-settings-tab>
       </p-tabpanel>
 
       <p-tabpanel value="days">
-        <div class="drawer-placeholder-card ui-surface">
-          <div class="drawer-placeholder-title">Дни мероприятия</div>
-          <div class="drawer-placeholder-text">
-            days
-          </div>
-        </div>
+        <app-event-management-days-tab
+          [dayRows]="dayRows()"
+        ></app-event-management-days-tab>
       </p-tabpanel>
 
       <p-tabpanel value="analytics">
         <div class="drawer-placeholder-card ui-surface">
           <div class="drawer-placeholder-title">Анализ мероприятия</div>
           <div class="drawer-placeholder-text">
-            analytics
+            Содержимое этой вкладки будет реализовано на следующем этапе.
           </div>
         </div>
       </p-tabpanel>
@@ -60,7 +55,7 @@
         <div class="drawer-placeholder-card ui-surface">
           <div class="drawer-placeholder-title">Отзывы</div>
           <div class="drawer-placeholder-text">
-            reviews
+            Содержимое этой вкладки будет реализовано на следующем этапе.
           </div>
         </div>
       </p-tabpanel>

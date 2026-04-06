@@ -49,6 +49,15 @@
   color: var(--eventor-text);
 }
 
+p-tabpanel > app-event-management-settings-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
+p-tabpanel > app-event-management-days-tab {
+  display: block;
+}
+
 p-tabpanel > .drawer-placeholder-card {
   display: block;
   margin-top: var(--space-4);

@@ -1,0 +1,119 @@
+.settings-card {
+  padding: var(--space-4);
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.settings-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.settings-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-caption);
+  color: var(--eventor-muted);
+}
+
+.settings-counter {
+  font-size: var(--text-caption);
+  color: var(--eventor-muted);
+}
+
+.settings-textarea,
+textarea.settings-textarea,
+.settings-textarea.ui-input,
+.settings-textarea.ui-input.p-inputtextarea,
+.settings-textarea.ui-input.p-inputtext {
+  width: 100%;
+  min-height: 86px;
+  height: auto !important;
+
+  padding: 12px 14px !important;
+
+  background: var(--eventor-surface) !important;
+  border: 1px solid var(--eventor-border) !important;
+  border-radius: var(--radius-sm) !important;
+
+  color: var(--eventor-text) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  resize: none;
+}
+
+.settings-textarea::placeholder {
+  color: var(--eventor-muted) !important;
+}
+
+.settings-textarea:hover {
+  border-color: var(--eventor-hover-border) !important;
+}
+
+.settings-textarea:focus,
+.settings-textarea:focus-visible {
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.settings-date-input {
+  position: relative;
+}
+
+.settings-date-control {
+  padding-right: 40px !important;
+}
+
+.settings-date-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--eventor-muted);
+  pointer-events: none;
+}
+
+.settings-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.settings-secondary-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  color: var(--eventor-text);
+
+  box-shadow: none;
+}
+
+button.settings-secondary-btn.p-button:hover,
+button.settings-secondary-btn.p-button:active,
+button.settings-secondary-btn.p-button:focus,
+button.settings-secondary-btn.p-button:focus-visible {
+  background: var(--eventor-hover-surface) !important;
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+}

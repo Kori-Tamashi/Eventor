@@ -6,6 +6,8 @@ import {
   EventManagementDrawerStore,
   EventManagementDrawerTab,
 } from '../../core/ui/event-management-drawer.store';
+import { EventManagementSettingsTab } from './sections/event-management-settings-tab/event-management-settings-tab';
+import { EventManagementDaysTab } from './sections/event-management-days-tab/event-management-days-tab';
 
 @Component({
   selector: 'app-event-management-drawer',
@@ -14,6 +16,8 @@ import {
     ButtonModule,
     DrawerModule,
     TabsModule,
+    EventManagementSettingsTab,
+    EventManagementDaysTab,
   ],
   templateUrl: './event-management-drawer.html',
   styleUrl: './event-management-drawer.scss',
@@ -24,6 +28,8 @@ export class EventManagementDrawer {
   readonly drawerOpen = this.store.isOpen;
   readonly title = this.store.title;
   readonly activeTab = this.store.activeTab;
+  readonly settingsDaysCount = this.store.settingsDaysCount;
+  readonly dayRows = this.store.dayRows;
 
   onDrawerVisibleChange(visible: boolean): void {
     this.store.onDrawerVisibleChange(visible);
@@ -46,5 +52,9 @@ export class EventManagementDrawer {
     ) {
       this.setActiveTab(value);
     }
+  }
+
+  onSettingsDaysCountChange(value: string): void {
+    this.store.setSettingsDaysCount(value);
   }
 }

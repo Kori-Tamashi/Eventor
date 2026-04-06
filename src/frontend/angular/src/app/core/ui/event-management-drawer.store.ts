@@ -12,6 +12,13 @@ export type EventManagementDrawerContext = {
   title: string;
 };
 
+export type EventManagementDrawerDayRow = {
+  number: number;
+  title: string;
+  price: string;
+  participantsCount: string;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,6 +26,8 @@ export class EventManagementDrawerStore {
   readonly isOpen = signal<boolean>(false);
   readonly context = signal<EventManagementDrawerContext | null>(null);
   readonly activeTab = signal<EventManagementDrawerTab>('settings');
+
+  readonly settingsDaysCount = signal<string>('5');
 
   readonly mode = computed(() => this.context()?.mode ?? 'create');
   readonly source = computed(() => this.context()?.source ?? 'organization');
@@ -34,9 +43,30 @@ export class EventManagementDrawerStore {
     return context.title;
   });
 
+  readonly normalizedDaysCount = computed(() => {
+    const raw = this.settingsDaysCount().trim();
+    const parsed = Number(raw);
+
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      return 0;
+    }
+
+    return parsed;
+  });
+
+  readonly dayRows = computed<EventManagementDrawerDayRow[]>(() => {
+    return Array.from({ length: this.normalizedDaysCount() }, (_, index) => ({
+      number: index + 1,
+      title: 'Name',
+      price: 'N',
+      participantsCount: 'N',
+    }));
+  });
+
   open(context: EventManagementDrawerContext): void {
     this.context.set(context);
     this.activeTab.set('settings');
+    this.settingsDaysCount.set('5');
     this.isOpen.set(true);
   }
 
@@ -44,6 +74,7 @@ export class EventManagementDrawerStore {
     this.isOpen.set(false);
     this.context.set(null);
     this.activeTab.set('settings');
+    this.settingsDaysCount.set('5');
   }
 
   onDrawerVisibleChange(visible: boolean): void {
@@ -57,5 +88,10 @@ export class EventManagementDrawerStore {
 
   setActiveTab(tab: EventManagementDrawerTab): void {
     this.activeTab.set(tab);
+  }
+
+  setSettingsDaysCount(value: string): void {
+    const normalized = value.replace(/\D/g, '').slice(0, 2);
+    this.settingsDaysCount.set(normalized);
   }
 }
