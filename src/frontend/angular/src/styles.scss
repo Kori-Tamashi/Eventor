@@ -390,7 +390,10 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 
 .event-drawer .p-tab {
   flex: 1;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  text-align: center !important;
 
   border-radius: calc(var(--radius-lg) - var(--space-1)) !important;
   background: transparent !important;
