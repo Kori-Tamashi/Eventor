@@ -55,7 +55,7 @@
           <td>{{ row.date }}</td>
           <td>{{ row.rating }}</td>
           <td class="details-cell">
-            <button pButton type="button" class="ui-icon-btn" aria-label="Details">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
               <span pButtonIcon class="pi pi-search"></span>
             </button>
           </td>

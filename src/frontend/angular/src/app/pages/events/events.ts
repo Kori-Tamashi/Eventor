@@ -1,7 +1,9 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
+import { buildMockEventDetailsDrawerContext } from '../../shared/event-details-drawer/event-details-drawer.mock';
 
 type EventsRow = {
   name: string;
@@ -20,9 +22,9 @@ type EventsRow = {
   styleUrl: './events.scss',
 })
 export class Events {
+  private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
 
   readonly pageSize = signal<number>(10);
-
   readonly pageIndex = signal<number>(0);
 
   readonly allRows = signal<EventsRow[]>([
@@ -73,15 +75,24 @@ export class Events {
   });
 
   prevPage(): void {
-    if (!this.canPrev())
+    if (!this.canPrev()) {
       return;
+    }
+
     this.pageIndex.update((v) => v - 1);
   }
 
   nextPage(): void {
-    if (!this.canNext())
+    if (!this.canNext()) {
       return;
+    }
+
     this.pageIndex.update((v) => v + 1);
   }
 
+  openDetails(row: EventsRow): void {
+    this.eventDetailsDrawerStore.open(
+      buildMockEventDetailsDrawerContext(row.name, 'events', 'user')
+    );
+  }
 }
