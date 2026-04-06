@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Configuration;
 using Application.Services;
 using Domain.Enums;
 using Domain.Filters;
@@ -9,6 +11,7 @@ using Domain.Interfaces.Repositories;
 using Domain.Models;
 using Eventor.Services.Exceptions;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -25,7 +28,15 @@ public class AuthServiceUnitTests
     public void Setup()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _authService = new AuthService(_userRepositoryMock.Object);
+        var jwtOptions = Options.Create(new JwtOptions
+        {
+            Issuer = "Eventor.Tests",
+            Audience = "Eventor.Tests.Client",
+            Key = "UnitTests_SuperSecretKey_1234567890",
+            ExpirationMinutes = 60
+        });
+
+        _authService = new AuthService(_userRepositoryMock.Object, jwtOptions);
     }
 
     private static string HashPassword(string password)
@@ -96,7 +107,14 @@ public class AuthServiceUnitTests
         var phone = "+1234567890";
         var password = "correctPassword";
         var hashedPassword = HashPassword(password);
-        var user = new User { Phone = phone, PasswordHash = hashedPassword };
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Name = "Login User",
+            Role = UserRole.User,
+            Phone = phone,
+            PasswordHash = hashedPassword
+        };
         _userRepositoryMock
             .Setup(x => x.GetUsersAsync(It.Is<UserFilter>(f => f.Phone == phone)))
             .ReturnsAsync(new List<User> { user });
@@ -106,6 +124,7 @@ public class AuthServiceUnitTests
 
         // Assert
         token.Should().NotBeNullOrEmpty();
+        new JwtSecurityTokenHandler().CanReadToken(token).Should().BeTrue();
         _userRepositoryMock.Verify(x => x.GetUsersAsync(It.IsAny<UserFilter>()), Times.Once);
     }
 
@@ -130,7 +149,14 @@ public class AuthServiceUnitTests
         // Arrange
         var phone = "+1234567890";
         var correctHash = HashPassword("correct");
-        var user = new User { Phone = phone, PasswordHash = correctHash };
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Name = "Login User",
+            Role = UserRole.User,
+            Phone = phone,
+            PasswordHash = correctHash
+        };
         _userRepositoryMock
             .Setup(x => x.GetUsersAsync(It.Is<UserFilter>(f => f.Phone == phone)))
             .ReturnsAsync(new List<User> { user });
