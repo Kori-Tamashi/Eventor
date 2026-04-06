@@ -544,3 +544,11 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   border-color: var(--eventor-hover-border) !important;
   box-shadow: none !important;
 }
+
+.review-rating .p-rating-icon {
+  color: #cbd5e1 !important;
+}
+
+.review-rating .p-rating-option-active .p-rating-icon {
+  color: #f59e0b !important;
+}
