@@ -76,8 +76,12 @@
   text-align: center;
 }
 
-.ui-table {
+.page-card > .ui-table {
   margin-top: var(--space-4);
+}
+
+.event-drawer .ui-drawer-table.p-datatable {
+  margin-top: 0 !important;
 }
 
 .drawer-topbar {
