@@ -76,8 +76,30 @@
   text-align: center;
 }
 
-.ui-table {
+.page-card > .ui-table {
   margin-top: var(--space-4);
+}
+
+.event-drawer .ui-drawer-table.p-datatable {
+  margin-top: 0 !important;
+}
+
+.drawer-topbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--drawer-topbar-padding-top);
+  margin-bottom: var(--space-4);
+}
+
+.drawer-topbar--subview {
+  justify-content: flex-start;
+}
+
+.drawer-parent-caption {
+  font-size: var(--text-body);
+  color: var(--eventor-muted);
 }
 
 .drawer-header {
@@ -91,7 +113,8 @@
 }
 
 .drawer-title {
-  font-weight: var(--font-weight-h3);
+  font-size: var(--text-h2);
+  font-weight: var(--font-weight-h2);
   color: var(--eventor-text);
 }
 
@@ -119,6 +142,12 @@
   margin-bottom: var(--space-4);
 }
 
+.drawer-subview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .event-drawer .ui-drawer-table.p-datatable {
   border-radius: var(--radius-md);
 }
@@ -140,13 +169,7 @@
 
 .event-drawer .ui-drawer-table.p-datatable th:nth-child(2),
 .event-drawer .ui-drawer-table.p-datatable td:nth-child(2) {
-  text-align: left !important;
-}
-
-.event-drawer .ui-drawer-table.p-datatable th:last-child,
-.event-drawer .ui-drawer-table.p-datatable td:last-child {
   text-align: center !important;
-  width: 70px;
 }
 
 .review-form {
@@ -248,8 +271,8 @@ button.review-secondary-btn.p-button:focus-visible {
 }
 
 .review-list {
-  --review-item-height: 80px;
-  --review-list-gap: var(--space-2);
+  --review-item-height: 85px;
+  --review-list-gap: var(--space-3);
 
   display: flex;
   flex-direction: column;
@@ -310,4 +333,30 @@ button.review-secondary-btn.p-button:focus-visible {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+
+.drawer-nav-btn.p-button {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.drawer-nav-btn.p-button:hover,
+.drawer-nav-btn.p-button:active,
+.drawer-nav-btn.p-button:focus,
+.drawer-nav-btn.p-button:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.drawer-nav-btn.p-button .p-button-icon {
+  color: var(--eventor-muted) !important;
+}
+
+.drawer-nav-btn.p-button:hover .p-button-icon,
+.drawer-nav-btn.p-button:active .p-button-icon,
+.drawer-nav-btn.p-button:focus .p-button-icon,
+.drawer-nav-btn.p-button:focus-visible .p-button-icon {
+  color: var(--eventor-text) !important;
 }

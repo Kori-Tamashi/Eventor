@@ -71,6 +71,19 @@
 
   --drawer-table-head: 15px;
   --drawer-table-row: 14px;
+
+  --status-badge-height: 28px;
+  --status-badge-min-width: 110px;
+  --status-badge-padding-x: 12px;
+  --status-badge-radius: 10px;
+
+  --status-paid-bg: #dcfce7;
+  --status-paid-text: #15803d;
+
+  --status-unpaid-bg: #fee2e2;
+  --status-unpaid-text: #dc2626;
+
+  --drawer-topbar-padding-top: 12px;
 }
 
 html,
@@ -551,4 +564,55 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 
 .review-rating .p-rating-option-active .p-rating-icon {
   color: #f59e0b !important;
+}
+
+.p-drawer.event-drawer .p-drawer-header {
+  display: none !important;
+}
+
+.event-drawer .ui-participants-table.p-datatable .p-datatable-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.event-drawer .ui-participants-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-participants-table.p-datatable .p-datatable-tbody > tr > td {
+  width: 50% !important;
+  text-align: center !important;
+}
+
+.event-drawer .ui-participants-table.p-datatable .p-datatable-thead > tr > th:nth-child(2),
+.event-drawer .ui-participants-table.p-datatable .p-datatable-tbody > tr > td:nth-child(2) {
+  text-align: center !important;
+}
+
+.event-drawer .ui-participants-table.p-datatable .p-datatable-thead > tr > th:last-child,
+.event-drawer .ui-participants-table.p-datatable .p-datatable-tbody > tr > td:last-child {
+  width: 50% !important;
+}
+
+.ui-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: var(--status-badge-min-width);
+  height: var(--status-badge-height);
+  padding: 0 var(--status-badge-padding-x);
+
+  border-radius: var(--status-badge-radius);
+
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-h6);
+  line-height: 1;
+}
+
+.ui-status-badge--paid {
+  background: var(--status-paid-bg);
+  color: var(--status-paid-text);
+}
+
+.ui-status-badge--unpaid {
+  background: var(--status-unpaid-bg);
+  color: var(--status-unpaid-text);
 }
