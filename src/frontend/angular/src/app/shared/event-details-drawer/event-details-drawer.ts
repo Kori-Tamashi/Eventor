@@ -1,30 +1,23 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
-import { RatingModule } from 'primeng/rating';
-import { TableModule } from 'primeng/table';
 import { TabsModule } from 'primeng/tabs';
-import { TextareaModule } from 'primeng/textarea';
-import { DrawerCard } from '../drawer-card/drawer-card';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
-import {
-  EventDetailsDrawerDay,
-  EventDetailsDrawerParticipantPayment
-} from './event-details-drawer.models';
+import { EventDetailsDrawerDay } from './event-details-drawer.models';
+import { EventDetailsInfoTab } from './sections/event-details-info-tab/event-details-info-tab';
+import { EventDetailsReviewsTab } from './sections/event-details-reviews-tab/event-details-reviews-tab';
+import { EventDetailsDayParticipantsView } from './sections/event-details-day-participants-view/event-details-day-participants-view';
 
 @Component({
   selector: 'app-event-details-drawer',
   standalone: true,
   imports: [
-    FormsModule,
     ButtonModule,
     DrawerModule,
-    RatingModule,
-    TableModule,
     TabsModule,
-    TextareaModule,
-    DrawerCard,
+    EventDetailsInfoTab,
+    EventDetailsReviewsTab,
+    EventDetailsDayParticipantsView,
   ],
   templateUrl: './event-details-drawer.html',
   styleUrl: './event-details-drawer.scss',
@@ -76,11 +69,5 @@ export class EventDetailsDrawer {
 
   saveReview(): void {
     this.store.saveReview();
-  }
-
-  paymentBadgeClass(payment: EventDetailsDrawerParticipantPayment): string {
-    return payment === 'Оплачено'
-      ? 'ui-status-badge ui-status-badge--paid'
-      : 'ui-status-badge ui-status-badge--unpaid';
   }
 }
