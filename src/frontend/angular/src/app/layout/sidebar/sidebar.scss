@@ -41,6 +41,9 @@
   color: var(--eventor-muted);
   text-decoration: none;
   border: 1px solid transparent;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
 }
 
 .nav-item i {

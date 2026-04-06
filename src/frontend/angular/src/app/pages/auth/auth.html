@@ -8,40 +8,28 @@
       [formGroup]="authForm"
       (submit)="onSubmit($event)"
     >
+      <div class="auth-field">
+        <label class="auth-label" for="username">Имя пользователя</label>
+        <input
+          id="username"
+          pInputText
+          class="ui-input"
+          type="text"
+          formControlName="username"
+          autocomplete="username"
+        />
+      </div>
+
       @if (isRegisterMode()) {
         <div class="auth-field">
-          <label class="auth-label" for="username">Имя пользователя</label>
+          <label class="auth-label" for="phone">Номер телефона</label>
           <input
-            id="username"
+            id="phone"
             pInputText
             class="ui-input"
             type="text"
-            formControlName="username"
-            autocomplete="username"
-          />
-        </div>
-
-        <div class="auth-field">
-          <label class="auth-label" for="email">Email</label>
-          <input
-            id="email"
-            pInputText
-            class="ui-input"
-            type="email"
-            formControlName="email"
-            autocomplete="email"
-          />
-        </div>
-      } @else {
-        <div class="auth-field">
-          <label class="auth-label" for="login">Имя пользователя или email</label>
-          <input
-            id="login"
-            pInputText
-            class="ui-input"
-            type="text"
-            formControlName="login"
-            autocomplete="username"
+            formControlName="phone"
+            autocomplete="tel"
           />
         </div>
       }

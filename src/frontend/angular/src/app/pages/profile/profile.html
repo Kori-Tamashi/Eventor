@@ -1,1 +1,98 @@
-<p>profile works!</p>
+<div class="profile-panel">
+  <header class="profile-panel__header">
+    <div>
+      <h1 class="profile-panel__title">Профиль</h1>
+      <p class="profile-panel__subtitle">Личные данные и параметры аккаунта</p>
+    </div>
+  </header>
+
+  <div class="profile-summary ui-surface">
+    <div class="profile-avatar">UN</div>
+
+    <div class="profile-name">Username</div>
+    <div class="profile-role">Организатор мероприятий</div>
+  </div>
+
+  <section class="profile-section ui-surface">
+    <div class="section-head">
+      <h2 class="section-title">Основная информация</h2>
+      <p class="section-subtitle">Данные, доступные из учетной записи пользователя</p>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label class="form-label" for="username">Имя пользователя</label>
+        <input
+          id="username"
+          pInputText
+          class="ui-input"
+          type="text"
+          value="Username"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="phone">Номер телефона</label>
+        <input
+          id="phone"
+          pInputText
+          class="ui-input"
+          type="text"
+          value="+7 900 000-00-00"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="gender">Пол</label>
+        <input
+          id="gender"
+          pInputText
+          class="ui-input"
+          type="text"
+          value="Не указан"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="accessRights">Права доступа</label>
+        <input
+          id="accessRights"
+          pInputText
+          class="ui-input"
+          type="text"
+          value="Организатор"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="profile-section ui-surface">
+    <div class="section-head">
+      <h2 class="section-title">Настройки аккаунта</h2>
+      <p class="section-subtitle">Параметры доступа и управления профилем</p>
+    </div>
+
+    <div class="settings-list">
+      <div class="settings-row">
+        <div>
+          <div class="settings-row__title">Смена пароля</div>
+          <div class="settings-row__text">Обновите пароль для повышения безопасности аккаунта</div>
+        </div>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Change password">
+          <span pButtonIcon class="pi pi-angle-right"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="profile-actions">
+    <button pButton type="button" class="profile-secondary-btn" aria-label="Cancel changes">
+      <span pButtonLabel>Отменить</span>
+    </button>
+
+    <button pButton type="button" class="ui-primary-btn" aria-label="Save changes">
+      <span pButtonLabel>Сохранить изменения</span>
+    </button>
+  </div>
+</div>

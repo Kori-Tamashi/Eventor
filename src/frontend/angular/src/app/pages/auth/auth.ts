@@ -62,9 +62,8 @@ export class Auth {
   );
 
   readonly authForm = this.fb.group({
-    login: [''],
     username: [''],
-    email: [''],
+    phone: [''],
     password: [''],
     confirmPassword: [''],
   });

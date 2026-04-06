@@ -1,10 +1,21 @@
 <div class="shell">
-  <app-sidebar></app-sidebar>
+  <app-sidebar
+    [profileOpen]="profileDrawerOpen()"
+    (profileToggle)="toggleProfileDrawer()"
+  ></app-sidebar>
 
   <main class="main">
-
     <section class="content">
       <router-outlet></router-outlet>
     </section>
   </main>
 </div>
+
+<p-drawer
+  position="right"
+  [visible]="profileDrawerOpen()"
+  (visibleChange)="profileDrawerOpen.set($event)"
+  styleClass="event-drawer profile-drawer"
+>
+  <app-profile></app-profile>
+</p-drawer>
