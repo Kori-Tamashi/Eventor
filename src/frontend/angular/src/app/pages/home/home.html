@@ -1,8 +1,40 @@
-<div class="page">
-  <h1 class="h1">Home page</h1>
-  <p class="subtitle">Route: /</p>
+<div class="welcome-page">
+  <header class="welcome-header">
+    <div class="welcome-header-inner">
+      <div class="brand">Eventor</div>
 
-  <a routerLink="/auth">
-    <button type="button">Goto Auth</button>
-  </a>
+      <div class="actions">
+        <div class="actions">
+          <button
+            pButton
+            type="button"
+            class="welcome-secondary-btn"
+            aria-label="Sign in"
+            [routerLink]="['/auth']"
+            [queryParams]="{ mode: 'login' }"
+          >
+            <span pButtonLabel>Войти</span>
+          </button>
+
+          <button
+            pButton
+            type="button"
+            class="ui-primary-btn"
+            aria-label="Sign up"
+            [routerLink]="['/auth']"
+            [queryParams]="{ mode: 'register' }"
+          >
+            <span pButtonLabel>Зарегистрироваться</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="welcome-body">
+    <div class="welcome-hero">
+      <h1 class="hero-title">Добро пожаловать в Eventor</h1>
+      <p class="hero-subtitle">Организуйте мероприятия и управляйте участниками в одном месте</p>
+    </div>
+  </main>
 </div>
