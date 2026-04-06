@@ -92,6 +92,7 @@
   } @else {
     <app-event-management-day-details-view
       [activeTab]="dayDetailsActiveTab()"
+      [dayTitle]="dayDetailsTitle()"
       (tabChange)="onDayDetailsTabChange($event)"
     ></app-event-management-day-details-view>
   }

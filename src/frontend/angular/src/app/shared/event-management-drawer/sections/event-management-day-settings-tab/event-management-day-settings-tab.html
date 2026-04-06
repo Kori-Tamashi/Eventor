@@ -1,0 +1,57 @@
+<div class="day-settings-card ui-surface">
+  <div class="day-settings-form">
+    <div class="day-settings-field">
+      <div class="day-settings-label-row">
+        <label class="day-settings-label" for="dayTitle">Название дня</label>
+        <span class="day-settings-counter">{{ titleCountLabel() }}</span>
+      </div>
+
+      <input
+        id="dayTitle"
+        pInputText
+        class="ui-input"
+        type="text"
+        [value]="dayTitle()"
+        (input)="onTitleInput(($any($event.target)).value)"
+      />
+    </div>
+
+    <div class="day-settings-field">
+      <div class="day-settings-label-row">
+        <label class="day-settings-label" for="dayDescription">Описание</label>
+        <span class="day-settings-counter">{{ descriptionCountLabel() }}</span>
+      </div>
+
+      <textarea
+        id="dayDescription"
+        pTextarea
+        class="ui-input day-settings-textarea"
+        rows="4"
+        [value]="description()"
+        (input)="onDescriptionInput(($any($event.target)).value)"
+      ></textarea>
+    </div>
+
+    <div class="day-settings-actions">
+      <button
+        pButton
+        type="button"
+        class="day-settings-secondary-btn"
+        aria-label="Cancel"
+        (click)="cancel()"
+      >
+        <span pButtonLabel>Отменить</span>
+      </button>
+
+      <button
+        pButton
+        type="button"
+        class="ui-primary-btn"
+        aria-label="Save"
+        (click)="save()"
+      >
+        <span pButtonLabel>Сохранить</span>
+      </button>
+    </div>
+  </div>
+</div>

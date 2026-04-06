@@ -8,12 +8,9 @@
 
   <p-tabpanels>
     <p-tabpanel value="settings">
-      <div class="drawer-placeholder-card ui-surface">
-        <div class="drawer-placeholder-title">Настройки</div>
-        <div class="drawer-placeholder-text">
-          Содержимое этой вкладки будет реализовано на следующем этапе.
-        </div>
-      </div>
+      <app-event-management-day-settings-tab
+        [initialTitle]="dayTitle()"
+      ></app-event-management-day-settings-tab>
     </p-tabpanel>
 
     <p-tabpanel value="participants">

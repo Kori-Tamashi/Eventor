@@ -2,6 +2,11 @@
   display: block;
 }
 
+p-tabpanel > app-event-management-day-settings-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
 p-tabpanel > .drawer-placeholder-card {
   display: block;
   margin-top: var(--space-4);

@@ -1,0 +1,96 @@
+.day-settings-card {
+  padding: var(--space-4);
+}
+
+.day-settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.day-settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.day-settings-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.day-settings-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-caption);
+  color: var(--eventor-muted);
+}
+
+.day-settings-counter {
+  font-size: var(--text-caption);
+  color: var(--eventor-muted);
+}
+
+.day-settings-textarea,
+textarea.day-settings-textarea,
+.day-settings-textarea.ui-input,
+.day-settings-textarea.ui-input.p-inputtextarea,
+.day-settings-textarea.ui-input.p-inputtext {
+  width: 100%;
+  min-height: 86px;
+  height: auto !important;
+
+  padding: 12px 14px !important;
+
+  background: var(--eventor-surface) !important;
+  border: 1px solid var(--eventor-border) !important;
+  border-radius: var(--radius-sm) !important;
+
+  color: var(--eventor-text) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  resize: none;
+}
+
+.day-settings-textarea::placeholder {
+  color: var(--eventor-muted) !important;
+}
+
+.day-settings-textarea:hover {
+  border-color: var(--eventor-hover-border) !important;
+}
+
+.day-settings-textarea:focus,
+.day-settings-textarea:focus-visible {
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.day-settings-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.day-settings-secondary-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  color: var(--eventor-text);
+
+  box-shadow: none;
+}
+
+button.day-settings-secondary-btn.p-button:hover,
+button.day-settings-secondary-btn.p-button:active,
+button.day-settings-secondary-btn.p-button:focus,
+button.day-settings-secondary-btn.p-button:focus-visible {
+  background: var(--eventor-hover-surface) !important;
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+}
