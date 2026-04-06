@@ -78,6 +78,8 @@ jobs:
   build-backend:
     name: Building a backend
     runs-on: ubuntu-latest
+    env:
+      JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -186,6 +188,8 @@ jobs:
     name: Running backend unit tests
     needs: build-backend
     runs-on: ubuntu-latest
+    env:
+      JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -216,6 +220,8 @@ jobs:
     name: Running backend integration tests
     needs: [build-database, build-backend, unit-tests-backend]
     runs-on: ubuntu-latest
+    env:
+      JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -265,6 +271,8 @@ jobs:
     name: Running backend end-to-end tests
     needs: [integration-tests-backend]
     runs-on: ubuntu-latest
+    env:
+      JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -314,6 +322,8 @@ jobs:
     name: Running backend
     needs: [e2e-tests-backend]
     runs-on: ubuntu-latest
+    env:
+      JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
