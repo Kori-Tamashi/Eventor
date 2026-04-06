@@ -41,9 +41,13 @@ public class RegistrationService(
             registration.Days = registration.Days;
             return registration;
         }
+        catch (RegistrationServiceException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
-            throw new RegistrationServiceException("Failed to create registration.", ex);
+            throw new RegistrationAlreadyExistsException("Failed to create registration.", ex);
         }
     }
 
@@ -53,7 +57,7 @@ public class RegistrationService(
         {
             var existing = await registrationRepository.GetByIdAsync(registration.Id, includeDays: true);
             if (existing is null)
-                throw new RegistrationServiceException($"Registration '{registration.Id}' was not found.", new Exception("Registration not found."));
+                throw new RegistrationNotFoundException($"Registration '{registration.Id}' was not found.");
 
             await registrationRepository.UpdateAsync(registration);
 
@@ -85,7 +89,7 @@ public class RegistrationService(
         {
             var existing = await registrationRepository.GetByIdAsync(id);
             if (existing is null)
-                throw new RegistrationServiceException($"Registration '{id}' was not found.", new Exception("Registration not found."));
+                throw new RegistrationNotFoundException($"Registration '{id}' was not found.");
 
             await registrationRepository.DeleteAsync(id);
         }

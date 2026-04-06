@@ -1,5 +1,6 @@
 using Domain.Filters;
 using Domain.Interfaces.Services;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Web.Converters;
 using Web.Dtos;
@@ -28,7 +29,7 @@ public class AdminUsersController(IUserService userService) : ApiControllerBase
     [HttpPost]
     public Task<IActionResult> Create([FromBody] CreateUserRequest request) => ExecuteAsync(async () =>
     {
-        var user = await userService.CreateAsync(request.ToDomain(PasswordHasher.Hash(request.Password)));
+        var user = await userService.CreateAsync(request.ToDomain(AuthService.HashPassword(request.Password)));
         return Created($"/api/v1/admin/users/{user.Id}", user.ToDto());
     });
 
@@ -46,7 +47,7 @@ public class AdminUsersController(IUserService userService) : ApiControllerBase
         if (user is null)
             return NotFound();
 
-        var passwordHash = request.Password is null ? null : PasswordHasher.Hash(request.Password);
+        var passwordHash = request.Password is null ? null : AuthService.HashPassword(request.Password);
         request.ApplyToDomain(user, passwordHash);
         await userService.UpdateAsync(user);
         return NoContent();

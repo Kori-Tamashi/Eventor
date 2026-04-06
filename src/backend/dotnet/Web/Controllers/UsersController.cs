@@ -1,4 +1,5 @@
 using Domain.Interfaces.Services;
+using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Converters;
@@ -31,7 +32,7 @@ public class UsersController(IUserService userService) : ApiControllerBase
         if (user is null)
             return NotFound();
 
-        var passwordHash = request.Password is null ? null : PasswordHasher.Hash(request.Password);
+        var passwordHash = request.Password is null ? null : AuthService.HashPassword(request.Password);
         request.ApplyToDomain(user, passwordHash);
         await userService.UpdateAsync(user);
 

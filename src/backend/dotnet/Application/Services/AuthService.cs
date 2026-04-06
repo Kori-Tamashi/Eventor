@@ -39,10 +39,6 @@ public class AuthService(
             await userRepository.CreateAsync(user);
             return user;
         }
-        catch (AuthServiceException)
-        {
-            throw;
-        }
         catch (Exception ex)
         {
             throw new AuthServiceException("Failed to register user.", ex);
@@ -63,17 +59,13 @@ public class AuthService(
 
             return GenerateJwtToken(user);
         }
-        catch (AuthServiceException)
-        {
-            throw;
-        }
         catch (Exception ex)
         {
             throw new AuthServiceException("Failed to login user.", ex);
         }
     }
 
-    private static string HashPassword(string password)
+    public static string HashPassword(string password)
     {
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
         return Convert.ToHexString(bytes);

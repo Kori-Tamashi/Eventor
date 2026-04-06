@@ -46,23 +46,9 @@ public abstract class ApiControllerBase : ControllerBase
         EventNotFoundException => NotFound(),
         DayNotFoundException => NotFound(),
         FeedbackNotFoundException => NotFound(),
+        RegistrationNotFoundException => NotFound(),
         DayConflictException => Conflict(),
-        RegistrationServiceException when IsConflictMessage(exception.Message) => Conflict(),
-        RegistrationServiceException when IsNotFoundMessage(exception.Message) => NotFound(),
-        FeedbackServiceException when IsConflictMessage(exception.Message) => Conflict(),
-        FeedbackServiceException when IsNotFoundMessage(exception.Message) => NotFound(),
-        MenuServiceException when IsConflictMessage(exception.Message) => Conflict(),
-        MenuServiceException when IsNotFoundMessage(exception.Message) => NotFound(),
+        RegistrationAlreadyExistsException => Conflict(),
         _ => StatusCode(StatusCodes.Status500InternalServerError)
     };
-
-    private static bool IsNotFoundMessage(string message) =>
-        message.Contains("not found", StringComparison.OrdinalIgnoreCase)
-        || message.Contains("was not found", StringComparison.OrdinalIgnoreCase)
-        || message.Contains("not in menu", StringComparison.OrdinalIgnoreCase);
-
-    private static bool IsConflictMessage(string message) =>
-        message.Contains("already", StringComparison.OrdinalIgnoreCase)
-        || message.Contains("exists", StringComparison.OrdinalIgnoreCase)
-        || message.Contains("duplicate", StringComparison.OrdinalIgnoreCase);
 }
