@@ -7,6 +7,10 @@
   margin-bottom: var(--space-4);
 }
 
+.drawer-topbar--subview {
+  justify-content: flex-start;
+}
+
 .drawer-nav-btn.p-button {
   background: transparent !important;
   border: 0 !important;
@@ -31,6 +35,11 @@
 .drawer-nav-btn.p-button:focus .p-button-icon,
 .drawer-nav-btn.p-button:focus-visible .p-button-icon {
   color: var(--eventor-text) !important;
+}
+
+.drawer-parent-caption {
+  font-size: var(--text-body);
+  color: var(--eventor-muted);
 }
 
 .drawer-header {
