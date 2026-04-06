@@ -64,7 +64,7 @@ jobs:
         run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
 
       - name: Run backend application and apply migrations
-        run: docker exec -d backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" && sleep 10
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" && sleep 10
 
       - name: Verify that __EFMigrationsHistory table exists
         run: |
@@ -212,7 +212,7 @@ jobs:
           fi
       
       - name: Run unit tests
-        run: docker exec -e JWT_KEY=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Unit" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Unit" --verbosity=normal
 
   integration-tests-backend:
     name: Running backend integration tests
@@ -263,7 +263,7 @@ jobs:
           fi
       
       - name: Run integration tests
-        run: docker exec -e JWT_KEY=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Integration" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Integration" --verbosity=normal
 
   e2e-tests-backend:
     name: Running backend end-to-end tests
@@ -314,7 +314,7 @@ jobs:
           fi
       
       - name: Run E2E tests
-        run: docker exec -e JWT_KEY=${{ secrets.JWT_KEY }}backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
 
   run-backend:
     name: Running backend
@@ -366,7 +366,7 @@ jobs:
 
       - name: Run backend
         run: |
-          docker exec -e JWT_KEY=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
           sleep 15
 
       - name: Check backend API availability
