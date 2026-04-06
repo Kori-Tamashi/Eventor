@@ -501,3 +501,46 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 .event-drawer .ui-drawer-table.p-datatable .p-datatable-tbody > tr {
   height: auto !important;
 }
+
+/* =========================
+   Base inputs (reusable)
+   ========================= */
+
+.ui-input.p-inputtext,
+.ui-input.p-inputtextarea,
+.p-password .ui-input.p-inputtext {
+  height: var(--control-height);
+  width: 100%;
+
+  padding: 0 14px;
+
+  background: var(--eventor-surface) !important;
+  border: 1px solid var(--eventor-border) !important;
+  border-radius: var(--radius-sm) !important;
+
+  color: var(--eventor-text) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.ui-input.p-inputtext::placeholder,
+.ui-input.p-inputtextarea::placeholder,
+.p-password .ui-input.p-inputtext::placeholder {
+  color: var(--eventor-muted) !important;
+}
+
+.ui-input.p-inputtext:hover,
+.ui-input.p-inputtextarea:hover,
+.p-password .ui-input.p-inputtext:hover {
+  border-color: var(--eventor-hover-border) !important;
+}
+
+.ui-input.p-inputtext:focus,
+.ui-input.p-inputtext:focus-visible,
+.ui-input.p-inputtextarea:focus,
+.ui-input.p-inputtextarea:focus-visible,
+.p-password .ui-input.p-inputtext:focus,
+.p-password .ui-input.p-inputtext:focus-visible {
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+}
