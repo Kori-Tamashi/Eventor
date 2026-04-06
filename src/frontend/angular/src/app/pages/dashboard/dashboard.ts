@@ -1,7 +1,9 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule} from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
+import { buildMockEventDetailsDrawerContext } from '../../shared/event-details-drawer/event-details-drawer.mock';
 
 type DashboardRow = {
   name: string;
@@ -18,9 +20,9 @@ type DashboardRow = {
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
+  private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
 
   readonly pageSize = signal<number>(9);
-
   readonly pageIndex = signal<number>(0);
 
   readonly allRows = signal<DashboardRow[]>([
@@ -71,15 +73,24 @@ export class Dashboard {
   });
 
   prevPage(): void {
-    if (!this.canPrev())
+    if (!this.canPrev()) {
       return;
+    }
+
     this.pageIndex.update((v) => v - 1);
   }
 
   nextPage(): void {
-    if (!this.canNext())
+    if (!this.canNext()) {
       return;
+    }
+
     this.pageIndex.update((v) => v + 1);
   }
 
+  openDetails(row: DashboardRow): void {
+    this.eventDetailsDrawerStore.open(
+      buildMockEventDetailsDrawerContext(row.name, 'dashboard', 'user')
+    );
+  }
 }

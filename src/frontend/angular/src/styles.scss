@@ -18,6 +18,9 @@
   --sidebar-bg: #f1f5f9;
   --sidebar-stroke: #f1f5f9;
 
+  --rating-star-empty: #cbd5e1;
+  --rating-star-active: #f59e0b;
+
   --text-h1: 24px;
   --text-h2: 20px;
   --text-h3: 18px;
@@ -356,7 +359,6 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   overflow: hidden !important;
 }
 
-.p-drawer.event-drawer .p-drawer-header,
 .p-drawer.event-drawer .p-drawer-content {
   background: var(--eventor-surface) !important;
   color: var(--eventor-text) !important;
@@ -559,11 +561,11 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 }
 
 .review-rating .p-rating-icon {
-  color: #cbd5e1 !important;
+  color: var(--rating-star-empty) !important;
 }
 
 .review-rating .p-rating-option-active .p-rating-icon {
-  color: #f59e0b !important;
+  color: var(--rating-star-active) !important;
 }
 
 .p-drawer.event-drawer .p-drawer-header {

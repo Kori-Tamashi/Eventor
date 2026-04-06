@@ -1,0 +1,23 @@
+<div class="drawer-subview">
+  <app-drawer-card title="Участники мероприятия" variant="table">
+    <p-table [value]="participants()" styleClass="ui-table ui-drawer-table ui-participants-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Имя</th>
+          <th>Оплата</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>
+            <span [class]="paymentBadgeClass(row.payment)">
+              {{ row.payment }}
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </app-drawer-card>
+</div>

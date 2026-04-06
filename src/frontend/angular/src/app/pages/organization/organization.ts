@@ -1,13 +1,9 @@
-import { Component, computed, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, inject, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
-import { DrawerModule } from 'primeng/drawer';
-import { TabsModule } from 'primeng/tabs';
-import { TextareaModule } from 'primeng/textarea';
-import { RatingModule } from 'primeng/rating';
-import { DrawerCard } from '../../shared/drawer-card/drawer-card';
+import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
+import { buildMockEventDetailsDrawerContext } from '../../shared/event-details-drawer/event-details-drawer.mock';
 
 type OrganizationEventRow = {
   name: string;
@@ -20,42 +16,16 @@ type OrganizationEventRow = {
   rating: number;
 };
 
-type ParticipantRow = {
-  name: string;
-  payment: 'Оплачено' | 'Не оплачено';
-};
-
-type DayRow = {
-  name: string;
-  price: string;
-  participants: number;
-  participantRows: ParticipantRow[];
-};
-
-type ReviewRow = {
-  person: string;
-  comment: string;
-  rating: number;
-};
-
 @Component({
   selector: 'app-organization',
   standalone: true,
-  imports: [
-    FormsModule,
-    InputTextModule,
-    ButtonModule,
-    TableModule,
-    DrawerModule,
-    TabsModule,
-    TextareaModule,
-    RatingModule,
-    DrawerCard
-  ],
+  imports: [InputTextModule, ButtonModule, TableModule],
   templateUrl: './organization.html',
   styleUrl: './organization.scss',
 })
 export class Organization {
+  private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
+
   readonly pageSize = signal<number>(10);
   readonly pageIndex = signal<number>(0);
 
@@ -72,99 +42,6 @@ export class Organization {
     { name: 'Название', location: 'Локация', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, markup: 0, rating: 0 },
     { name: 'Название', location: 'Локация', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, markup: 0, rating: 0 },
   ]);
-
-  readonly dayRows = signal<DayRow[]>([
-    {
-      name: 'День 1 - Название',
-      price: 'N',
-      participants: 4,
-      participantRows: [
-        { name: 'Участник 1', payment: 'Оплачено' },
-        { name: 'Участник 2', payment: 'Оплачено' },
-        { name: 'Участник 3', payment: 'Не оплачено' },
-        { name: 'Участник 4', payment: 'Оплачено' },
-      ],
-    },
-    {
-      name: 'День 2 - Название',
-      price: 'N',
-      participants: 4,
-      participantRows: [
-        { name: 'Участник 1', payment: 'Оплачено' },
-        { name: 'Участник 2', payment: 'Не оплачено' },
-        { name: 'Участник 3', payment: 'Оплачено' },
-        { name: 'Участник 4', payment: 'Оплачено' },
-        { name: 'Участник 5', payment: 'Не оплачено' },
-        { name: 'Участник 6', payment: 'Оплачено' },
-      ],
-    },
-    {
-      name: 'День 3 - Название',
-      price: 'N',
-      participants: 4,
-      participantRows: [
-        { name: 'Участник 1', payment: 'Оплачено' },
-        { name: 'Участник 2', payment: 'Оплачено' },
-        { name: 'Участник 3', payment: 'Не оплачено' },
-      ],
-    },
-  ]);
-
-  readonly reviewMaxLen = 250;
-
-  readonly currentUsername = signal<string>('Username');
-  readonly reviewText = signal<string>('');
-  readonly reviewRating = signal<number>(0);
-
-  readonly reviewCountLabel = computed(() => `${this.reviewText().length}/${this.reviewMaxLen}`);
-
-  readonly canSaveReview = computed(() => {
-    return this.reviewText().trim().length > 0 && this.reviewRating() > 0;
-  });
-
-  readonly reviewRows = signal<ReviewRow[]>([
-    { person: 'Александр', comment: 'Хорошая организация, всё прошло по плану.', rating: 5 },
-    { person: 'Мария', comment: 'Понравилась программа и общее сопровождение мероприятия.', rating: 4 },
-    { person: 'Иван', comment: 'Удобная логистика и понятное расписание.', rating: 5 },
-  ]);
-
-  readonly drawerOpen = signal<boolean>(false);
-  readonly selectedRow = signal<OrganizationEventRow | null>(null);
-  readonly selectedDayRow = signal<DayRow | null>(null);
-
-  readonly dayParticipantsOpen = computed(() => this.selectedDayRow() !== null);
-
-  readonly selectedDayParticipants = computed(() => {
-    return this.selectedDayRow()?.participantRows ?? [];
-  });
-
-  onReviewInput(value: string): void {
-    this.reviewText.set(value.slice(0, this.reviewMaxLen));
-  }
-
-  onReviewRatingChange(value: number): void {
-    this.reviewRating.set(value ?? 0);
-  }
-
-  cancelReview(): void {
-    this.reviewText.set('');
-    this.reviewRating.set(0);
-  }
-
-  saveReview(): void {
-    if (!this.canSaveReview()) {
-      return;
-    }
-
-    const newReview: ReviewRow = {
-      person: this.currentUsername(),
-      comment: this.reviewText().trim(),
-      rating: this.reviewRating(),
-    };
-
-    this.reviewRows.update((rows) => [newReview, ...rows]);
-    this.cancelReview();
-  }
 
   private readonly paginationState = computed(() => {
     const all = this.allRows();
@@ -216,37 +93,8 @@ export class Organization {
   }
 
   openDetails(row: OrganizationEventRow): void {
-    this.selectedRow.set(row);
-    this.selectedDayRow.set(null);
-    this.drawerOpen.set(true);
-  }
-
-  openDayParticipants(dayRow: DayRow): void {
-    this.selectedDayRow.set(dayRow);
-  }
-
-  closeDayParticipants(): void {
-    this.selectedDayRow.set(null);
-  }
-
-  closeDetails(): void {
-    this.drawerOpen.set(false);
-    this.selectedRow.set(null);
-    this.selectedDayRow.set(null);
-  }
-
-  onDrawerVisibleChange(visible: boolean): void {
-    if (!visible) {
-      this.closeDetails();
-      return;
-    }
-
-    this.drawerOpen.set(true);
-  }
-
-  paymentBadgeClass(payment: ParticipantRow['payment']): string {
-    return payment === 'Оплачено'
-      ? 'ui-status-badge ui-status-badge--paid'
-      : 'ui-status-badge ui-status-badge--unpaid';
+    this.eventDetailsDrawerStore.open(
+      buildMockEventDetailsDrawerContext(row.name, 'organization', 'user')
+    );
   }
 }

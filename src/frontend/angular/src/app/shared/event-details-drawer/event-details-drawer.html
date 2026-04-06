@@ -1,0 +1,79 @@
+<p-drawer
+  position="right"
+  [visible]="drawerOpen()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer"
+>
+  <div
+    class="drawer-topbar"
+    [class.drawer-topbar--subview]="dayParticipantsOpen()"
+  >
+    @if (dayParticipantsOpen()) {
+      <button
+        pButton
+        type="button"
+        class="ui-icon-btn drawer-nav-btn"
+        aria-label="Back"
+        (click)="closeDayParticipants()"
+      >
+        <span pButtonIcon class="pi pi-arrow-left"></span>
+      </button>
+
+      <div class="drawer-parent-caption">
+        {{ parentTitle() }}
+      </div>
+    } @else {
+      <button
+        pButton
+        type="button"
+        class="ui-icon-btn drawer-nav-btn"
+        aria-label="Close"
+        (click)="close()"
+      >
+        <span pButtonIcon class="pi pi-times"></span>
+      </button>
+    }
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">{{ drawerTitle() }}</div>
+  </div>
+
+  @if (!dayParticipantsOpen()) {
+    <p-tabs value="info">
+      <p-tablist>
+        <p-tab value="info">Информация</p-tab>
+        <p-tab value="reviews">Отзывы</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="info">
+          <app-event-details-info-tab
+            [daysCount]="daysCount()"
+            [participantsCount]="participantsCount()"
+            [dayRows]="dayRows()"
+            (dayParticipantsOpen)="openDayParticipants($event)"
+          ></app-event-details-info-tab>
+        </p-tabpanel>
+
+        <p-tabpanel value="reviews">
+          <app-event-details-reviews-tab
+            [reviewText]="reviewText()"
+            [reviewRating]="reviewRating()"
+            [reviewRows]="reviewRows()"
+            [reviewCountLabel]="reviewCountLabel()"
+            [canSaveReview]="canSaveReview()"
+            (reviewTextChange)="onReviewInput($event)"
+            (reviewRatingChange)="onReviewRatingChange($event)"
+            (reviewCancel)="cancelReview()"
+            (reviewSave)="saveReview()"
+          ></app-event-details-reviews-tab>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  } @else {
+    <app-event-details-day-participants-view
+      [participants]="selectedDayParticipants()"
+    ></app-event-details-day-participants-view>
+  }
+</p-drawer>
