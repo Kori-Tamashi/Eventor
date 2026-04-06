@@ -1,4 +1,16 @@
 <div class="profile-panel">
+  <div class="profile-topbar">
+    <button
+      pButton
+      type="button"
+      class="ui-icon-btn profile-nav-btn"
+      aria-label="Close"
+      (click)="closeDrawer()"
+    >
+      <span pButtonIcon class="pi pi-times"></span>
+    </button>
+  </div>
+
   <header class="profile-panel__header">
     <div>
       <h1 class="profile-panel__title">Профиль</h1>

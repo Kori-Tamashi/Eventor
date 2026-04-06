@@ -1,0 +1,69 @@
+<p-drawer
+  position="right"
+  [visible]="drawerOpen()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer"
+>
+  <div class="drawer-topbar">
+    <button
+      pButton
+      type="button"
+      class="ui-icon-btn drawer-nav-btn"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span pButtonIcon class="pi pi-times"></span>
+    </button>
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">{{ title() }}</div>
+  </div>
+
+  <p-tabs [value]="activeTab()" (valueChange)="onTabValueChange($event)">
+    <p-tablist>
+      <p-tab value="settings">Настройки</p-tab>
+      <p-tab value="days">Дни мероприятия</p-tab>
+      <p-tab value="analytics">Анализ мероприятия</p-tab>
+      <p-tab value="reviews">Отзывы</p-tab>
+    </p-tablist>
+
+    <p-tabpanels>
+      <p-tabpanel value="settings">
+        <div class="drawer-placeholder-card ui-surface">
+          <div class="drawer-placeholder-title">Настройки</div>
+          <div class="drawer-placeholder-text">
+            settings
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <p-tabpanel value="days">
+        <div class="drawer-placeholder-card ui-surface">
+          <div class="drawer-placeholder-title">Дни мероприятия</div>
+          <div class="drawer-placeholder-text">
+            days
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <p-tabpanel value="analytics">
+        <div class="drawer-placeholder-card ui-surface">
+          <div class="drawer-placeholder-title">Анализ мероприятия</div>
+          <div class="drawer-placeholder-text">
+            analytics
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <p-tabpanel value="reviews">
+        <div class="drawer-placeholder-card ui-surface">
+          <div class="drawer-placeholder-title">Отзывы</div>
+          <div class="drawer-placeholder-text">
+            reviews
+          </div>
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</p-drawer>
