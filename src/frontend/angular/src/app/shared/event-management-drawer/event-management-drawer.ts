@@ -9,6 +9,7 @@ import {
   EventManagementDrawerTab,
 } from '../../core/ui/event-management-drawer.store';
 import { EventDetailsReviewsTab } from '../event-details-drawer/sections/event-details-reviews-tab/event-details-reviews-tab';
+import { EventManagementAnalyticsTab } from './sections/event-management-analytics-tab/event-management-analytics-tab';
 import { EventManagementSettingsTab } from './sections/event-management-settings-tab/event-management-settings-tab';
 import { EventManagementDaysTab } from './sections/event-management-days-tab/event-management-days-tab';
 import { EventManagementDayDetailsView } from './sections/event-management-day-details-view/event-management-day-details-view';
@@ -22,6 +23,7 @@ import { EventManagementDayDetailsView } from './sections/event-management-day-d
     TabsModule,
     EventManagementSettingsTab,
     EventManagementDaysTab,
+    EventManagementAnalyticsTab,
     EventManagementDayDetailsView,
     EventDetailsReviewsTab,
   ],

@@ -67,6 +67,11 @@ p-tabpanel > app-event-management-days-tab {
   display: block;
 }
 
+p-tabpanel > app-event-management-analytics-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
 p-tabpanel > .drawer-placeholder-card {
   display: block;
   margin-top: var(--space-4);
