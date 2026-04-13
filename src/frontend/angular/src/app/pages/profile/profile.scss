@@ -108,6 +108,13 @@
   gap: var(--space-3);
 }
 
+.password-grid {
+  margin-top: var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
 .settings-row {
   display: flex;
   align-items: center;
@@ -188,4 +195,15 @@ button.profile-secondary-btn.p-button:focus-visible {
 .profile-nav-btn.p-button:focus .p-button-icon,
 .profile-nav-btn.p-button:focus-visible .p-button-icon {
   color: var(--eventor-text) !important;
+}
+
+@media (max-width: 640px) {
+  .form-grid,
+  .password-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
 }
