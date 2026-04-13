@@ -1,0 +1,125 @@
+<div class="settings-card ui-surface">
+  <div class="settings-form">
+    <div class="settings-field">
+      <div class="settings-label-row">
+        <label class="settings-label" for="eventTitle">Название мероприятия</label>
+        <span class="settings-counter">{{ titleCountLabel() }}</span>
+      </div>
+
+      <input
+        id="eventTitle"
+        pInputText
+        class="ui-input"
+        type="text"
+        [value]="eventTitle()"
+        (input)="onTitleInput(($any($event.target)).value)"
+      />
+    </div>
+
+    <div class="settings-field">
+      <div class="settings-label-row">
+        <label class="settings-label" for="description">Описание</label>
+        <span class="settings-counter">{{ descriptionCountLabel() }}</span>
+      </div>
+
+      <textarea
+        id="description"
+        pTextarea
+        class="ui-input settings-textarea"
+        rows="4"
+        [value]="description()"
+        (input)="onDescriptionInput(($any($event.target)).value)"
+      ></textarea>
+    </div>
+
+    <div class="settings-field">
+      <label class="settings-label" for="location">Локация</label>
+      <input
+        id="location"
+        pInputText
+        class="ui-input"
+        type="text"
+        [value]="location()"
+        (input)="onLocationInput(($any($event.target)).value)"
+      />
+    </div>
+
+    <div class="settings-grid">
+      <div class="settings-field">
+        <label class="settings-label" for="date">Дата</label>
+
+        <div class="settings-date-input">
+          <input
+            id="date"
+            pInputText
+            class="ui-input settings-date-control"
+            type="text"
+            [value]="date()"
+            (input)="onDateInput(($any($event.target)).value)"
+          />
+          <i class="pi pi-calendar settings-date-icon" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="settings-field">
+        <label class="settings-label" for="daysCount">Количество дней</label>
+        <input
+          id="daysCount"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="daysCount()"
+          (input)="onDaysCountInput(($any($event.target)).value)"
+        />
+      </div>
+    </div>
+
+    <div class="settings-grid">
+      <div class="settings-field">
+        <label class="settings-label" for="markup">Наценка</label>
+        <input
+          id="markup"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="markup()"
+          (input)="onMarkupInput(($any($event.target)).value)"
+        />
+      </div>
+
+      <div class="settings-field">
+        <label class="settings-label" for="participantBudget">Бюджет участника</label>
+        <input
+          id="participantBudget"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="participantBudget()"
+          (input)="onParticipantBudgetInput(($any($event.target)).value)"
+        />
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button
+        pButton
+        type="button"
+        class="settings-secondary-btn"
+        aria-label="Cancel"
+        (click)="cancel()"
+      >
+        <span pButtonLabel>Отменить</span>
+      </button>
+
+      <button
+        pButton
+        type="button"
+        class="ui-primary-btn"
+        aria-label="Save"
+        (click)="save()"
+      >
+        <span pButtonLabel>Сохранить</span>
+      </button>
+    </div>
+  </div>
+</div>

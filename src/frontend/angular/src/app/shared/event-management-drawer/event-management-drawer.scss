@@ -1,0 +1,95 @@
+.drawer-topbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--drawer-topbar-padding-top);
+  margin-bottom: var(--space-4);
+}
+
+.drawer-topbar--subview {
+  justify-content: flex-start;
+}
+
+.drawer-nav-btn.p-button {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.drawer-nav-btn.p-button:hover,
+.drawer-nav-btn.p-button:active,
+.drawer-nav-btn.p-button:focus,
+.drawer-nav-btn.p-button:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.drawer-nav-btn.p-button .p-button-icon {
+  color: var(--eventor-muted) !important;
+}
+
+.drawer-nav-btn.p-button:hover .p-button-icon,
+.drawer-nav-btn.p-button:active .p-button-icon,
+.drawer-nav-btn.p-button:focus .p-button-icon,
+.drawer-nav-btn.p-button:focus-visible .p-button-icon {
+  color: var(--eventor-text) !important;
+}
+
+.drawer-parent-caption {
+  font-size: var(--text-body);
+  color: var(--eventor-muted);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--eventor-border);
+  margin-bottom: var(--space-4);
+}
+
+.drawer-title {
+  font-size: var(--text-h2);
+  font-weight: var(--font-weight-h2);
+  color: var(--eventor-text);
+}
+
+p-tabpanel > app-event-management-settings-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
+p-tabpanel > app-event-management-days-tab {
+  display: block;
+}
+
+p-tabpanel > app-event-management-analytics-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
+p-tabpanel > .drawer-placeholder-card {
+  display: block;
+  margin-top: var(--space-4);
+}
+
+.drawer-placeholder-card {
+  padding: var(--space-6);
+}
+
+.drawer-placeholder-title {
+  font-size: var(--text-h4);
+  font-weight: var(--font-weight-h4);
+  color: var(--eventor-text);
+}
+
+.drawer-placeholder-text {
+  margin-top: var(--space-2);
+  font-size: var(--text-body);
+  color: var(--eventor-muted);
+  line-height: 1.5;
+}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 
@@ -9,4 +9,10 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
 })
-export class Profile {}
+export class Profile {
+  readonly closeRequested = output<void>();
+
+  closeDrawer(): void {
+    this.closeRequested.emit();
+  }
+}

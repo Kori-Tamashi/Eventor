@@ -29,7 +29,13 @@
             <span pButtonIcon class="pi pi-chevron-right"></span>
           </button>
 
-          <button pButton type="button" class="ui-primary-btn" aria-label="Create event">
+          <button
+            pButton
+            type="button"
+            class="ui-primary-btn"
+            aria-label="Create event"
+            (click)="openCreateEventDrawer()"
+          >
             <span pButtonIcon class="pi pi-plus"></span>
             <span pButtonLabel>Создать мероприятие</span>
           </button>

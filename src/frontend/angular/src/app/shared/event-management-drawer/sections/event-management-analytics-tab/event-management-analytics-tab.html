@@ -1,0 +1,34 @@
+<div class="analytics-content">
+  <app-drawer-card title="Общая информация">
+    <div class="analytics-list">
+      @for (metric of generalMetrics(); track metric.label) {
+        <div class="analytics-row">
+          <div class="analytics-label">{{ metric.label }}</div>
+          <div class="analytics-value">{{ metric.value }}</div>
+        </div>
+      }
+    </div>
+  </app-drawer-card>
+
+  <app-drawer-card title="Ценообразование">
+    <div class="analytics-list">
+      @for (metric of pricingMetrics(); track metric.label) {
+        <div class="analytics-row">
+          <div class="analytics-label">{{ metric.label }}</div>
+          <div class="analytics-value">{{ metric.value }}</div>
+        </div>
+      }
+    </div>
+  </app-drawer-card>
+
+  <app-drawer-card title="Прибыль">
+    <div class="analytics-list">
+      @for (metric of profitMetrics(); track metric.label) {
+        <div class="analytics-row">
+          <div class="analytics-label">{{ metric.label }}</div>
+          <div class="analytics-value">{{ metric.value }}</div>
+        </div>
+      }
+    </div>
+  </app-drawer-card>
+</div>

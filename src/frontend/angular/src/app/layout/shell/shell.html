@@ -17,7 +17,8 @@
   (visibleChange)="profileDrawerOpen.set($event)"
   styleClass="event-drawer profile-drawer"
 >
-  <app-profile></app-profile>
+  <app-profile (closeRequested)="profileDrawerOpen.set(false)"></app-profile>
 </p-drawer>
 
 <app-event-details-drawer></app-event-details-drawer>
+<app-event-management-drawer></app-event-management-drawer>

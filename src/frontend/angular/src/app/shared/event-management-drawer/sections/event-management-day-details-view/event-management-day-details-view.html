@@ -1,0 +1,28 @@
+<p-tabs [value]="activeTab()" (valueChange)="onTabValueChange($event)">
+  <p-tablist>
+    <p-tab value="settings">Настройки</p-tab>
+    <p-tab value="participants">Участники</p-tab>
+    <p-tab value="menu">Меню</p-tab>
+    <p-tab value="analytics">Анализ</p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <p-tabpanel value="settings">
+      <app-event-management-day-settings-tab
+        [initialTitle]="dayTitle()"
+      ></app-event-management-day-settings-tab>
+    </p-tabpanel>
+
+    <p-tabpanel value="participants">
+      <app-event-management-day-participants-tab></app-event-management-day-participants-tab>
+    </p-tabpanel>
+
+    <p-tabpanel value="menu">
+      <app-event-management-day-menu-tab></app-event-management-day-menu-tab>
+    </p-tabpanel>
+
+    <p-tabpanel value="analytics">
+      <app-event-management-day-analytics-tab></app-event-management-day-analytics-tab>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

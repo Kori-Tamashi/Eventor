@@ -1,0 +1,72 @@
+<div class="participants-content">
+  <app-drawer-card title="Участники мероприятия" variant="table">
+    <p-table
+      [value]="participantRows()"
+      styleClass="ui-table ui-drawer-table ui-management-day-participants-table"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Имя</th>
+          <th>Тип</th>
+          <th>Оплата</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>
+            <div class="participants-select-wrap">
+              <select
+                class="participants-select"
+                [value]="row.type"
+                (change)="updateParticipantType(row.id, $any($event.target).value)"
+              >
+                @for (option of participantTypeOptions; track option) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </select>
+              <i class="pi pi-angle-down participants-select-icon" aria-hidden="true"></i>
+            </div>
+          </td>
+          <td>
+            <div class="participants-select-wrap">
+              <select
+                class="participants-select"
+                [value]="row.payment"
+                (change)="updateParticipantPayment(row.id, $any($event.target).value)"
+              >
+                @for (option of paymentOptions; track option) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </select>
+              <i class="pi pi-angle-down participants-select-icon" aria-hidden="true"></i>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </app-drawer-card>
+
+  <div class="participants-actions">
+    <button
+      pButton
+      type="button"
+      class="participants-secondary-btn"
+      aria-label="Cancel"
+      (click)="cancel()"
+    >
+      <span pButtonLabel>Отменить</span>
+    </button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-primary-btn"
+      aria-label="Save"
+      (click)="save()"
+    >
+      <span pButtonLabel>Сохранить</span>
+    </button>
+  </div>
+</div>
