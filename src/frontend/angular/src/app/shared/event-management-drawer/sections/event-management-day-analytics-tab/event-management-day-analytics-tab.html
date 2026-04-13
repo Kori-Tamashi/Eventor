@@ -1,0 +1,10 @@
+<app-drawer-card title="Анализ">
+  <div class="analytics-list">
+    @for (metric of metrics(); track metric.label) {
+      <div class="analytics-row">
+        <div class="analytics-label">{{ metric.label }}</div>
+        <div class="analytics-value">{{ metric.value }}</div>
+      </div>
+    }
+  </div>
+</app-drawer-card>

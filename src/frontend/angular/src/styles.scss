@@ -670,3 +670,53 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
 .event-drawer .ui-management-days-table.p-datatable .p-datatable-tbody > tr > td:last-child {
   width: auto !important;
 }
+
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th:nth-child(1),
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td:nth-child(1) {
+  width: 34% !important;
+}
+
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th:nth-child(2),
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td:nth-child(2),
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th:nth-child(3),
+.event-drawer .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td:nth-child(3) {
+  width: 33% !important;
+}
+
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-thead > tr > th,
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-thead > tr > th:nth-child(1),
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-tbody > tr > td:nth-child(1) {
+  width: 56px !important;
+}
+
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-thead > tr > th:nth-child(2),
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-tbody > tr > td:nth-child(2) {
+  width: auto !important;
+  text-align: left !important;
+}
+
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-thead > tr > th:nth-child(3),
+.event-drawer .ui-management-day-menu-table.p-datatable .p-datatable-tbody > tr > td:nth-child(3) {
+  width: 140px !important;
+}

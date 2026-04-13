@@ -12,6 +12,16 @@ p-tabpanel > app-event-management-day-participants-tab {
   margin-top: var(--space-4);
 }
 
+p-tabpanel > app-event-management-day-menu-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
+p-tabpanel > app-event-management-day-analytics-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
 p-tabpanel > .drawer-placeholder-card {
   display: block;
   margin-top: var(--space-4);
