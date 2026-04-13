@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+.participants-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.participants-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.participants-select {
+  width: 100%;
+  height: var(--control-height);
+  padding: 0 40px 0 14px;
+  border: 1px solid var(--eventor-border);
+  border-radius: var(--radius-sm);
+  background: var(--eventor-surface);
+  color: var(--eventor-text);
+  font-size: var(--text-body);
+  box-shadow: none;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.participants-select:hover {
+  border-color: var(--eventor-hover-border);
+}
+
+.participants-select:focus,
+.participants-select:focus-visible {
+  border-color: var(--eventor-hover-border);
+  box-shadow: none;
+  outline: none;
+}
+
+.participants-select-icon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--eventor-muted);
+  pointer-events: none;
+}
+
+.participants-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.participants-secondary-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  color: var(--eventor-text);
+  box-shadow: none;
+}
+
+button.participants-secondary-btn.p-button:hover,
+button.participants-secondary-btn.p-button:active,
+button.participants-secondary-btn.p-button:focus,
+button.participants-secondary-btn.p-button:focus-visible {
+  background: var(--eventor-hover-surface) !important;
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th,
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th:nth-child(1),
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td:nth-child(1) {
+  width: 34% !important;
+}
+
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th:nth-child(2),
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td:nth-child(2),
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-thead > tr > th:nth-child(3),
+:host ::ng-deep .ui-management-day-participants-table.p-datatable .p-datatable-tbody > tr > td:nth-child(3) {
+  width: 33% !important;
+}

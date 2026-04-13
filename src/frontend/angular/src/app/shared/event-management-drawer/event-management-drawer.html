@@ -72,19 +72,24 @@
           <div class="drawer-placeholder-card ui-surface">
             <div class="drawer-placeholder-title">Анализ мероприятия</div>
             <div class="drawer-placeholder-text">
-              Содержимое этой вкладки будет реализовано на следующем этапе.
+              placeholder
             </div>
           </div>
         </p-tabpanel>
 
         @if (mode() !== 'create') {
           <p-tabpanel value="reviews">
-            <div class="drawer-placeholder-card ui-surface">
-              <div class="drawer-placeholder-title">Отзывы</div>
-              <div class="drawer-placeholder-text">
-                Содержимое этой вкладки будет реализовано на следующем этапе.
-              </div>
-            </div>
+            <app-event-details-reviews-tab
+              [reviewText]="reviewText()"
+              [reviewRating]="reviewRating()"
+              [reviewRows]="reviewRows()"
+              [reviewCountLabel]="reviewCountLabel()"
+              [canSaveReview]="canSaveReview()"
+              (reviewTextChange)="onReviewInput($event)"
+              (reviewRatingChange)="onReviewRatingChange($event)"
+              (reviewCancel)="cancelReview()"
+              (reviewSave)="saveReview()"
+            ></app-event-details-reviews-tab>
           </p-tabpanel>
         }
       </p-tabpanels>

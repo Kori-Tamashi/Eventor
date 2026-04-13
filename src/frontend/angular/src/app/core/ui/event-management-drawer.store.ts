@@ -20,10 +20,18 @@ export type EventManagementDrawerDayRow = {
   participantsCount: string;
 };
 
+export type EventManagementDrawerReview = {
+  person: string;
+  comment: string;
+  rating: number;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class EventManagementDrawerStore {
+  readonly currentUsername = signal<string>('Username');
+
   readonly isOpen = signal<boolean>(false);
   readonly context = signal<EventManagementDrawerContext | null>(null);
   readonly activeTab = signal<EventManagementDrawerTab>('settings');
@@ -32,6 +40,11 @@ export class EventManagementDrawerStore {
 
   readonly selectedDay = signal<EventManagementDrawerDayRow | null>(null);
   readonly dayDetailsActiveTab = signal<EventManagementDrawerDayDetailsTab>('settings');
+
+  readonly reviewMaxLen = 250;
+  readonly reviewText = signal<string>('');
+  readonly reviewRating = signal<number>(0);
+  readonly reviewRows = signal<EventManagementDrawerReview[]>([]);
 
   readonly mode = computed(() => this.context()?.mode ?? 'create');
   readonly source = computed(() => this.context()?.source ?? 'organization');
@@ -51,6 +64,12 @@ export class EventManagementDrawerStore {
 
   readonly dayDetailsTitle = computed(() => {
     return this.selectedDay()?.title ?? 'Название дня';
+  });
+
+  readonly reviewCountLabel = computed(() => `${this.reviewText().length}/${this.reviewMaxLen}`);
+
+  readonly canSaveReview = computed(() => {
+    return this.reviewText().trim().length > 0 && this.reviewRating() > 0;
   });
 
   readonly normalizedDaysCount = computed(() => {
@@ -79,6 +98,9 @@ export class EventManagementDrawerStore {
     this.settingsDaysCount.set('5');
     this.selectedDay.set(null);
     this.dayDetailsActiveTab.set('settings');
+    this.reviewText.set('');
+    this.reviewRating.set(0);
+    this.reviewRows.set(this.buildInitialReviewRows());
     this.isOpen.set(true);
   }
 
@@ -89,6 +111,9 @@ export class EventManagementDrawerStore {
     this.settingsDaysCount.set('5');
     this.selectedDay.set(null);
     this.dayDetailsActiveTab.set('settings');
+    this.reviewText.set('');
+    this.reviewRating.set(0);
+    this.reviewRows.set([]);
   }
 
   onDrawerVisibleChange(visible: boolean): void {
@@ -121,5 +146,53 @@ export class EventManagementDrawerStore {
 
   setDayDetailsActiveTab(tab: EventManagementDrawerDayDetailsTab): void {
     this.dayDetailsActiveTab.set(tab);
+  }
+
+  onReviewInput(value: string): void {
+    this.reviewText.set(value.slice(0, this.reviewMaxLen));
+  }
+
+  onReviewRatingChange(value: number): void {
+    this.reviewRating.set(value ?? 0);
+  }
+
+  cancelReview(): void {
+    this.reviewText.set('');
+    this.reviewRating.set(0);
+  }
+
+  saveReview(): void {
+    if (!this.canSaveReview()) {
+      return;
+    }
+
+    const newReview: EventManagementDrawerReview = {
+      person: this.currentUsername(),
+      comment: this.reviewText().trim(),
+      rating: this.reviewRating(),
+    };
+
+    this.reviewRows.update((rows) => [newReview, ...rows]);
+    this.cancelReview();
+  }
+
+  private buildInitialReviewRows(): EventManagementDrawerReview[] {
+    return [
+      {
+        person: 'Александр',
+        comment: 'Хорошая организация, всё прошло по плану.',
+        rating: 5,
+      },
+      {
+        person: 'Мария',
+        comment: 'Понравилась программа и общее сопровождение мероприятия.',
+        rating: 4,
+      },
+      {
+        person: 'Иван',
+        comment: 'Удобная логистика и понятное расписание.',
+        rating: 5,
+      },
+    ];
   }
 }

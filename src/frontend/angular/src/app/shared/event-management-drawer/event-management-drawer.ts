@@ -8,6 +8,7 @@ import {
   EventManagementDrawerDayRow,
   EventManagementDrawerTab,
 } from '../../core/ui/event-management-drawer.store';
+import { EventDetailsReviewsTab } from '../event-details-drawer/sections/event-details-reviews-tab/event-details-reviews-tab';
 import { EventManagementSettingsTab } from './sections/event-management-settings-tab/event-management-settings-tab';
 import { EventManagementDaysTab } from './sections/event-management-days-tab/event-management-days-tab';
 import { EventManagementDayDetailsView } from './sections/event-management-day-details-view/event-management-day-details-view';
@@ -22,6 +23,7 @@ import { EventManagementDayDetailsView } from './sections/event-management-day-d
     EventManagementSettingsTab,
     EventManagementDaysTab,
     EventManagementDayDetailsView,
+    EventDetailsReviewsTab,
   ],
   templateUrl: './event-management-drawer.html',
   styleUrl: './event-management-drawer.scss',
@@ -39,6 +41,11 @@ export class EventManagementDrawer {
   readonly dayDetailsOpen = this.store.dayDetailsOpen;
   readonly dayDetailsTitle = this.store.dayDetailsTitle;
   readonly dayDetailsActiveTab = this.store.dayDetailsActiveTab;
+  readonly reviewText = this.store.reviewText;
+  readonly reviewRating = this.store.reviewRating;
+  readonly reviewRows = this.store.reviewRows;
+  readonly reviewCountLabel = this.store.reviewCountLabel;
+  readonly canSaveReview = this.store.canSaveReview;
 
   onDrawerVisibleChange(visible: boolean): void {
     this.store.onDrawerVisibleChange(visible);
@@ -77,5 +84,21 @@ export class EventManagementDrawer {
 
   onDayDetailsTabChange(tab: EventManagementDrawerDayDetailsTab): void {
     this.store.setDayDetailsActiveTab(tab);
+  }
+
+  onReviewInput(value: string): void {
+    this.store.onReviewInput(value);
+  }
+
+  onReviewRatingChange(value: number): void {
+    this.store.onReviewRatingChange(value);
+  }
+
+  cancelReview(): void {
+    this.store.cancelReview();
+  }
+
+  saveReview(): void {
+    this.store.saveReview();
   }
 }
