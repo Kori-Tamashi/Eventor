@@ -1,5 +1,17 @@
 <div class="settings-card ui-surface">
   <div class="settings-form">
+    @if (errorMessage()) {
+      <div class="ui-feedback-message ui-feedback-message--error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="ui-feedback-message">
+        {{ successMessage() }}
+      </div>
+    }
+
     <div class="settings-field">
       <div class="settings-label-row">
         <label class="settings-label" for="eventTitle">Название мероприятия</label>
@@ -34,14 +46,19 @@
 
     <div class="settings-field">
       <label class="settings-label" for="location">Локация</label>
-      <input
-        id="location"
-        pInputText
-        class="ui-input"
-        type="text"
-        [value]="location()"
-        (input)="onLocationInput(($any($event.target)).value)"
-      />
+      <div class="ui-select-wrap">
+        <select
+          id="location"
+          class="ui-input ui-select"
+          [value]="locationId()"
+          (change)="onLocationInput(($any($event.target)).value)"
+        >
+          @for (location of locations(); track location.id) {
+            <option [value]="location.id">{{ location.title }}</option>
+          }
+        </select>
+        <i class="pi pi-chevron-down ui-select-icon" aria-hidden="true"></i>
+      </div>
     </div>
 
     <div class="settings-grid">
@@ -53,7 +70,7 @@
             id="date"
             pInputText
             class="ui-input settings-date-control"
-            type="text"
+            type="date"
             [value]="date()"
             (input)="onDateInput(($any($event.target)).value)"
           />
@@ -68,7 +85,7 @@
           pInputText
           class="ui-input"
           type="text"
-          [value]="daysCount()"
+          [value]="daysCountValue()"
           (input)="onDaysCountInput(($any($event.target)).value)"
         />
       </div>
@@ -84,18 +101,6 @@
           type="text"
           [value]="markup()"
           (input)="onMarkupInput(($any($event.target)).value)"
-        />
-      </div>
-
-      <div class="settings-field">
-        <label class="settings-label" for="participantBudget">Бюджет участника</label>
-        <input
-          id="participantBudget"
-          pInputText
-          class="ui-input"
-          type="text"
-          [value]="participantBudget()"
-          (input)="onParticipantBudgetInput(($any($event.target)).value)"
         />
       </div>
     </div>
@@ -116,10 +121,10 @@
         type="button"
         class="ui-primary-btn"
         aria-label="Save"
+        [disabled]="isSaving()"
         (click)="save()"
       >
-        <span pButtonLabel>Сохранить</span>
+        <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить' }}</span>
       </button>
     </div>
-  </div>
 </div>

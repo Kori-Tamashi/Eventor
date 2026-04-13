@@ -40,37 +40,47 @@
   </div>
 
   @if (!dayParticipantsOpen()) {
-    <p-tabs value="info">
-      <p-tablist>
-        <p-tab value="info">Информация</p-tab>
-        <p-tab value="reviews">Отзывы</p-tab>
-      </p-tablist>
+    @if (isLoading()) {
+      <div class="ui-feedback-message">Загрузка деталей мероприятия...</div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="ui-feedback-message ui-feedback-message--error">
+          {{ errorMessage() }}
+        </div>
+      }
 
-      <p-tabpanels>
-        <p-tabpanel value="info">
-          <app-event-details-info-tab
-            [daysCount]="daysCount()"
-            [participantsCount]="participantsCount()"
-            [dayRows]="dayRows()"
-            (dayParticipantsOpen)="openDayParticipants($event)"
-          ></app-event-details-info-tab>
-        </p-tabpanel>
+      <p-tabs value="info">
+        <p-tablist>
+          <p-tab value="info">Информация</p-tab>
+          <p-tab value="reviews">Отзывы</p-tab>
+        </p-tablist>
 
-        <p-tabpanel value="reviews">
-          <app-event-details-reviews-tab
-            [reviewText]="reviewText()"
-            [reviewRating]="reviewRating()"
-            [reviewRows]="reviewRows()"
-            [reviewCountLabel]="reviewCountLabel()"
-            [canSaveReview]="canSaveReview()"
-            (reviewTextChange)="onReviewInput($event)"
-            (reviewRatingChange)="onReviewRatingChange($event)"
-            (reviewCancel)="cancelReview()"
-            (reviewSave)="saveReview()"
-          ></app-event-details-reviews-tab>
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
+        <p-tabpanels>
+          <p-tabpanel value="info">
+            <app-event-details-info-tab
+              [daysCount]="daysCount()"
+              [participantsCount]="participantsCount()"
+              [dayRows]="dayRows()"
+              (dayParticipantsOpen)="openDayParticipants($event)"
+            ></app-event-details-info-tab>
+          </p-tabpanel>
+
+          <p-tabpanel value="reviews">
+            <app-event-details-reviews-tab
+              [reviewText]="reviewText()"
+              [reviewRating]="reviewRating()"
+              [reviewRows]="reviewRows()"
+              [reviewCountLabel]="reviewCountLabel()"
+              [canSaveReview]="canSaveReview()"
+              (reviewTextChange)="onReviewInput($event)"
+              (reviewRatingChange)="onReviewRatingChange($event)"
+              (reviewCancel)="cancelReview()"
+              (reviewSave)="saveReview()"
+            ></app-event-details-reviews-tab>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    }
   } @else {
     <app-event-details-day-participants-view
       [participants]="selectedDayParticipants()"

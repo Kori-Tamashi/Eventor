@@ -10,6 +10,12 @@ import { LocationApiModel } from '../models/location.models';
 export class LocationsApiService {
   private readonly locationsService = inject(LocationsService);
 
+  listLocations(titleContains?: string): Observable<LocationApiModel[]> {
+    return this.locationsService.getApiV1Locations({
+      titleContains,
+    }) as Observable<LocationApiModel[]>;
+  }
+
   getLocation(locationId: string): Observable<LocationApiModel> {
     return this.locationsService.getApiV1Locations1({ locationId }) as Observable<LocationApiModel>;
   }

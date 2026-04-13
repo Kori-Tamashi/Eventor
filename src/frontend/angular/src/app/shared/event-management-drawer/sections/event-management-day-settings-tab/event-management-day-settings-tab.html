@@ -1,5 +1,17 @@
 <div class="day-settings-card ui-surface">
   <div class="day-settings-form">
+    @if (errorMessage()) {
+      <div class="ui-feedback-message ui-feedback-message--error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="ui-feedback-message">
+        {{ successMessage() }}
+      </div>
+    }
+
     <div class="day-settings-field">
       <div class="day-settings-label-row">
         <label class="day-settings-label" for="dayTitle">Название дня</label>
@@ -48,9 +60,10 @@
         type="button"
         class="ui-primary-btn"
         aria-label="Save"
+        [disabled]="isSaving()"
         (click)="save()"
       >
-        <span pButtonLabel>Сохранить</span>
+        <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить' }}</span>
       </button>
     </div>
   </div>

@@ -26,6 +26,8 @@ export class EventDetailsDrawer {
   readonly store = inject(EventDetailsDrawerStore);
 
   readonly drawerOpen = this.store.isOpen;
+  readonly isLoading = this.store.isLoading;
+  readonly errorMessage = this.store.errorMessage;
   readonly dayParticipantsOpen = this.store.dayParticipantsOpen;
   readonly drawerTitle = this.store.drawerTitle;
   readonly parentTitle = this.store.parentTitle;

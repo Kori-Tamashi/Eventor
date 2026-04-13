@@ -22,8 +22,14 @@ import { EventManagementDaySettingsTab } from '../event-management-day-settings-
 export class EventManagementDayDetailsView {
   readonly activeTab = input.required<EventManagementDrawerDayDetailsTab>();
   readonly dayTitle = input.required<string>();
+  readonly dayDescription = input<string>('');
+  readonly isSaving = input<boolean>(false);
+  readonly errorMessage = input<string>('');
+  readonly successMessage = input<string>('');
 
   readonly tabChange = output<EventManagementDrawerDayDetailsTab>();
+  readonly saveDay = output<{ title: string; description: string }>();
+  readonly cancelDay = output<void>();
 
   onTabValueChange(value: string | number | undefined): void {
     if (
@@ -34,5 +40,13 @@ export class EventManagementDayDetailsView {
     ) {
       this.tabChange.emit(value);
     }
+  }
+
+  onSaveDay(payload: { title: string; description: string }): void {
+    this.saveDay.emit(payload);
+  }
+
+  onCancelDay(): void {
+    this.cancelDay.emit();
   }
 }

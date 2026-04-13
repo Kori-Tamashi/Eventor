@@ -10,6 +10,12 @@
     <p-tabpanel value="settings">
       <app-event-management-day-settings-tab
         [initialTitle]="dayTitle()"
+        [initialDescription]="dayDescription()"
+        [isSaving]="isSaving()"
+        [errorMessage]="errorMessage()"
+        [successMessage]="successMessage()"
+        (saveRequested)="onSaveDay($event)"
+        (cancelRequested)="onCancelDay()"
       ></app-event-management-day-settings-tab>
     </p-tabpanel>
 

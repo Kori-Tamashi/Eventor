@@ -34,15 +34,27 @@ export class EventManagementDrawer {
   readonly store = inject(EventManagementDrawerStore);
 
   readonly drawerOpen = this.store.isOpen;
+  readonly isLoading = this.store.isLoading;
+  readonly errorMessage = this.store.errorMessage;
+  readonly successMessage = this.store.successMessage;
   readonly title = this.store.title;
   readonly activeTab = this.store.activeTab;
+  readonly eventTitle = this.store.eventTitle;
+  readonly eventDescription = this.store.eventDescription;
+  readonly eventLocationId = this.store.eventLocationId;
+  readonly eventStartDate = this.store.eventStartDate;
   readonly settingsDaysCount = this.store.settingsDaysCount;
+  readonly eventMarkup = this.store.eventMarkup;
+  readonly locationOptions = this.store.locationOptions;
+  readonly isSavingSettings = this.store.isSavingSettings;
   readonly dayRows = this.store.dayRows;
   readonly mode = this.store.mode;
 
   readonly dayDetailsOpen = this.store.dayDetailsOpen;
   readonly dayDetailsTitle = this.store.dayDetailsTitle;
+  readonly selectedDay = this.store.selectedDay;
   readonly dayDetailsActiveTab = this.store.dayDetailsActiveTab;
+  readonly isSavingDay = this.store.isSavingDay;
   readonly reviewText = this.store.reviewText;
   readonly reviewRating = this.store.reviewRating;
   readonly reviewRows = this.store.reviewRows;
@@ -76,6 +88,34 @@ export class EventManagementDrawer {
     this.store.setSettingsDaysCount(value);
   }
 
+  onEventTitleChange(value: string): void {
+    this.store.setEventTitle(value);
+  }
+
+  onEventDescriptionChange(value: string): void {
+    this.store.setEventDescription(value);
+  }
+
+  onEventLocationIdChange(value: string): void {
+    this.store.setEventLocationId(value);
+  }
+
+  onEventStartDateChange(value: string): void {
+    this.store.setEventStartDate(value);
+  }
+
+  onEventMarkupChange(value: string): void {
+    this.store.setEventMarkup(value);
+  }
+
+  cancelSettings(): void {
+    this.store.cancelSettings();
+  }
+
+  saveSettings(): void {
+    this.store.saveSettings();
+  }
+
   openDayDetails(day: EventManagementDrawerDayRow): void {
     this.store.openDayDetails(day);
   }
@@ -86,6 +126,14 @@ export class EventManagementDrawer {
 
   onDayDetailsTabChange(tab: EventManagementDrawerDayDetailsTab): void {
     this.store.setDayDetailsActiveTab(tab);
+  }
+
+  saveSelectedDay(payload: { title: string; description: string }): void {
+    this.store.saveSelectedDay(payload);
+  }
+
+  cancelSelectedDay(): void {
+    this.store.cancelSelectedDay();
   }
 
   onReviewInput(value: string): void {
