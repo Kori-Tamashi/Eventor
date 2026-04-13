@@ -8,29 +8,48 @@
       [formGroup]="authForm"
       (submit)="onSubmit($event)"
     >
+      @if (isRegisterMode()) {
+        <div class="auth-field">
+          <label class="auth-label" for="name">Имя пользователя</label>
+          <input
+            id="name"
+            pInputText
+            class="ui-input"
+            type="text"
+            formControlName="name"
+            autocomplete="username"
+          />
+        </div>
+      }
+
       <div class="auth-field">
-        <label class="auth-label" for="username">Имя пользователя</label>
+        <label class="auth-label" for="phone">Номер телефона</label>
         <input
-          id="username"
+          id="phone"
           pInputText
           class="ui-input"
           type="text"
-          formControlName="username"
-          autocomplete="username"
+          formControlName="phone"
+          autocomplete="tel"
         />
       </div>
 
       @if (isRegisterMode()) {
         <div class="auth-field">
-          <label class="auth-label" for="phone">Номер телефона</label>
-          <input
-            id="phone"
-            pInputText
-            class="ui-input"
-            type="text"
-            formControlName="phone"
-            autocomplete="tel"
-          />
+          <label class="auth-label" for="gender">Пол</label>
+
+          <div class="ui-select-wrap">
+            <select
+              id="gender"
+              class="ui-select"
+              formControlName="gender"
+            >
+              @for (option of genderOptions; track option.value) {
+                <option [ngValue]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <i class="pi pi-angle-down ui-select-icon" aria-hidden="true"></i>
+          </div>
         </div>
       }
 
@@ -77,13 +96,20 @@
         </div>
       }
 
+      @if (errorMessage()) {
+        <div class="ui-feedback-message ui-feedback-message--error" role="alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
       <button
         pButton
         type="submit"
         class="ui-primary-btn auth-submit"
         [attr.aria-label]="submitLabel()"
+        [disabled]="submitDisabled()"
       >
-        <span pButtonLabel>{{ submitLabel() }}</span>
+        <span pButtonLabel>{{ isSubmitting() ? 'Подождите...' : submitLabel() }}</span>
       </button>
     </form>
 
