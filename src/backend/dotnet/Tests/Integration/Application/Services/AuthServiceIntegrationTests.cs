@@ -1,11 +1,16 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Application.Configuration;
 using Application.Services;
 using DataAccess.Repositories;
 using Domain.Enums;
 using Domain.Filters;
 using Eventor.Services.Exceptions;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging.Abstractions;
 using Tests.Core.DatabaseIntegration;
 using Tests.Core.Fixtures;
@@ -24,7 +29,16 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
     {
         var logger = NullLogger<UserRepository>.Instance;
         _userRepository = new UserRepository(DbContext!, logger);
-        _authService = new AuthService(_userRepository);
+
+        var jwtOptions = Options.Create(new JwtOptions
+        {
+            Issuer = "Eventor.Tests",
+            Audience = "Eventor.Tests.Client",
+            Key = "IntegrationTests_SuperSecretKey_1234567890",
+            ExpirationMinutes = 60
+        });
+
+        _authService = new AuthService(_userRepository, jwtOptions);
     }
 
     [TestMethod]
@@ -49,7 +63,6 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
         result.PasswordHash.Should().NotBe(password);
         result.PasswordHash.Should().NotBeNullOrEmpty();
 
-        // Проверка, что пользователь действительно сохранён в БД
         var savedUser = await _userRepository.GetByIdAsync(result.Id);
         savedUser.Should().NotBeNull();
         savedUser!.Phone.Should().Be(phone);
@@ -70,12 +83,14 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
             await _authService.RegisterAsync("New User", phone, Gender.Male, "password");
 
         // Assert
-        await act.Should().ThrowAsync<UserLoginAlreadyExistsException>()
-            .WithMessage($"User with phone '{phone}' already exists.");
+        var exception = await act.Should().ThrowAsync<AuthServiceException>()
+            .WithMessage("Failed to register user.");
+        exception.Which.InnerException.Should().BeOfType<UserLoginAlreadyExistsException>()
+            .Which.Message.Should().Be($"User with phone '{phone}' already exists.");
     }
 
     [TestMethod]
-    public async Task LoginAsync_ShouldReturnToken_WhenCredentialsValid()
+    public async Task LoginAsync_ShouldReturnJwtToken_WhenCredentialsValid()
     {
         // Arrange
         var phone = "+1111111111";
@@ -87,9 +102,15 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
 
         // Assert
         token.Should().NotBeNullOrEmpty();
-        // Токен — это Base64 от Guid, поэтому проверим, что его можно декодировать
-        var bytes = Convert.FromBase64String(token);
-        bytes.Length.Should().Be(16); // Guid имеет 16 байт
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        tokenHandler.CanReadToken(token).Should().BeTrue();
+
+        var jwt = tokenHandler.ReadJwtToken(token);
+        jwt.Claims.Should().Contain(c => c.Type == ClaimTypes.NameIdentifier);
+        jwt.Claims.Should().Contain(c => c.Type == ClaimTypes.Name);
+        jwt.Claims.Should().Contain(c => c.Type == ClaimTypes.Role);
+        jwt.Claims.First(c => c.Type == ClaimTypes.Name).Value.Should().Be("Login User");
     }
 
     [TestMethod]
@@ -103,8 +124,10 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
         Func<Task> act = async () => await _authService.LoginAsync(phone, password);
 
         // Assert
-        await act.Should().ThrowAsync<UserLoginNotFoundException>()
-            .WithMessage($"User with phone '{phone}' not found.");
+        var exception = await act.Should().ThrowAsync<AuthServiceException>()
+            .WithMessage("Failed to login user.");
+        exception.Which.InnerException.Should().BeOfType<UserLoginNotFoundException>()
+            .Which.Message.Should().Be($"User with phone '{phone}' not found.");
     }
 
     [TestMethod]
@@ -119,7 +142,9 @@ public class AuthServiceIntegrationTests : DatabaseIntegrationTestBase
         Func<Task> act = async () => await _authService.LoginAsync(phone, "wrongPassword");
 
         // Assert
-        await act.Should().ThrowAsync<IncorrectPasswordException>()
-            .WithMessage("Incorrect password.");
+        var exception = await act.Should().ThrowAsync<AuthServiceException>()
+            .WithMessage("Failed to login user.");
+        exception.Which.InnerException.Should().BeOfType<IncorrectPasswordException>()
+            .Which.Message.Should().Be("Incorrect password.");
     }
 }
