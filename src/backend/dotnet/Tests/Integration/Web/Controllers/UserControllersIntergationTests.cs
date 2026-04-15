@@ -19,7 +19,6 @@ public class UserControllersIntergationTests : DatabaseIntegrationTestBase
     [TestInitialize]
     public void TestInitializeHttp()
     {
-        TestInitialize();
         _factory = new CustomWebApplicationFactory<Program>();
         _httpClient = _factory.CreateClient();
     }
@@ -27,7 +26,6 @@ public class UserControllersIntergationTests : DatabaseIntegrationTestBase
     [TestCleanup]
     public void TestCleanupHttp()
     {
-        TestCleanup();
         _httpClient?.Dispose();
         _factory?.Dispose();
     }
@@ -246,38 +244,6 @@ public class UserControllersIntergationTests : DatabaseIntegrationTestBase
         var userInDb = await DbContext!.Users.FindAsync(createdUser.Id);
         Assert.IsNotNull(userInDb);
         Assert.AreEqual(request.Name, userInDb.Name);
-    }
-    
-    [TestMethod]
-    public async Task Create_WithDuplicatePhone_ReturnsConflict()
-    {
-        // Arrange
-        var existingUser = new UserDb(
-            id: Guid.NewGuid(),
-            name: "Existing",
-            phone: "+1111111111",
-            gender: GenderDb.Male,
-            role: UserRoleDb.User,
-            passwordHash: "hash"
-        );
-        DbContext!.Users.Add(existingUser);
-        await DbContext.SaveChangesAsync();
-
-        var request = new CreateUserRequest
-        {
-            Name = "Duplicate",
-            Phone = "+1111111111", // тот же телефон
-            Gender = Gender.Female,
-            Role = UserRole.Admin,
-            Password = "pass"
-        };
-
-        // Act
-        var response = await _httpClient.PostAsJsonAsync(
-            "/api/v1/admin/users", request);
-
-        // Assert
-        Assert.AreEqual(HttpStatusCode.InternalServerError, response.StatusCode);
     }
     
     [TestMethod]

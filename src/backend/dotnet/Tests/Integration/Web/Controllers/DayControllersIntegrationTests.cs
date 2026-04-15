@@ -18,16 +18,13 @@ public class DayControllersIntegrationTests : DatabaseIntegrationTestBase
     [TestInitialize]
     public void TestInitializeHttp()
     {
-        TestInitialize();
         _factory = new CustomWebApplicationFactory<Program>();
-
         _httpClient = _factory.CreateClient();
     }
 
     [TestCleanup]
     public void TestCleanupHttp()
     {
-        TestCleanup();
         _httpClient?.Dispose();
         _factory?.Dispose();
     }
