@@ -32,8 +32,4 @@
         <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="E2E\" />
-    </ItemGroup>
-
 </Project>
