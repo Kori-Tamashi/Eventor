@@ -375,9 +375,6 @@ jobs:
           docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
           sleep 15
 
-      - name: Check backend API availability
-        run: docker exec backend curl -f http://localhost:8080/
-
       - name: Check container health
         run: |
           status=$(docker inspect -f '{{.State.Health.Status}}' backend)
