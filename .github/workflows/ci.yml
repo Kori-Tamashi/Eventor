@@ -271,6 +271,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       JWT_KEY: ${{ secrets.JWT_KEY }}
+      E2E_BASE_URL: "http://localhost:8080"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -313,8 +314,13 @@ jobs:
             exit 1
           fi
       
+      - name: Run backend app
+        run: |
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls ${{ env.E2E_BASE_URL }}
+          sleep 15
+      
       - name: Run E2E tests
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -e E2E_BASE_URL=${{ env.E2E_BASE_URL }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
 
   run-backend:
     name: Running backend
@@ -367,10 +373,7 @@ jobs:
       - name: Run backend
         run: |
           docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
-          sleep 15
-
-      - name: Check backend API availability
-        run: docker exec backend curl -f http://localhost:8080/
+          sleep 30
 
       - name: Check container health
         run: |

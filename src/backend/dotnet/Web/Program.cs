@@ -67,6 +67,7 @@ builder.Services.AddScoped<ICalculationService, CalculationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHealthChecks();
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.FullName?.Replace("+", ".") ?? type.Name);
@@ -127,6 +128,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Maps for health check
+app.MapHealthChecks("/health");
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -135,3 +139,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
