@@ -2,39 +2,161 @@
   <header class="welcome-header">
     <div class="welcome-header-inner">
       <div class="brand">Eventor</div>
-
-      <div class="actions">
-        <div class="actions">
-          <button
-            pButton
-            type="button"
-            class="welcome-secondary-btn"
-            aria-label="Sign in"
-            [routerLink]="['/auth']"
-            [queryParams]="{ mode: 'login' }"
-          >
-            <span pButtonLabel>Войти</span>
-          </button>
-
-          <button
-            pButton
-            type="button"
-            class="ui-primary-btn"
-            aria-label="Sign up"
-            [routerLink]="['/auth']"
-            [queryParams]="{ mode: 'register' }"
-          >
-            <span pButtonLabel>Зарегистрироваться</span>
-          </button>
-        </div>
+      <div class="header-actions">
+        <button
+          pButton
+          type="button"
+          class="welcome-secondary-btn"
+          aria-label="Sign in"
+          [routerLink]="['/auth']"
+          [queryParams]="{ mode: 'login' }"
+        >
+          <span pButtonLabel>Войти</span>
+        </button>
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn"
+          aria-label="Sign up"
+          [routerLink]="['/auth']"
+          [queryParams]="{ mode: 'register' }"
+        >
+          <span pButtonLabel>Зарегистрироваться</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <main class="welcome-body">
-    <div class="welcome-hero">
-      <h1 class="hero-title">Добро пожаловать в Eventor</h1>
-      <p class="hero-subtitle">Организуйте мероприятия и управляйте участниками в одном месте</p>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge animate-fade-up" style="--delay: 0ms">
+        <i class="pi pi-calendar-plus hero-badge-icon"></i>
+        <span>Платформа для организаторов мероприятий</span>
+      </div>
+
+      <h1 class="hero-title animate-fade-up" style="--delay: 80ms">
+        Организуйте&nbsp;события,<br />управляйте&nbsp;командой
+      </h1>
+
+      <p class="hero-subtitle animate-fade-up" style="--delay: 160ms">
+        Eventor — единое рабочее пространство для планирования мероприятий,
+        учёта участников и отслеживания результатов.
+      </p>
+
+      <div class="hero-cta animate-fade-up" style="--delay: 240ms">
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn hero-cta-primary"
+          aria-label="Get started"
+          [routerLink]="['/auth']"
+          [queryParams]="{ mode: 'register' }"
+        >
+          <span pButtonLabel>Начать бесплатно</span>
+          <i class="pi pi-arrow-right" pButtonIcon iconPos="right"></i>
+        </button>
+        <button
+          pButton
+          type="button"
+          class="welcome-secondary-btn hero-cta-secondary"
+          aria-label="Sign in"
+          [routerLink]="['/auth']"
+          [queryParams]="{ mode: 'login' }"
+        >
+          <span pButtonLabel>Уже есть аккаунт</span>
+        </button>
+      </div>
     </div>
-  </main>
+
+    <div class="hero-visual animate-fade-up" style="--delay: 120ms" aria-hidden="true">
+      <div class="hero-card ui-surface">
+        <div class="hero-card-header">
+          <span class="hero-card-dot hero-card-dot--red"></span>
+          <span class="hero-card-dot hero-card-dot--yellow"></span>
+          <span class="hero-card-dot hero-card-dot--green"></span>
+        </div>
+        <div class="hero-card-body">
+          <div class="mock-row mock-row--header">
+            <div class="mock-cell mock-cell--sm mock-cell--muted">#</div>
+            <div class="mock-cell mock-cell--lg">Мероприятие</div>
+            <div class="mock-cell mock-cell--md">Дата</div>
+            <div class="mock-cell mock-cell--md">Участники</div>
+            <div class="mock-cell mock-cell--md">Статус</div>
+          </div>
+          @for (row of mockRows; track row.id) {
+            <div class="mock-row" [style.--row-delay]="row.delay + 'ms'">
+              <div class="mock-cell mock-cell--sm mock-cell--muted">{{ row.id }}</div>
+              <div class="mock-cell mock-cell--lg">{{ row.name }}</div>
+              <div class="mock-cell mock-cell--md mock-cell--muted">{{ row.date }}</div>
+              <div class="mock-cell mock-cell--md">{{ row.count }}</div>
+              <div class="mock-cell mock-cell--md">
+                <span class="mock-badge" [class]="'mock-badge--' + row.status">
+                  {{ row.statusLabel }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="features-inner">
+      <div class="section-label animate-fade-up" style="--delay: 0ms">Возможности</div>
+      <h2 class="section-title animate-fade-up" style="--delay: 60ms">Всё необходимое в одном месте</h2>
+      <p class="section-subtitle animate-fade-up" style="--delay: 120ms">
+        Инструменты для каждого этапа работы с мероприятием
+      </p>
+
+      <div class="features-grid">
+        @for (feature of features; track feature.icon) {
+          <div class="feature-card ui-surface animate-fade-up" [style.--delay]="feature.delay + 'ms'">
+            <div class="feature-icon-wrap">
+              <i class="pi {{ feature.icon }} feature-icon"></i>
+            </div>
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-desc">{{ feature.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stats-inner">
+      @for (stat of stats; track stat.label) {
+        <div class="stat-item animate-fade-up" [style.--delay]="stat.delay + 'ms'">
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner animate-fade-up" style="--delay: 0ms">
+      <h2 class="cta-title">Готовы начать?</h2>
+      <p class="cta-subtitle">Создайте аккаунт и проведите первое мероприятие уже сегодня</p>
+      <button
+        pButton
+        type="button"
+        class="ui-primary-btn cta-btn"
+        aria-label="Get started"
+        [routerLink]="['/auth']"
+        [queryParams]="{ mode: 'register' }"
+      >
+        <span pButtonLabel>Зарегистрироваться бесплатно</span>
+        <i class="pi pi-arrow-right" pButtonIcon iconPos="right"></i>
+      </button>
+    </div>
+  </section>
+
+  <footer class="welcome-footer">
+    <div class="footer-inner">
+      <span class="footer-brand">Eventor</span>
+      <span class="footer-copy">© 2026 Eventor. Все права защищены.</span>
+    </div>
+  </footer>
+
 </div>
