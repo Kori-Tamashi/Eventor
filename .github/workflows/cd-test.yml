@@ -27,8 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
@@ -56,8 +54,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
@@ -85,8 +81,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Copy docker-compose file to server
         uses: appleboy/scp-action@v0.1.4
@@ -131,6 +125,7 @@ jobs:
         DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
         DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
         DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+        JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Run database container
         uses: appleboy/ssh-action@v1.0.0
@@ -140,7 +135,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           timeout: ${{ env.SERVER_TIMEOUT }} 
-          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY,JWT_KEY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d database --wait
 
       - name: Check database container status
@@ -180,6 +175,7 @@ jobs:
         DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
         DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
         DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+        JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Run database-interface container
         uses: appleboy/ssh-action@v1.0.0
@@ -189,7 +185,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           timeout: ${{ env.SERVER_TIMEOUT }} 
-          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY,JWT_KEY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d database-interface --wait
 
       - name: Check database-interface container status
@@ -229,6 +225,7 @@ jobs:
         DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
         DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
         DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+        JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Run backend container
         uses: appleboy/ssh-action@v1.0.0
@@ -238,8 +235,8 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           timeout: ${{ env.SERVER_TIMEOUT }} 
-          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
-          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d backend --pull always --wait
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY,JWT_KEY
+          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -e JwtOptions__Key=${{ env.JWT_KEY }} -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d backend --pull always --wait
           
       - name: Check backend container status
         uses: appleboy/ssh-action@v1.0.0
@@ -278,6 +275,7 @@ jobs:
         DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
         DOCKER_WEBSERVER_REPOSITORY: ${{ secrets.DOCKER_WEBSERVER_REPOSITORY }}
         DOCKER_BACKEND_REPOSITORY: ${{ secrets.DOCKER_BACKEND_REPOSITORY }}
+        JWT_KEY: ${{ secrets.JWT_KEY }}
     steps:
       - name: Run webserver container
         uses: appleboy/ssh-action@v1.0.0
@@ -287,7 +285,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_SSH_PASSWORD }}
           port: 22
           timeout: ${{ env.SERVER_TIMEOUT }} 
-          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY
+          envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY,JWT_KEY
           script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d web-server --pull always --wait
           
       - name: Check webserver container status
