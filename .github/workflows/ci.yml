@@ -316,7 +316,7 @@ jobs:
       
       - name: Run backend app
         run: |
-          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls {{ env.E2E_BASE_URL }}
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls ${{ env.E2E_BASE_URL }}
           sleep 15
       
       - name: Run E2E tests
