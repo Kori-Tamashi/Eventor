@@ -271,7 +271,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       JWT_KEY: ${{ secrets.JWT_KEY }}
-      E2E_BASE_URL: http://localhost:8080
+      E2E_BASE_URL: "http://localhost:8080"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -313,6 +313,11 @@ jobs:
             echo "Container is not running (status: $status)"
             exit 1
           fi
+      
+      - name: Run backend app
+        run: |
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls {{ env.E2E_BASE_URL }}
+          sleep 15
       
       - name: Run E2E tests
         run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -e E2E_BASE_URL=${{ env.E2E_BASE_URL }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
