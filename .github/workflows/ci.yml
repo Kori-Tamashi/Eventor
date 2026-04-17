@@ -373,7 +373,7 @@ jobs:
       - name: Run backend
         run: |
           docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
-          sleep 15
+          sleep 30
 
       - name: Check container health
         run: |
