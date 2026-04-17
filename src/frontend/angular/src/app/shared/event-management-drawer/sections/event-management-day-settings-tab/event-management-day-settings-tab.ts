@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, signal } from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
@@ -12,6 +12,13 @@ import { ButtonModule } from 'primeng/button';
 })
 export class EventManagementDaySettingsTab {
   readonly initialTitle = input<string>('Название дня');
+  readonly initialDescription = input<string>('');
+  readonly isSaving = input<boolean>(false);
+  readonly errorMessage = input<string>('');
+  readonly successMessage = input<string>('');
+
+  readonly cancelRequested = output<void>();
+  readonly saveRequested = output<{ title: string; description: string }>();
 
   readonly titleMaxLen = 70;
   readonly descriptionMaxLen = 250;
@@ -26,7 +33,7 @@ export class EventManagementDaySettingsTab {
     effect(() => {
       const normalizedTitle = this.initialTitle().trim() || 'Название дня';
       this.dayTitle.set(normalizedTitle);
-      this.description.set('Описание дня');
+      this.description.set(this.initialDescription());
     });
   }
 
@@ -39,10 +46,13 @@ export class EventManagementDaySettingsTab {
   }
 
   cancel(): void {
-    const normalizedTitle = this.initialTitle().trim() || 'Название дня';
-    this.dayTitle.set(normalizedTitle);
-    this.description.set('Описание дня');
+    this.cancelRequested.emit();
   }
 
-  save(): void {}
+  save(): void {
+    this.saveRequested.emit({
+      title: this.dayTitle().trim() || 'Название дня',
+      description: this.description().trim(),
+    });
+  }
 }

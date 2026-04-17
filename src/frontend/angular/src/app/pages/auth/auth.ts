@@ -1,13 +1,26 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
+import { AuthApiService } from '../../core/api/services/auth-api.service';
+import { Web_Dtos_Gender } from '../../core/api/generated';
 
 type AuthMode = 'login' | 'register';
+type GenderOption = {
+  label: string;
+  value: Web_Dtos_Gender;
+};
 
 @Component({
   selector: 'app-auth',
@@ -26,6 +39,7 @@ export class Auth {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly authApiService = inject(AuthApiService);
 
   private readonly routeMode = toSignal(
     this.route.queryParamMap.pipe(
@@ -61,19 +75,151 @@ export class Auth {
     this.isRegisterMode() ? 'new-password' : 'current-password'
   );
 
+  readonly genderOptions: GenderOption[] = [
+    { label: 'Мужской', value: 0 },
+    { label: 'Женский', value: 1 },
+  ];
+
+  readonly isSubmitting = signal<boolean>(false);
+  readonly errorMessage = signal<string>('');
+
   readonly authForm = this.fb.group({
-    username: [''],
-    phone: [''],
-    password: [''],
+    name: ['', [Validators.required]],
+    phone: ['', [Validators.required]],
+    gender: [0 as Web_Dtos_Gender, [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: [''],
+  }, {
+    validators: [this.passwordsMatchValidator],
   });
+
+  readonly submitDisabled = computed(() => {
+    if (this.isSubmitting()) {
+      return true;
+    }
+
+    const controls = this.authForm.controls;
+
+    if (this.isRegisterMode()) {
+      return (
+        !controls.name.value.trim() ||
+        !controls.phone.value.trim() ||
+        !controls.password.value ||
+        !controls.confirmPassword.value ||
+        !!this.authForm.errors?.['passwordMismatch'] ||
+        controls.password.invalid
+      );
+    }
+
+    return !controls.phone.value.trim() || !controls.password.value || controls.password.invalid;
+  });
+
+  constructor() {
+    effect(() => {
+      this.isRegisterMode();
+      this.errorMessage.set('');
+      this.authForm.controls.password.setValue('');
+      this.authForm.controls.confirmPassword.setValue('');
+    });
+  }
 
   onSubmit(event: Event): void {
     event.preventDefault();
-    this.router.navigate(['/app/dashboard']);
+
+    if (this.submitDisabled()) {
+      this.errorMessage.set(this.buildValidationMessage());
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.isSubmitting.set(true);
+
+    const { name, phone, gender, password } = this.authForm.getRawValue();
+
+    const request$ = this.isRegisterMode()
+      ? this.authApiService.register({
+          name: name.trim(),
+          phone: phone.trim(),
+          gender,
+          password,
+        }).pipe(
+          switchMap(() =>
+            this.authApiService.login({
+              phone: phone.trim(),
+              password,
+            })
+          )
+        )
+      : this.authApiService.login({
+          phone: phone.trim(),
+          password,
+        });
+
+    request$
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/app/dashboard']);
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.mapErrorMessage(error));
+        },
+      });
   }
 
   private normalizeMode(value: string | null): AuthMode {
     return value === 'register' ? 'register' : 'login';
+  }
+
+  private passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password')?.value ?? '';
+    const confirmPassword = control.get('confirmPassword')?.value ?? '';
+
+    if (!confirmPassword) {
+      return null;
+    }
+
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
+
+  private buildValidationMessage(): string {
+    if (!this.isRegisterMode()) {
+      if (!this.authForm.controls.phone.value.trim() || !this.authForm.controls.password.value) {
+        return 'Заполните номер телефона и пароль.';
+      }
+
+      return 'Проверьте корректность данных для входа.';
+    }
+
+    if (this.authForm.errors?.['passwordMismatch']) {
+      return 'Пароли не совпадают.';
+    }
+
+    return 'Заполните все обязательные поля для регистрации.';
+  }
+
+  private mapErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Неверный номер телефона или пароль.';
+    }
+
+    if (status === 400) {
+      return this.isRegisterMode()
+        ? 'Не удалось зарегистрироваться. Проверьте введенные данные.'
+        : 'Не удалось выполнить вход. Проверьте введенные данные.';
+    }
+
+    return 'Сервер временно недоступен. Повторите попытку позже.';
+  }
+
+  private extractStatusCode(error: unknown): number | null {
+    if (typeof error !== 'object' || error === null || !('status' in error)) {
+      return null;
+    }
+
+    const status = (error as { status?: unknown }).status;
+    return typeof status === 'number' ? status : null;
   }
 }

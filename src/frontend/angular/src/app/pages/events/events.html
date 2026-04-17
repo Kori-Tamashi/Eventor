@@ -9,7 +9,13 @@
       <div class="actions">
         <span class="search ui-search p-input-icon-left">
           <i class="pi pi-search"></i>
-          <input pInputText type="text" placeholder="Поиск мероприятий" />
+          <input
+            pInputText
+            type="text"
+            placeholder="Поиск мероприятий"
+            [value]="searchTerm()"
+            (input)="onSearchInput($any($event.target).value)"
+          />
         </span>
 
         <div class="pager">
@@ -31,6 +37,12 @@
         </div>
       </div>
     </header>
+
+    @if (errorMessage()) {
+      <div class="ui-feedback-message ui-feedback-message--error">
+        {{ errorMessage() }}
+      </div>
+    }
 
     <p-table [value]="pagedRows()" styleClass="ui-table">
       <ng-template pTemplate="header">
@@ -61,5 +73,11 @@
         </tr>
       </ng-template>
     </p-table>
+
+    @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
+      <div class="ui-feedback-message">
+        Мероприятия не найдены.
+      </div>
+    }
   </div>
 </div>

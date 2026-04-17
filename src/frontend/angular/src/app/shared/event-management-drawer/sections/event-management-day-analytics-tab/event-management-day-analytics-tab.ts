@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { DrawerCard } from '../../../drawer-card/drawer-card';
 
 type EventManagementDayAnalyticsMetric = {
@@ -14,25 +14,38 @@ type EventManagementDayAnalyticsMetric = {
   styleUrl: './event-management-day-analytics-tab.scss',
 })
 export class EventManagementDayAnalyticsTab {
-  readonly cost = signal<number>(62050);
-  readonly price = signal<number>(13321.55);
-  readonly privilegedPrice = signal<number>(16911.66);
-  readonly participantsCount = signal<number>(5);
-  readonly coefficient = signal<number>(1.01);
+  readonly menuCost = input<number | null>(null);
+  readonly dayPrice = input<number | null>(null);
+  readonly dayPriceWithPrivileges = input<number | null>(null);
+  readonly participantsCount = input.required<number>();
 
-  readonly metrics = computed<EventManagementDayAnalyticsMetric[]>(() => [
-    { label: 'Стоимость', value: this.formatNumber(this.cost()) },
-    { label: 'Цена', value: this.formatNumber(this.price()) },
-    {
-      label: 'Цена (с привилегиями)',
-      value: this.formatNumber(this.privilegedPrice()),
-    },
-    {
-      label: 'Количество участников',
-      value: this.formatNumber(this.participantsCount()),
-    },
-    { label: 'Коэффициент', value: this.coefficient().toFixed(2) },
-  ]);
+  readonly metrics = computed<EventManagementDayAnalyticsMetric[]>(() => {
+    const menuCost = this.menuCost();
+    const dayPrice = this.dayPrice();
+    const dayPriceWithPrivileges = this.dayPriceWithPrivileges();
+    const participantsCount = this.participantsCount();
+
+    const coefficient =
+      dayPrice !== null && dayPriceWithPrivileges !== null && dayPrice !== 0
+        ? dayPriceWithPrivileges / dayPrice
+        : null;
+
+    return [
+      { label: 'Стоимость', value: this.formatNullable(menuCost) },
+      { label: 'Цена', value: this.formatNullable(dayPrice) },
+      { label: 'Цена (с привилегиями)', value: this.formatNullable(dayPriceWithPrivileges) },
+      { label: 'Количество участников', value: String(participantsCount) },
+      { label: 'Коэффициент', value: coefficient !== null ? coefficient.toFixed(2) : 'N/A' },
+    ];
+  });
+
+  private formatNullable(value: number | null): string {
+    if (value === null) {
+      return 'N/A';
+    }
+
+    return this.formatNumber(value);
+  }
 
   private formatNumber(value: number): string {
     return Number.isInteger(value) ? String(value) : value.toFixed(2);

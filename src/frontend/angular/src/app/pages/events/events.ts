@@ -1,11 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { finalize } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { EventsApiService } from '../../core/api/services/events-api.service';
+import { EventApiModel } from '../../core/api/models/event.models';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
-import { buildMockEventDetailsDrawerContext } from '../../shared/event-details-drawer/event-details-drawer.mock';
 
 type EventsRow = {
+  id: string;
   name: string;
   description: string;
   date: string;
@@ -22,27 +25,33 @@ type EventsRow = {
   styleUrl: './events.scss',
 })
 export class Events {
+  private readonly eventsApiService = inject(EventsApiService);
   private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
 
   readonly pageSize = signal<number>(10);
   readonly pageIndex = signal<number>(0);
+  readonly searchTerm = signal<string>('');
+  readonly isLoading = signal<boolean>(true);
+  readonly errorMessage = signal<string>('');
 
-  readonly allRows = signal<EventsRow[]>([
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-    { name: 'Название', description: 'Описание', date: 'dd.mm.yyyy', peopleCount: 0, daysCount: 0, rating: 0 },
-  ]);
+  readonly allRows = signal<EventsRow[]>([]);
+
+  constructor() {
+    this.loadEvents();
+  }
 
   private readonly paginationState = computed(() => {
-    const all = this.allRows();
+    const query = this.searchTerm().trim().toLowerCase();
+    const all = this.allRows().filter((row) => {
+      if (!query) {
+        return true;
+      }
+
+      return (
+        row.name.toLowerCase().includes(query) ||
+        row.description.toLowerCase().includes(query)
+      );
+    });
     const size = this.pageSize();
     const index = this.pageIndex();
     return { all, size, index };
@@ -90,9 +99,75 @@ export class Events {
     this.pageIndex.update((v) => v + 1);
   }
 
+  onSearchInput(value: string): void {
+    this.searchTerm.set(value);
+    this.pageIndex.set(0);
+  }
+
   openDetails(row: EventsRow): void {
-    this.eventDetailsDrawerStore.open(
-      buildMockEventDetailsDrawerContext(row.name, 'events', 'user')
-    );
+    this.eventDetailsDrawerStore.openForEvent({
+      eventId: row.id,
+      source: 'events',
+      viewerRole: 'user',
+      fallbackTitle: row.name,
+    });
+  }
+
+  private loadEvents(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.eventsApiService.listEvents()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (events) => {
+          this.allRows.set(events.map((event) => this.mapEventToRow(event)));
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.mapErrorMessage(error));
+          this.allRows.set([]);
+        },
+      });
+  }
+
+  private mapEventToRow(event: EventApiModel): EventsRow {
+    return {
+      id: event.id,
+      name: event.title,
+      description: event.description ?? 'Без описания',
+      date: this.formatDate(event.startDate),
+      peopleCount: event.personCount,
+      daysCount: event.daysCount,
+      rating: event.rating,
+    };
+  }
+
+  private formatDate(date: string): string {
+    const [year, month, day] = date.split('-');
+
+    if (!year || !month || !day) {
+      return date;
+    }
+
+    return `${day}.${month}.${year}`;
+  }
+
+  private mapErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Выполните вход, чтобы просматривать мероприятия.';
+    }
+
+    return 'Не удалось загрузить список мероприятий.';
+  }
+
+  private extractStatusCode(error: unknown): number | null {
+    if (typeof error !== 'object' || error === null || !('status' in error)) {
+      return null;
+    }
+
+    const status = (error as { status?: unknown }).status;
+    return typeof status === 'number' ? status : null;
   }
 }

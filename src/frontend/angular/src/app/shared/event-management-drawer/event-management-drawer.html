@@ -41,7 +41,9 @@
     </div>
   </div>
 
-  @if (!dayDetailsOpen()) {
+  @if (isLoading()) {
+    <div class="ui-feedback-message">Загрузка данных мероприятия...</div>
+  } @else if (!dayDetailsOpen()) {
     <p-tabs [value]="activeTab()" (valueChange)="onTabValueChange($event)">
       <p-tablist>
         <p-tab value="settings">Настройки</p-tab>
@@ -56,8 +58,24 @@
       <p-tabpanels>
         <p-tabpanel value="settings">
           <app-event-management-settings-tab
-            [daysCount]="settingsDaysCount()"
+            [eventTitleValue]="eventTitle()"
+            [descriptionValue]="eventDescription()"
+            [locationIdValue]="eventLocationId()"
+            [startDateValue]="eventStartDate()"
+            [daysCountValue]="settingsDaysCount()"
+            [markupValue]="eventMarkup()"
+            [locations]="locationOptions()"
+            [isSaving]="isSavingSettings()"
+            [errorMessage]="errorMessage()"
+            [successMessage]="successMessage()"
+            (eventTitleChange)="onEventTitleChange($event)"
+            (descriptionChange)="onEventDescriptionChange($event)"
+            (locationIdChange)="onEventLocationIdChange($event)"
+            (startDateChange)="onEventStartDateChange($event)"
             (daysCountChange)="onSettingsDaysCountChange($event)"
+            (markupChange)="onEventMarkupChange($event)"
+            (cancelRequested)="cancelSettings()"
+            (saveRequested)="saveSettings()"
           ></app-event-management-settings-tab>
         </p-tabpanel>
 
@@ -69,7 +87,13 @@
         </p-tabpanel>
 
         <p-tabpanel value="analytics">
-          <app-event-management-analytics-tab></app-event-management-analytics-tab>
+          <app-event-management-analytics-tab
+            [eventAnalytics]="eventAnalytics()"
+            [eventRating]="eventRating()"
+            [eventPersonCount]="eventPersonCount()"
+            [eventDaysCount]="eventDaysCount()"
+            [locationCapacity]="locationCapacity()"
+          ></app-event-management-analytics-tab>
         </p-tabpanel>
 
         @if (mode() !== 'create') {
@@ -93,7 +117,25 @@
     <app-event-management-day-details-view
       [activeTab]="dayDetailsActiveTab()"
       [dayTitle]="dayDetailsTitle()"
+      [dayDescription]="selectedDay()?.description ?? ''"
+      [isSaving]="isSavingDay()"
+      [errorMessage]="errorMessage()"
+      [successMessage]="successMessage()"
+      [participantRows]="participantRows()"
+      [isSavingParticipants]="isSavingParticipants()"
+      [participantsCount]="participantsCount()"
+      [menuItems]="menuItems()"
+      [availableItems]="availableItems()"
+      [isLoadingMenuItems]="isLoadingMenuItems()"
+      [isSavingMenuItems]="isSavingMenuItems()"
+      [dayAnalytics]="dayAnalytics()"
       (tabChange)="onDayDetailsTabChange($event)"
+      (saveDay)="saveSelectedDay($event)"
+      (cancelDay)="cancelSelectedDay()"
+      (saveParticipants)="onSaveParticipants($event)"
+      (cancelParticipants)="onCancelParticipants()"
+      (saveMenuItems)="onSaveMenuItems($event)"
+      (cancelMenuItems)="onCancelMenuItems()"
     ></app-event-management-day-details-view>
   }
 </p-drawer>

@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate:api": "openapi -i ./src/api.json -o ./src/app/core/api/generated -c angular --useOptions --useUnionTypes"
   },
   "prettier": {
     "printWidth": 100,
@@ -40,6 +41,7 @@
     "@angular/cli": "^21.1.4",
     "@angular/compiler-cli": "^21.1.0",
     "jsdom": "^27.1.0",
+    "openapi-typescript-codegen": "^0.30.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }

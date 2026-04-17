@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { DrawerCard } from '../../../drawer-card/drawer-card';
+import { EventManagementEventAnalytics } from '../../../../core/ui/event-management-drawer-data.service';
 
 type EventManagementAnalyticsMetric = {
   label: string;
@@ -14,32 +15,54 @@ type EventManagementAnalyticsMetric = {
   styleUrl: './event-management-analytics-tab.scss',
 })
 export class EventManagementAnalyticsTab {
-  readonly generalMetrics = signal<EventManagementAnalyticsMetric[]>([
-    { label: 'Количество участников', value: '7/150' },
-    { label: 'Рейтинг', value: '10' },
-    { label: 'Стоимость мероприятия', value: '187500' },
-    { label: 'Средняя стоимость дня', value: '62500' },
-    { label: 'Возможность расчета цены', value: 'Расчет возможен' },
-    { label: 'N-мерность мероприятия', value: '3' },
-    { label: 'Осталось дней до начала', value: 'Мероприятие завершилось' },
-  ]);
+  readonly eventAnalytics = input.required<EventManagementEventAnalytics>();
+  readonly eventRating = input.required<number>();
+  readonly eventPersonCount = input.required<number>();
+  readonly eventDaysCount = input.required<number>();
+  readonly locationCapacity = input.required<number>();
 
-  readonly pricingMetrics = signal<EventManagementAnalyticsMetric[]>([
-    { label: 'Фундаментальная цена', value: '13160.53' },
-    { label: 'Фундаментальная цена (с привилегиями)', value: '16707.25' },
-    { label: 'Относительная разница фундаментальных цен', value: '26.95%' },
-    { label: 'Средняя цена дня', value: '15430.88' },
-    { label: 'Средняя цена дня (с привилегиями)', value: '19589.45' },
-    { label: 'Цена мероприятия', value: '46292.65' },
-    { label: 'Цена мероприятия (с привилегиями)', value: '58768.35' },
-  ]);
+  readonly generalMetrics = computed<EventManagementAnalyticsMetric[]>(() => {
+    const analytics = this.eventAnalytics();
+    const personCount = this.eventPersonCount();
+    const capacity = this.locationCapacity();
+    const daysCount = this.eventDaysCount();
+    const rating = this.eventRating();
+    const cost = analytics.eventCost;
+    const avgDayCost = cost !== null && daysCount > 0 ? cost / daysCount : null;
 
-  readonly profitMetrics = signal<EventManagementAnalyticsMetric[]>([
-    { label: 'Расходы', value: '187500' },
-    { label: 'Доход', value: '215625' },
-    { label: 'Фактическая прибыль', value: '28125' },
-    { label: 'Теоретическая прибыль', value: '28125' },
-    { label: 'Максимальная наценка', value: '71.59%' },
-    { label: 'Минимальное количество участников', value: '7' },
-  ]);
+    return [
+      { label: 'Количество участников', value: `${personCount}/${capacity}` },
+      { label: 'Рейтинг', value: this.formatNullable(rating === 0 ? null : rating) },
+      { label: 'Стоимость мероприятия', value: this.formatNullable(cost) },
+      { label: 'Средняя стоимость дня', value: this.formatNullable(avgDayCost) },
+      { label: 'N-мерность мероприятия', value: String(daysCount) },
+    ];
+  });
+
+  readonly pricingMetrics = computed<EventManagementAnalyticsMetric[]>(() => {
+    const analytics = this.eventAnalytics();
+
+    return [
+      { label: 'Фундаментальная цена (1 день)', value: this.formatNullable(analytics.fundamentalPrice1D) },
+      { label: 'Фундаментальная цена (N дней)', value: this.formatNullable(analytics.fundamentalPriceNd) },
+    ];
+  });
+
+  readonly profitMetrics = computed<EventManagementAnalyticsMetric[]>(() => {
+    const analytics = this.eventAnalytics();
+
+    return [
+      { label: 'Расходы', value: this.formatNullable(analytics.eventCost) },
+      { label: 'Баланс (1 день)', value: this.formatNullable(analytics.balance1D) },
+      { label: 'Баланс (N дней)', value: this.formatNullable(analytics.balanceNd) },
+    ];
+  });
+
+  private formatNullable(value: number | null | undefined): string {
+    if (value === null || value === undefined) {
+      return 'N/A';
+    }
+
+    return Number.isInteger(value) ? String(value) : value.toFixed(2);
+  }
 }

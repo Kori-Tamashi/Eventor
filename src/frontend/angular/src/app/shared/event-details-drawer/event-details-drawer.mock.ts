@@ -12,6 +12,7 @@ export function buildMockEventDetailsDrawerContext(
 ): EventDetailsDrawerContext {
   const dayRows: EventDetailsDrawerDay[] = [
     {
+      id: 'day-1',
       name: 'День 1 - Название',
       price: 'N',
       participants: 4,
@@ -23,6 +24,7 @@ export function buildMockEventDetailsDrawerContext(
       ],
     },
     {
+      id: 'day-2',
       name: 'День 2 - Название',
       price: 'N',
       participants: 6,
@@ -36,6 +38,7 @@ export function buildMockEventDetailsDrawerContext(
       ],
     },
     {
+      id: 'day-3',
       name: 'День 3 - Название',
       price: 'N',
       participants: 3,
@@ -56,6 +59,7 @@ export function buildMockEventDetailsDrawerContext(
   const participantsCount = dayRows.reduce((sum, day) => sum + day.participantRows.length, 0);
 
   return {
+    eventId: 'event-mock',
     source,
     viewerRole,
     data: {
@@ -64,6 +68,7 @@ export function buildMockEventDetailsDrawerContext(
       participantsCount,
       dayRows,
       reviewRows,
+      currentUserRegistrationId: null,
     },
   };
 }

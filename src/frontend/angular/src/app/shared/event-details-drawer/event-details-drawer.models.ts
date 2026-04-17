@@ -9,6 +9,7 @@ export type EventDetailsDrawerParticipant = {
 };
 
 export type EventDetailsDrawerDay = {
+  id: string;
   name: string;
   price: string;
   participants: number;
@@ -27,9 +28,11 @@ export type EventDetailsDrawerData = {
   participantsCount: number;
   dayRows: EventDetailsDrawerDay[];
   reviewRows: EventDetailsDrawerReview[];
+  currentUserRegistrationId: string | null;
 };
 
 export type EventDetailsDrawerContext = {
+  eventId: string;
   source: EventDetailsDrawerSource;
   viewerRole: EventDetailsDrawerViewerRole;
   data: EventDetailsDrawerData;

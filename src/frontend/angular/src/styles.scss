@@ -572,6 +572,63 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   box-shadow: none !important;
 }
 
+.ui-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.ui-select {
+  width: 100%;
+  height: var(--control-height);
+  padding: 0 40px 0 14px;
+  border: 1px solid var(--eventor-border);
+  border-radius: var(--radius-sm);
+  background: var(--eventor-surface);
+  color: var(--eventor-text);
+  font-size: var(--text-body);
+  box-shadow: none;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.ui-select:hover {
+  border-color: var(--eventor-hover-border);
+}
+
+.ui-select:focus,
+.ui-select:focus-visible {
+  border-color: var(--eventor-hover-border);
+  box-shadow: none;
+  outline: none;
+}
+
+.ui-select-icon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--eventor-muted);
+  pointer-events: none;
+}
+
+.ui-feedback-message {
+  padding: 12px 14px;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-sm);
+  background: #f0fdf4;
+  color: #166534;
+  font-size: var(--text-caption);
+  line-height: 1.4;
+}
+
+.ui-feedback-message--error {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
 .review-rating .p-rating-icon {
   color: var(--rating-star-empty) !important;
 }

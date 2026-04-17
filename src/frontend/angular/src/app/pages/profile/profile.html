@@ -18,11 +18,17 @@
     </div>
   </header>
 
-  <div class="profile-summary ui-surface">
-    <div class="profile-avatar">UN</div>
+  @if (loadErrorMessage()) {
+    <div class="ui-feedback-message ui-feedback-message--error" role="alert">
+      {{ loadErrorMessage() }}
+    </div>
+  }
 
-    <div class="profile-name">Username</div>
-    <div class="profile-role">Организатор мероприятий</div>
+  <div class="profile-summary ui-surface">
+    <div class="profile-avatar">{{ profileInitials() || 'UN' }}</div>
+
+    <div class="profile-name">{{ profileForm.controls.name.value || 'Username' }}</div>
+    <div class="profile-role">{{ roleLabel() }}</div>
   </div>
 
   <section class="profile-section ui-surface">
@@ -31,7 +37,7 @@
       <p class="section-subtitle">Данные, доступные из учетной записи пользователя</p>
     </div>
 
-    <div class="form-grid">
+    <form class="form-grid" [formGroup]="profileForm">
       <div class="form-field">
         <label class="form-label" for="username">Имя пользователя</label>
         <input
@@ -39,7 +45,7 @@
           pInputText
           class="ui-input"
           type="text"
-          value="Username"
+          formControlName="name"
         />
       </div>
 
@@ -50,19 +56,25 @@
           pInputText
           class="ui-input"
           type="text"
-          value="+7 900 000-00-00"
+          formControlName="phone"
         />
       </div>
 
       <div class="form-field">
         <label class="form-label" for="gender">Пол</label>
-        <input
-          id="gender"
-          pInputText
-          class="ui-input"
-          type="text"
-          value="Не указан"
-        />
+
+        <div class="ui-select-wrap">
+          <select
+            id="gender"
+            class="ui-select"
+            formControlName="gender"
+          >
+            @for (option of genderOptions; track option.value) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          <i class="pi pi-angle-down ui-select-icon" aria-hidden="true"></i>
+        </div>
       </div>
 
       <div class="form-field">
@@ -72,10 +84,11 @@
           pInputText
           class="ui-input"
           type="text"
-          value="Организатор"
+          [value]="roleLabel()"
+          readonly
         />
       </div>
-    </div>
+    </form>
   </section>
 
   <section class="profile-section ui-surface">
@@ -91,20 +104,75 @@
           <div class="settings-row__text">Обновите пароль для повышения безопасности аккаунта</div>
         </div>
 
-        <button pButton type="button" class="ui-icon-btn" aria-label="Change password">
-          <span pButtonIcon class="pi pi-angle-right"></span>
+        <button
+          pButton
+          type="button"
+          class="ui-icon-btn"
+          aria-label="Change password"
+          (click)="togglePasswordEditor()"
+        >
+          <span pButtonIcon class="pi" [class.pi-angle-right]="!passwordEditorOpen()" [class.pi-angle-down]="passwordEditorOpen()"></span>
         </button>
       </div>
+
+      @if (passwordEditorOpen()) {
+        <div class="password-grid" [formGroup]="profileForm">
+          <div class="form-field">
+            <label class="form-label" for="newPassword">Новый пароль</label>
+            <input
+              id="newPassword"
+              pInputText
+              class="ui-input"
+              type="password"
+              formControlName="password"
+            />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="confirmPassword">Подтвердите пароль</label>
+            <input
+              id="confirmPassword"
+              pInputText
+              class="ui-input"
+              type="password"
+              formControlName="confirmPassword"
+            />
+          </div>
+        </div>
+      }
     </div>
   </section>
 
+  @if (saveMessage()) {
+    <div
+      class="ui-feedback-message"
+      [class.ui-feedback-message--error]="saveMessage() !== 'Изменения сохранены.'"
+    >
+      {{ saveMessage() }}
+    </div>
+  }
+
   <div class="profile-actions">
-    <button pButton type="button" class="profile-secondary-btn" aria-label="Cancel changes">
+    <button
+      pButton
+      type="button"
+      class="profile-secondary-btn"
+      aria-label="Cancel changes"
+      [disabled]="isLoading() || isSaving()"
+      (click)="cancelChanges()"
+    >
       <span pButtonLabel>Отменить</span>
     </button>
 
-    <button pButton type="button" class="ui-primary-btn" aria-label="Save changes">
-      <span pButtonLabel>Сохранить изменения</span>
+    <button
+      pButton
+      type="button"
+      class="ui-primary-btn"
+      aria-label="Save changes"
+      [disabled]="!canSave()"
+      (click)="saveChanges()"
+    >
+      <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить изменения' }}</span>
     </button>
   </div>
 </div>
