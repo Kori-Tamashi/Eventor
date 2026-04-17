@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
 import { buildMockEventDetailsDrawerContext } from '../../shared/event-details-drawer/event-details-drawer.mock';
+import { EventManagementDrawerStore } from '../../core/ui/event-management-drawer.store';
 
 type OrganizationEventRow = {
   name: string;
@@ -25,6 +26,7 @@ type OrganizationEventRow = {
 })
 export class Organization {
   private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
+  private readonly eventManagementDrawerStore = inject(EventManagementDrawerStore);
 
   readonly pageSize = signal<number>(10);
   readonly pageIndex = signal<number>(0);
@@ -96,5 +98,14 @@ export class Organization {
     this.eventDetailsDrawerStore.open(
       buildMockEventDetailsDrawerContext(row.name, 'organization', 'user')
     );
+  }
+
+  openCreateEventDrawer(): void {
+    this.eventManagementDrawerStore.open({
+      mode: 'create',
+      source: 'organization',
+      viewerRole: 'user',
+      title: 'Создать мероприятие',
+    });
   }
 }

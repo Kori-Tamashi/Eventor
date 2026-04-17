@@ -156,3 +156,36 @@ button.profile-secondary-btn.p-button:focus-visible {
   border-color: var(--eventor-hover-border) !important;
   box-shadow: none !important;
 }
+
+.profile-topbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: var(--drawer-topbar-padding-top);
+}
+
+.profile-nav-btn.p-button {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.profile-nav-btn.p-button:hover,
+.profile-nav-btn.p-button:active,
+.profile-nav-btn.p-button:focus,
+.profile-nav-btn.p-button:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.profile-nav-btn.p-button .p-button-icon {
+  color: var(--eventor-muted) !important;
+}
+
+.profile-nav-btn.p-button:hover .p-button-icon,
+.profile-nav-btn.p-button:active .p-button-icon,
+.profile-nav-btn.p-button:focus .p-button-icon,
+.profile-nav-btn.p-button:focus-visible .p-button-icon {
+  color: var(--eventor-text) !important;
+}

@@ -1,0 +1,99 @@
+<p-drawer
+  position="right"
+  [visible]="drawerOpen()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer"
+>
+  <div
+    class="drawer-topbar"
+    [class.drawer-topbar--subview]="dayDetailsOpen()"
+  >
+    @if (dayDetailsOpen()) {
+      <button
+        pButton
+        type="button"
+        class="ui-icon-btn drawer-nav-btn"
+        aria-label="Back"
+        (click)="closeDayDetails()"
+      >
+        <span pButtonIcon class="pi pi-arrow-left"></span>
+      </button>
+
+      <div class="drawer-parent-caption">
+        {{ title() }}
+      </div>
+    } @else {
+      <button
+        pButton
+        type="button"
+        class="ui-icon-btn drawer-nav-btn"
+        aria-label="Close"
+        (click)="close()"
+      >
+        <span pButtonIcon class="pi pi-times"></span>
+      </button>
+    }
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">
+      {{ dayDetailsOpen() ? dayDetailsTitle() : title() }}
+    </div>
+  </div>
+
+  @if (!dayDetailsOpen()) {
+    <p-tabs [value]="activeTab()" (valueChange)="onTabValueChange($event)">
+      <p-tablist>
+        <p-tab value="settings">Настройки</p-tab>
+        <p-tab value="days">Дни мероприятия</p-tab>
+        <p-tab value="analytics">Анализ мероприятия</p-tab>
+
+        @if (mode() !== 'create') {
+          <p-tab value="reviews">Отзывы</p-tab>
+        }
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="settings">
+          <app-event-management-settings-tab
+            [daysCount]="settingsDaysCount()"
+            (daysCountChange)="onSettingsDaysCountChange($event)"
+          ></app-event-management-settings-tab>
+        </p-tabpanel>
+
+        <p-tabpanel value="days">
+          <app-event-management-days-tab
+            [dayRows]="dayRows()"
+            (dayDetailsOpen)="openDayDetails($event)"
+          ></app-event-management-days-tab>
+        </p-tabpanel>
+
+        <p-tabpanel value="analytics">
+          <app-event-management-analytics-tab></app-event-management-analytics-tab>
+        </p-tabpanel>
+
+        @if (mode() !== 'create') {
+          <p-tabpanel value="reviews">
+            <app-event-details-reviews-tab
+              [reviewText]="reviewText()"
+              [reviewRating]="reviewRating()"
+              [reviewRows]="reviewRows()"
+              [reviewCountLabel]="reviewCountLabel()"
+              [canSaveReview]="canSaveReview()"
+              (reviewTextChange)="onReviewInput($event)"
+              (reviewRatingChange)="onReviewRatingChange($event)"
+              (reviewCancel)="cancelReview()"
+              (reviewSave)="saveReview()"
+            ></app-event-details-reviews-tab>
+          </p-tabpanel>
+        }
+      </p-tabpanels>
+    </p-tabs>
+  } @else {
+    <app-event-management-day-details-view
+      [activeTab]="dayDetailsActiveTab()"
+      [dayTitle]="dayDetailsTitle()"
+      (tabChange)="onDayDetailsTabChange($event)"
+    ></app-event-management-day-details-view>
+  }
+</p-drawer>

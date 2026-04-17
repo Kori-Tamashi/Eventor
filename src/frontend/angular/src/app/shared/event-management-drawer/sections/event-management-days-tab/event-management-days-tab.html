@@ -1,0 +1,38 @@
+<app-drawer-card title="Дни мероприятия" variant="table">
+  <p-table
+    [value]="dayRows()"
+    [scrollable]="true"
+    [scrollHeight]="'var(--management-days-table-scroll-height)'"
+    styleClass="ui-table ui-drawer-table ui-management-days-table"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Номер</th>
+        <th>Название</th>
+        <th>Цена</th>
+        <th>Количество участников</th>
+        <th>Детали</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.number }}</td>
+        <td>{{ row.title }}</td>
+        <td>{{ row.price }}</td>
+        <td>{{ row.participantsCount }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            class="ui-icon-btn"
+            aria-label="Details"
+            (click)="openDayDetails(row)"
+          >
+            <span pButtonIcon class="pi pi-search"></span>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</app-drawer-card>
