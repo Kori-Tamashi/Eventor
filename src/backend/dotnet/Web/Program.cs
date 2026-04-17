@@ -67,6 +67,7 @@ builder.Services.AddScoped<ICalculationService, CalculationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHealthChecks();
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.FullName?.Replace("+", ".") ?? type.Name);
@@ -126,6 +127,9 @@ if (app.Environment.IsDevelopment())
         options.DocumentTitle = "Eventor API";
     });
 }
+
+// Maps for health check
+app.MapHealthChecks("/health");
 
 app.UseHttpsRedirection();
 
