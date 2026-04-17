@@ -7,22 +7,34 @@ namespace DataAccess.Context;
 
 public static class DependencyInjection
 {
+    private static NpgsqlDataSource? _dataSource;
+    private static readonly object _lock = new();
+
     public static IServiceCollection AddDataAccess(
         this IServiceCollection services,
         string connectionString)
     {
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        if (_dataSource == null)
+        {
+            lock (_lock)
+            {
+                if (_dataSource == null)
+                {
+                    var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 
-        dataSourceBuilder.MapEnum<GenderDb>("gender");
-        dataSourceBuilder.MapEnum<UserRoleDb>("user_role");
-        dataSourceBuilder.MapEnum<RegistrationTypeDb>("registration_type");
+                    dataSourceBuilder.MapEnum<GenderDb>("gender");
+                    dataSourceBuilder.MapEnum<UserRoleDb>("user_role");
+                    dataSourceBuilder.MapEnum<RegistrationTypeDb>("registration_type");
 
-        var dataSource = dataSourceBuilder.Build();
+                    _dataSource = dataSourceBuilder.Build();
+                }
+            }
+        }
 
         services.AddDbContext<EventorDbContext>(options =>
             options
                 .UseLazyLoadingProxies()
-                .UseNpgsql(dataSource));
+                .UseNpgsql(_dataSource));
 
         return services;
     }

@@ -236,7 +236,7 @@ jobs:
           port: 22
           timeout: ${{ env.SERVER_TIMEOUT }} 
           envs: DOCKER_HUB_USER,DOCKER_WEBSERVER_REPOSITORY,DOCKER_BACKEND_REPOSITORY,JWT_KEY
-          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d backend --pull always --wait
+          script: docker compose --env-file ${{ env.SERVER_INFRA_PATH }}/settings.conf -e JwtOptions__Key=$JWT_KEY -f ${{ env.SERVER_DOCKER_PATH }}/docker-compose.yml up -d backend --pull always --wait
           
       - name: Check backend container status
         uses: appleboy/ssh-action@v1.0.0
