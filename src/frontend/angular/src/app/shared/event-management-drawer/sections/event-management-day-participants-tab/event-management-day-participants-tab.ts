@@ -1,17 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DrawerCard } from '../../../drawer-card/drawer-card';
-
-type EventManagementDayParticipantType = 'Простой' | 'VIP' | 'Организатор';
-type EventManagementDayParticipantPayment = 'Не оплачено' | 'Оплачено';
-
-type EventManagementDayParticipantRow = {
-  id: number;
-  name: string;
-  type: EventManagementDayParticipantType;
-  payment: EventManagementDayParticipantPayment;
-};
+import { EventManagementParticipantRow } from '../../../../core/ui/event-management-drawer-data.service';
 
 @Component({
   selector: 'app-event-management-day-participants-tab',
@@ -21,66 +12,59 @@ type EventManagementDayParticipantRow = {
   styleUrl: './event-management-day-participants-tab.scss',
 })
 export class EventManagementDayParticipantsTab {
-  readonly participantTypeOptions: EventManagementDayParticipantType[] = [
-    'Простой',
-    'VIP',
-    'Организатор',
-  ];
+  readonly participantRows = input.required<EventManagementParticipantRow[]>();
+  readonly isSaving = input<boolean>(false);
 
-  readonly paymentOptions: EventManagementDayParticipantPayment[] = [
-    'Не оплачено',
-    'Оплачено',
-  ];
+  readonly saveRequested = output<EventManagementParticipantRow[]>();
+  readonly cancelRequested = output<void>();
 
-  readonly savedRows = signal<EventManagementDayParticipantRow[]>(this.buildInitialRows());
-  readonly participantRows = signal<EventManagementDayParticipantRow[]>(this.buildInitialRows());
+  readonly savedRows = signal<EventManagementParticipantRow[]>([]);
+  readonly editableRows = signal<EventManagementParticipantRow[]>([]);
 
-  updateParticipantType(id: number, value: string): void {
-    if (!this.isParticipantType(value)) {
+  constructor() {
+    effect(() => {
+      const rows = this.participantRows().map((r) => ({ ...r }));
+      this.savedRows.set(rows);
+      this.editableRows.set(rows.map((r) => ({ ...r })));
+    });
+  }
+
+  typeLabel(type: 0 | 1 | 2): string {
+    if (type === 0) return 'Простой';
+    if (type === 1) return 'VIP';
+    return 'Организатор';
+  }
+
+  paymentLabel(payment: boolean): string {
+    return payment ? 'Оплачено' : 'Не оплачено';
+  }
+
+  updateParticipantType(registrationId: string, value: string): void {
+    const numericValue = Number(value) as 0 | 1 | 2;
+
+    if (numericValue !== 0 && numericValue !== 1 && numericValue !== 2) {
       return;
     }
 
-    this.participantRows.update((rows) =>
-      rows.map((row) => (row.id === id ? { ...row, type: value } : row))
+    this.editableRows.update((rows) =>
+      rows.map((row) => (row.registrationId === registrationId ? { ...row, type: numericValue } : row))
     );
   }
 
-  updateParticipantPayment(id: number, value: string): void {
-    if (!this.isParticipantPayment(value)) {
-      return;
-    }
+  updateParticipantPayment(registrationId: string, value: string): void {
+    const boolValue = value === 'true';
 
-    this.participantRows.update((rows) =>
-      rows.map((row) => (row.id === id ? { ...row, payment: value } : row))
+    this.editableRows.update((rows) =>
+      rows.map((row) => (row.registrationId === registrationId ? { ...row, payment: boolValue } : row))
     );
   }
 
   cancel(): void {
-    this.participantRows.set(this.cloneRows(this.savedRows()));
+    this.editableRows.set(this.savedRows().map((r) => ({ ...r })));
+    this.cancelRequested.emit();
   }
 
   save(): void {
-    this.savedRows.set(this.cloneRows(this.participantRows()));
-  }
-
-  private buildInitialRows(): EventManagementDayParticipantRow[] {
-    return Array.from({ length: 9 }, (_, index) => ({
-      id: index + 1,
-      name: 'Участник',
-      type: 'Простой',
-      payment: 'Не оплачено',
-    }));
-  }
-
-  private cloneRows(rows: EventManagementDayParticipantRow[]): EventManagementDayParticipantRow[] {
-    return rows.map((row) => ({ ...row }));
-  }
-
-  private isParticipantType(value: string): value is EventManagementDayParticipantType {
-    return this.participantTypeOptions.includes(value as EventManagementDayParticipantType);
-  }
-
-  private isParticipantPayment(value: string): value is EventManagementDayParticipantPayment {
-    return this.paymentOptions.includes(value as EventManagementDayParticipantPayment);
+    this.saveRequested.emit(this.editableRows());
   }
 }

@@ -12,6 +12,12 @@ export type MenuApiModel = {
   }>;
 };
 
+export type MenuItemApiModel = {
+  itemId: string;
+  title: string;
+  amount: number;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,5 +36,36 @@ export class MenusApiService {
         description,
       },
     }) as Observable<MenuApiModel>;
+  }
+
+  listMenuItems(menuId: string, pageNumber?: number, pageSize?: number): Observable<MenuItemApiModel[]> {
+    return this.menusService.getApiV1MenusItems({
+      menuId,
+      pageNumber,
+      pageSize,
+    }) as Observable<MenuItemApiModel[]>;
+  }
+
+  addMenuItem(menuId: string, itemId: string, amount: number): Observable<void> {
+    return this.adminMenusService.postApiV1AdminMenusItems({
+      menuId,
+      itemId,
+      amount,
+    }) as Observable<void>;
+  }
+
+  updateMenuItemAmount(menuId: string, itemId: string, amount: number): Observable<void> {
+    return this.adminMenusService.putApiV1AdminMenusItems({
+      menuId,
+      itemId,
+      amount,
+    }) as Observable<void>;
+  }
+
+  removeMenuItem(menuId: string, itemId: string): Observable<void> {
+    return this.adminMenusService.deleteApiV1AdminMenusItems({
+      menuId,
+      itemId,
+    }) as Observable<void>;
   }
 }

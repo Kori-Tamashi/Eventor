@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
 import { TabsModule } from 'primeng/tabs';
@@ -8,6 +8,7 @@ import {
   EventManagementDrawerDayRow,
   EventManagementDrawerTab,
 } from '../../core/ui/event-management-drawer.store';
+import { EventManagementParticipantRow, MenuItemApiModel } from '../../core/ui/event-management-drawer-data.service';
 import { EventDetailsReviewsTab } from '../event-details-drawer/sections/event-details-reviews-tab/event-details-reviews-tab';
 import { EventManagementAnalyticsTab } from './sections/event-management-analytics-tab/event-management-analytics-tab';
 import { EventManagementSettingsTab } from './sections/event-management-settings-tab/event-management-settings-tab';
@@ -55,11 +56,27 @@ export class EventManagementDrawer {
   readonly selectedDay = this.store.selectedDay;
   readonly dayDetailsActiveTab = this.store.dayDetailsActiveTab;
   readonly isSavingDay = this.store.isSavingDay;
+
   readonly reviewText = this.store.reviewText;
   readonly reviewRating = this.store.reviewRating;
   readonly reviewRows = this.store.reviewRows;
   readonly reviewCountLabel = this.store.reviewCountLabel;
   readonly canSaveReview = this.store.canSaveReview;
+
+  readonly eventAnalytics = this.store.eventAnalytics;
+  readonly eventRating = this.store.eventRating;
+  readonly eventPersonCount = this.store.eventPersonCount;
+  readonly locationCapacity = this.store.locationCapacity;
+  readonly eventDaysCount = computed(() => Number(this.store.settingsDaysCount()) || 0);
+
+  readonly dayAnalytics = this.store.dayAnalytics;
+  readonly participantRows = computed(() => this.store.selectedDay()?.participantRows ?? []);
+  readonly participantsCount = computed(() => Number(this.store.selectedDay()?.participantsCount ?? '0'));
+  readonly menuItems = this.store.menuItems;
+  readonly availableItems = this.store.availableItems;
+  readonly isLoadingMenuItems = this.store.isLoadingMenuItems;
+  readonly isSavingMenuItems = this.store.isSavingMenuItems;
+  readonly isSavingParticipants = this.store.isSavingParticipants;
 
   onDrawerVisibleChange(visible: boolean): void {
     this.store.onDrawerVisibleChange(visible);
@@ -150,5 +167,21 @@ export class EventManagementDrawer {
 
   saveReview(): void {
     this.store.saveReview();
+  }
+
+  onSaveParticipants(rows: EventManagementParticipantRow[]): void {
+    this.store.saveParticipants(rows);
+  }
+
+  onCancelParticipants(): void {
+    this.store.cancelParticipants();
+  }
+
+  onSaveMenuItems(items: MenuItemApiModel[]): void {
+    this.store.saveMenuItems(items);
+  }
+
+  onCancelMenuItems(): void {
+    this.store.cancelMenuItems();
   }
 }

@@ -6,7 +6,7 @@
       class="auth-form"
       autocomplete="on"
       [formGroup]="authForm"
-      (submit)="onSubmit($event)"
+      (ngSubmit)="onSubmit($event)"
     >
       @if (isRegisterMode()) {
         <div class="auth-field">
@@ -107,7 +107,6 @@
         type="submit"
         class="ui-primary-btn auth-submit"
         [attr.aria-label]="submitLabel()"
-        [disabled]="submitDisabled()"
       >
         <span pButtonLabel>{{ isSubmitting() ? 'Подождите...' : submitLabel() }}</span>
       </button>

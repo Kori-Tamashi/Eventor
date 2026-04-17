@@ -1,14 +1,13 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DrawerCard } from '../../../drawer-card/drawer-card';
+import { ItemApiModel, MenuItemApiModel } from '../../../../core/ui/event-management-drawer-data.service';
 
-type EventManagementDayMenuObject = 'Объект 1' | 'Объект 2' | 'Объект 3' | 'Объект 4';
-
-type EventManagementDayMenuRow = {
-  id: number;
-  objectName: EventManagementDayMenuObject;
+type MenuTabRow = {
+  itemId: string;
+  title: string;
   quantity: string;
 };
 
@@ -20,36 +19,54 @@ type EventManagementDayMenuRow = {
   styleUrl: './event-management-day-menu-tab.scss',
 })
 export class EventManagementDayMenuTab {
-  readonly objectOptions: EventManagementDayMenuObject[] = [
-    'Объект 1',
-    'Объект 2',
-    'Объект 3',
-    'Объект 4',
-  ];
+  readonly initialMenuItems = input.required<MenuItemApiModel[]>();
+  readonly availableItems = input.required<ItemApiModel[]>();
+  readonly isLoading = input<boolean>(false);
+  readonly isSaving = input<boolean>(false);
 
-  readonly savedRows = signal<EventManagementDayMenuRow[]>(this.buildInitialRows());
-  readonly menuRows = signal<EventManagementDayMenuRow[]>(this.buildInitialRows());
+  readonly saveRequested = output<MenuItemApiModel[]>();
+  readonly cancelRequested = output<void>();
 
-  readonly draftObject = signal<EventManagementDayMenuObject>('Объект 1');
+  readonly savedRows = signal<MenuTabRow[]>([]);
+  readonly menuRows = signal<MenuTabRow[]>([]);
+
+  readonly draftItemId = signal<string>('');
   readonly draftQuantity = signal<string>('1');
-  readonly editingRowId = signal<number | null>(null);
-  readonly selectedRowIds = signal<number[]>([]);
+  readonly editingItemId = signal<string | null>(null);
+  readonly selectedItemIds = signal<string[]>([]);
 
-  readonly isEditing = computed(() => this.editingRowId() !== null);
-  readonly canSubmit = computed(() => this.draftQuantity().trim().length > 0);
-  readonly canDelete = computed(() => this.selectedRowIds().length > 0);
-  readonly canEdit = computed(() => this.selectedRowIds().length === 1);
+  readonly isEditing = computed(() => this.editingItemId() !== null);
+  readonly canSubmit = computed(() => this.draftQuantity().trim().length > 0 && this.draftItemId().length > 0);
+  readonly canDelete = computed(() => this.selectedItemIds().length > 0);
+  readonly canEdit = computed(() => this.selectedItemIds().length === 1);
   readonly areAllRowsSelected = computed(() => {
     const rows = this.menuRows();
-    return rows.length > 0 && this.selectedRowIds().length === rows.length;
+    return rows.length > 0 && this.selectedItemIds().length === rows.length;
   });
 
-  onDraftObjectChange(value: string): void {
-    if (!this.isObjectOption(value)) {
-      return;
-    }
+  constructor() {
+    effect(() => {
+      const items = this.initialMenuItems();
+      const rows: MenuTabRow[] = items.map((item) => ({
+        itemId: item.itemId,
+        title: item.title,
+        quantity: String(item.amount),
+      }));
+      this.savedRows.set(rows);
+      this.menuRows.set(rows.map((r) => ({ ...r })));
+      this.resetDraft();
+    });
 
-    this.draftObject.set(value);
+    effect(() => {
+      const available = this.availableItems();
+      if (available.length > 0 && !this.draftItemId()) {
+        this.draftItemId.set(available[0].id);
+      }
+    });
+  }
+
+  onDraftItemChange(value: string): void {
+    this.draftItemId.set(value);
   }
 
   onDraftQuantityInput(value: string): void {
@@ -62,34 +79,31 @@ export class EventManagementDayMenuTab {
     }
 
     const quantity = this.draftQuantity().trim();
-    const objectName = this.draftObject();
-    const editingId = this.editingRowId();
+    const itemId = this.draftItemId();
+    const editingId = this.editingItemId();
+    const item = this.availableItems().find((i) => i.id === itemId);
+    const title = item?.title ?? itemId;
 
     if (editingId !== null) {
       this.menuRows.update((rows) =>
         rows.map((row) =>
-          row.id === editingId
-            ? {
-                ...row,
-                objectName,
-                quantity,
-              }
-            : row
+          row.itemId === editingId ? { ...row, itemId, title, quantity } : row
         )
       );
-      this.selectedRowIds.set([editingId]);
+      this.selectedItemIds.set([itemId]);
       this.resetDraft();
       return;
     }
 
-    const nextRow: EventManagementDayMenuRow = {
-      id: this.nextRowId(),
-      objectName,
-      quantity,
-    };
+    if (this.menuRows().some((r) => r.itemId === itemId)) {
+      this.menuRows.update((rows) =>
+        rows.map((row) => (row.itemId === itemId ? { ...row, quantity } : row))
+      );
+    } else {
+      this.menuRows.update((rows) => [...rows, { itemId, title, quantity }]);
+    }
 
-    this.menuRows.update((rows) => [nextRow, ...rows]);
-    this.selectedRowIds.set([nextRow.id]);
+    this.selectedItemIds.set([itemId]);
     this.resetDraft();
   }
 
@@ -98,66 +112,71 @@ export class EventManagementDayMenuTab {
       return;
     }
 
-    const rowId = this.selectedRowIds()[0];
-    const row = this.menuRows().find((candidate) => candidate.id === rowId);
+    const itemId = this.selectedItemIds()[0];
+    const row = this.menuRows().find((r) => r.itemId === itemId);
 
     if (!row) {
       return;
     }
 
-    this.editingRowId.set(row.id);
-    this.draftObject.set(row.objectName);
+    this.editingItemId.set(row.itemId);
+    this.draftItemId.set(row.itemId);
     this.draftQuantity.set(row.quantity);
   }
 
   deleteSelected(): void {
-    const selectedIds = new Set(this.selectedRowIds());
+    const selectedIds = new Set(this.selectedItemIds());
 
     if (selectedIds.size === 0) {
       return;
     }
 
-    this.menuRows.update((rows) => rows.filter((row) => !selectedIds.has(row.id)));
+    this.menuRows.update((rows) => rows.filter((row) => !selectedIds.has(row.itemId)));
 
-    if (this.editingRowId() !== null && selectedIds.has(this.editingRowId()!)) {
+    if (this.editingItemId() !== null && selectedIds.has(this.editingItemId()!)) {
       this.resetDraft();
     }
 
-    this.selectedRowIds.set([]);
+    this.selectedItemIds.set([]);
   }
 
   toggleAllRows(checked: boolean): void {
     if (!checked) {
-      this.selectedRowIds.set([]);
+      this.selectedItemIds.set([]);
       return;
     }
 
-    this.selectedRowIds.set(this.menuRows().map((row) => row.id));
+    this.selectedItemIds.set(this.menuRows().map((row) => row.itemId));
   }
 
-  toggleRowSelection(id: number, checked: boolean): void {
+  toggleRowSelection(itemId: string, checked: boolean): void {
     if (checked) {
-      this.selectedRowIds.update((ids) => (ids.includes(id) ? ids : [...ids, id]));
+      this.selectedItemIds.update((ids) => (ids.includes(itemId) ? ids : [...ids, itemId]));
       return;
     }
 
-    this.selectedRowIds.update((ids) => ids.filter((currentId) => currentId !== id));
+    this.selectedItemIds.update((ids) => ids.filter((id) => id !== itemId));
   }
 
-  isRowSelected(id: number): boolean {
-    return this.selectedRowIds().includes(id);
+  isRowSelected(itemId: string): boolean {
+    return this.selectedItemIds().includes(itemId);
   }
 
   cancel(): void {
-    this.menuRows.set(this.cloneRows(this.savedRows()));
-    this.selectedRowIds.set([]);
+    this.menuRows.set(this.savedRows().map((r) => ({ ...r })));
+    this.selectedItemIds.set([]);
     this.resetDraft();
+    this.cancelRequested.emit();
   }
 
   save(): void {
-    this.savedRows.set(this.cloneRows(this.menuRows()));
-    this.selectedRowIds.set([]);
-    this.resetDraft();
+    this.saveRequested.emit(
+      this.menuRows().map((row) => ({
+        itemId: row.itemId,
+        title: row.title,
+        amount: Number(row.quantity) || 0,
+      }))
+    );
   }
 
   submitButtonLabel(): string {
@@ -168,31 +187,10 @@ export class EventManagementDayMenuTab {
     return value.replace(/\D/g, '').slice(0, 3);
   }
 
-  private nextRowId(): number {
-    return this.menuRows().reduce((max, row) => Math.max(max, row.id), 0) + 1;
-  }
-
   private resetDraft(): void {
-    this.editingRowId.set(null);
-    this.draftObject.set('Объект 1');
+    this.editingItemId.set(null);
+    const available = this.availableItems();
+    this.draftItemId.set(available.length > 0 ? available[0].id : '');
     this.draftQuantity.set('1');
-  }
-
-  private buildInitialRows(): EventManagementDayMenuRow[] {
-    return [
-      { id: 1, objectName: 'Объект 1', quantity: '2' },
-      { id: 2, objectName: 'Объект 2', quantity: '4' },
-      { id: 3, objectName: 'Объект 3', quantity: '1' },
-      { id: 4, objectName: 'Объект 1', quantity: '3' },
-      { id: 5, objectName: 'Объект 4', quantity: '2' },
-    ];
-  }
-
-  private cloneRows(rows: EventManagementDayMenuRow[]): EventManagementDayMenuRow[] {
-    return rows.map((row) => ({ ...row }));
-  }
-
-  private isObjectOption(value: string): value is EventManagementDayMenuObject {
-    return this.objectOptions.includes(value as EventManagementDayMenuObject);
   }
 }

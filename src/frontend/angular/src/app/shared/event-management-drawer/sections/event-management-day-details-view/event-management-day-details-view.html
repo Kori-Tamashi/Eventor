@@ -20,15 +20,32 @@
     </p-tabpanel>
 
     <p-tabpanel value="participants">
-      <app-event-management-day-participants-tab></app-event-management-day-participants-tab>
+      <app-event-management-day-participants-tab
+        [participantRows]="participantRows()"
+        [isSaving]="isSavingParticipants()"
+        (saveRequested)="onSaveParticipants($event)"
+        (cancelRequested)="onCancelParticipants()"
+      ></app-event-management-day-participants-tab>
     </p-tabpanel>
 
     <p-tabpanel value="menu">
-      <app-event-management-day-menu-tab></app-event-management-day-menu-tab>
+      <app-event-management-day-menu-tab
+        [initialMenuItems]="menuItems()"
+        [availableItems]="availableItems()"
+        [isLoading]="isLoadingMenuItems()"
+        [isSaving]="isSavingMenuItems()"
+        (saveRequested)="onSaveMenuItems($event)"
+        (cancelRequested)="onCancelMenuItems()"
+      ></app-event-management-day-menu-tab>
     </p-tabpanel>
 
     <p-tabpanel value="analytics">
-      <app-event-management-day-analytics-tab></app-event-management-day-analytics-tab>
+      <app-event-management-day-analytics-tab
+        [menuCost]="dayAnalytics()?.menuCost ?? null"
+        [dayPrice]="dayAnalytics()?.dayPrice ?? null"
+        [dayPriceWithPrivileges]="dayAnalytics()?.dayPriceWithPrivileges ?? null"
+        [participantsCount]="participantsCount()"
+      ></app-event-management-day-analytics-tab>
     </p-tabpanel>
   </p-tabpanels>
 </p-tabs>

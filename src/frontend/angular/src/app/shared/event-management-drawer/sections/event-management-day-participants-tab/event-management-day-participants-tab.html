@@ -1,7 +1,7 @@
 <div class="participants-content">
   <app-drawer-card title="Участники мероприятия" variant="table">
     <p-table
-      [value]="participantRows()"
+      [value]="editableRows()"
       styleClass="ui-table ui-drawer-table ui-management-day-participants-table"
     >
       <ng-template pTemplate="header">
@@ -20,11 +20,11 @@
               <select
                 class="participants-select"
                 [value]="row.type"
-                (change)="updateParticipantType(row.id, $any($event.target).value)"
+                (change)="updateParticipantType(row.registrationId, $any($event.target).value)"
               >
-                @for (option of participantTypeOptions; track option) {
-                  <option [value]="option">{{ option }}</option>
-                }
+                <option value="0">Простой</option>
+                <option value="1">VIP</option>
+                <option value="2">Организатор</option>
               </select>
               <i class="pi pi-angle-down participants-select-icon" aria-hidden="true"></i>
             </div>
@@ -34,11 +34,10 @@
               <select
                 class="participants-select"
                 [value]="row.payment"
-                (change)="updateParticipantPayment(row.id, $any($event.target).value)"
+                (change)="updateParticipantPayment(row.registrationId, $any($event.target).value)"
               >
-                @for (option of paymentOptions; track option) {
-                  <option [value]="option">{{ option }}</option>
-                }
+                <option [value]="false">Не оплачено</option>
+                <option [value]="true">Оплачено</option>
               </select>
               <i class="pi pi-angle-down participants-select-icon" aria-hidden="true"></i>
             </div>
@@ -54,6 +53,7 @@
       type="button"
       class="participants-secondary-btn"
       aria-label="Cancel"
+      [disabled]="isSaving()"
       (click)="cancel()"
     >
       <span pButtonLabel>Отменить</span>
@@ -64,6 +64,7 @@
       type="button"
       class="ui-primary-btn"
       aria-label="Save"
+      [disabled]="isSaving()"
       (click)="save()"
     >
       <span pButtonLabel>Сохранить</span>

@@ -3,18 +3,47 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { DayApiModel } from '../api/models/day.models';
 import { EventApiModel } from '../api/models/event.models';
+import { FeedbackApiModel } from '../api/models/feedback.models';
 import { RegistrationApiModel } from '../api/models/registration.models';
+import { AdminUsersApiService } from '../api/services/admin-users-api.service';
 import { DaysApiService } from '../api/services/days-api.service';
 import { EconomyApiService } from '../api/services/economy-api.service';
 import { EventsApiService } from '../api/services/events-api.service';
+import { FeedbacksApiService } from '../api/services/feedbacks-api.service';
+import { ItemsApiService, ItemApiModel } from '../api/services/items-api.service';
 import { LocationsApiService } from '../api/services/locations-api.service';
-import { MenusApiService } from '../api/services/menus-api.service';
+import { MenusApiService, MenuItemApiModel } from '../api/services/menus-api.service';
 import { RegistrationsApiService } from '../api/services/registrations-api.service';
 import { UsersApiService } from '../api/services/users-api.service';
+import { CreateFeedbackPayload } from '../api/models/feedback.models';
+
+export type { ItemApiModel, MenuItemApiModel };
 
 export type EventManagementLocationOption = {
   id: string;
   title: string;
+};
+
+export type EventManagementParticipantRow = {
+  registrationId: string;
+  userId: string;
+  name: string;
+  type: 0 | 1 | 2;
+  payment: boolean;
+};
+
+export type EventManagementReviewRow = {
+  person: string;
+  comment: string;
+  rating: number;
+};
+
+export type EventManagementEventAnalytics = {
+  eventCost: number | null;
+  fundamentalPrice1D: number | null;
+  fundamentalPriceNd: number | null;
+  balance1D: number | null;
+  balanceNd: number | null;
 };
 
 export type EventManagementDayData = {
@@ -25,6 +54,7 @@ export type EventManagementDayData = {
   menuId: string;
   price: string;
   participantsCount: string;
+  participantRows: EventManagementParticipantRow[];
 };
 
 export type EventManagementFormData = {
@@ -39,6 +69,12 @@ export type EventManagementFormData = {
   dayRows: EventManagementDayData[];
   currentUserId: string;
   currentUsername: string;
+  reviewRows: EventManagementReviewRow[];
+  currentUserRegistrationId: string | null;
+  eventAnalytics: EventManagementEventAnalytics;
+  eventRating: number;
+  personCount: number;
+  locationCapacity: number;
 };
 
 export type SaveEventManagementPayload = {
@@ -72,6 +108,9 @@ export class EventManagementDrawerDataService {
   private readonly menusApiService = inject(MenusApiService);
   private readonly economyApiService = inject(EconomyApiService);
   private readonly registrationsApiService = inject(RegistrationsApiService);
+  private readonly feedbacksApiService = inject(FeedbacksApiService);
+  private readonly adminUsersApiService = inject(AdminUsersApiService);
+  private readonly itemsApiService = inject(ItemsApiService);
 
   loadCreateData(): Observable<EventManagementFormData> {
     return forkJoin({
@@ -93,6 +132,18 @@ export class EventManagementDrawerDataService {
         dayRows: [],
         currentUserId: currentUser.id,
         currentUsername: currentUser.name,
+        reviewRows: [],
+        currentUserRegistrationId: null,
+        eventAnalytics: {
+          eventCost: null,
+          fundamentalPrice1D: null,
+          fundamentalPriceNd: null,
+          balance1D: null,
+          balanceNd: null,
+        },
+        eventRating: 0,
+        personCount: 0,
+        locationCapacity: 0,
       }))
     );
   }
@@ -104,11 +155,22 @@ export class EventManagementDrawerDataService {
       event: this.eventsApiService.getEvent(eventId),
       days: this.daysApiService.listByEvent(eventId),
       registrations: this.registrationsApiService.listByEvent(eventId),
+      feedbacks: this.feedbacksApiService.listByEvent(eventId).pipe(catchError(() => of([] as FeedbackApiModel[]))),
     }).pipe(
-      switchMap(({ currentUser, locations, event, days, registrations }) =>
-        this.economyApiService.getDayPriceMap(days.map((day) => day.id)).pipe(
-          catchError(() => of({})),
-          map((dayPriceMap) => ({
+      switchMap(({ currentUser, locations, event, days, registrations, feedbacks }) => {
+        const userIds = registrations.map((r) => r.userId);
+        const selectedLocation = locations.find((l) => l.id === event.locationId);
+
+        return forkJoin({
+          dayPriceMap: this.economyApiService.getDayPriceMap(days.map((d) => d.id)).pipe(catchError(() => of({} as Record<string, number>))),
+          userMap: this.adminUsersApiService.getUserNameMap(userIds).pipe(catchError(() => of({} as Record<string, string>))),
+          eventCost: this.economyApiService.getEventCost(eventId).pipe(catchError(() => of(null))),
+          fundamentalPrice1D: this.economyApiService.getFundamentalPrice1D(eventId).pipe(catchError(() => of(null))),
+          fundamentalPriceNd: this.economyApiService.getFundamentalPriceNd(eventId).pipe(catchError(() => of(null))),
+          balance1D: this.economyApiService.getEventBalance1D(eventId).pipe(catchError(() => of(null))),
+          balanceNd: this.economyApiService.getEventBalanceNd(eventId).pipe(catchError(() => of(null))),
+        }).pipe(
+          map(({ dayPriceMap, userMap, eventCost, fundamentalPrice1D, fundamentalPriceNd, balance1D, balanceNd }) => ({
             eventId: event.id,
             title: event.title,
             description: event.description ?? '',
@@ -120,12 +182,18 @@ export class EventManagementDrawerDataService {
               id: location.id,
               title: location.title,
             })),
-            dayRows: this.buildDayRows(days, registrations, dayPriceMap),
+            dayRows: this.buildDayRows(days, registrations, dayPriceMap, userMap),
             currentUserId: currentUser.id,
             currentUsername: currentUser.name,
+            reviewRows: this.buildReviewRows(feedbacks, registrations, userMap),
+            currentUserRegistrationId: registrations.find((r) => r.userId === currentUser.id)?.id ?? null,
+            eventAnalytics: { eventCost, fundamentalPrice1D, fundamentalPriceNd, balance1D, balanceNd },
+            eventRating: event.rating,
+            personCount: event.personCount,
+            locationCapacity: selectedLocation?.capacity ?? 0,
           }))
-        )
-      )
+        );
+      })
     );
   }
 
@@ -169,6 +237,74 @@ export class EventManagementDrawerDataService {
       sequenceNumber: payload.sequenceNumber,
     }).pipe(
       switchMap(() => this.loadEventData(payload.eventId))
+    );
+  }
+
+  saveParticipants(
+    updates: Array<{ registrationId: string; type: 0 | 1 | 2; payment: boolean }>,
+    _eventId: string,
+  ): Observable<void> {
+    if (updates.length === 0) {
+      return of(void 0);
+    }
+
+    return forkJoin(
+      updates.map((u) =>
+        this.registrationsApiService.updateRegistration(u.registrationId, {
+          type: u.type,
+          payment: u.payment,
+        })
+      )
+    ).pipe(map(() => void 0));
+  }
+
+  loadMenuItems(menuId: string): Observable<{ menuItems: MenuItemApiModel[]; availableItems: ItemApiModel[] }> {
+    return forkJoin({
+      menuItems: this.menusApiService.listMenuItems(menuId).pipe(catchError(() => of([] as MenuItemApiModel[]))),
+      availableItems: this.itemsApiService.listItems().pipe(catchError(() => of([] as ItemApiModel[]))),
+    });
+  }
+
+  saveMenuItems(
+    menuId: string,
+    currentItems: MenuItemApiModel[],
+    updatedItems: MenuItemApiModel[],
+  ): Observable<void> {
+    const currentMap = new Map(currentItems.map((i) => [i.itemId, i]));
+    const updatedMap = new Map(updatedItems.map((i) => [i.itemId, i]));
+
+    const operations: Array<Observable<unknown>> = [];
+
+    for (const updated of updatedItems) {
+      const current = currentMap.get(updated.itemId);
+
+      if (!current) {
+        operations.push(this.menusApiService.addMenuItem(menuId, updated.itemId, updated.amount));
+      } else if (current.amount !== updated.amount) {
+        operations.push(this.menusApiService.updateMenuItemAmount(menuId, updated.itemId, updated.amount));
+      }
+    }
+
+    for (const current of currentItems) {
+      if (!updatedMap.has(current.itemId)) {
+        operations.push(this.menusApiService.removeMenuItem(menuId, current.itemId));
+      }
+    }
+
+    if (operations.length === 0) {
+      return of(void 0);
+    }
+
+    return forkJoin(operations).pipe(map(() => void 0));
+  }
+
+  createReview(payload: CreateFeedbackPayload, person: string): Observable<EventManagementReviewRow> {
+    return this.feedbacksApiService.createFeedback(payload).pipe(
+      map((feedback) => ({
+        person,
+        comment: feedback.comment,
+        rating: feedback.rate,
+      }))
     );
   }
 
@@ -228,23 +364,50 @@ export class EventManagementDrawerDataService {
   private buildDayRows(
     days: DayApiModel[],
     registrations: RegistrationApiModel[],
-    dayPriceMap: Record<string, number>
+    dayPriceMap: Record<string, number>,
+    userMap: Record<string, string>,
   ): EventManagementDayData[] {
     return [...days]
       .sort((a, b) => a.sequenceNumber - b.sequenceNumber)
-      .map((day) => ({
-        id: day.id,
-        number: day.sequenceNumber,
-        title: day.title,
-        description: day.description ?? '',
-        menuId: day.menuId,
-        price: this.formatPrice(dayPriceMap[day.id]),
-        participantsCount: String(
-          registrations.filter((registration) =>
-            registration.days.some((registrationDay) => registrationDay.id === day.id)
-          ).length
-        ),
-      }));
+      .map((day) => {
+        const dayRegistrations = registrations.filter((r) =>
+          r.days.some((d) => d.id === day.id)
+        );
+
+        return {
+          id: day.id,
+          number: day.sequenceNumber,
+          title: day.title,
+          description: day.description ?? '',
+          menuId: day.menuId,
+          price: this.formatPrice(dayPriceMap[day.id]),
+          participantsCount: String(dayRegistrations.length),
+          participantRows: dayRegistrations.map((r, index) => ({
+            registrationId: r.id,
+            userId: r.userId,
+            name: userMap[r.userId] ?? `Участник ${index + 1}`,
+            type: r.type,
+            payment: r.payment,
+          })),
+        };
+      });
+  }
+
+  private buildReviewRows(
+    feedbacks: FeedbackApiModel[],
+    registrations: RegistrationApiModel[],
+    userMap: Record<string, string>,
+  ): EventManagementReviewRow[] {
+    const registrationById = registrations.reduce<Record<string, RegistrationApiModel>>((acc, r) => {
+      acc[r.id] = r;
+      return acc;
+    }, {});
+
+    return feedbacks.map((feedback) => {
+      const registration = registrationById[feedback.registrationId];
+      const person = registration ? (userMap[registration.userId] ?? 'Участник') : 'Участник';
+      return { person, comment: feedback.comment, rating: feedback.rate };
+    });
   }
 
   private mapDateOnly(value: string): { year: number; month: number; day: number } {

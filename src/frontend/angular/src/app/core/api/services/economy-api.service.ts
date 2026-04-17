@@ -35,4 +35,32 @@ export class EconomyApiService {
       )
     );
   }
+
+  getDayPriceWithPrivileges(dayId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyDaysPriceWithPrivileges({ dayId }) as Observable<number>;
+  }
+
+  getMenuCost(menuId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyMenusCost({ menuId }) as Observable<number>;
+  }
+
+  getEventCost(eventId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyEventsCost({ eventId }) as Observable<number>;
+  }
+
+  getFundamentalPrice1D(eventId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyEventsFundamentalPrice1D({ eventId }) as Observable<number>;
+  }
+
+  getFundamentalPriceNd(eventId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyEventsFundamentalPriceNd({ eventId }) as Observable<number>;
+  }
+
+  getEventBalance1D(eventId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyEventsBalance1D({ eventId }) as Observable<number>;
+  }
+
+  getEventBalanceNd(eventId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyEventsBalanceNd({ eventId }) as Observable<number>;
+  }
 }

@@ -1,11 +1,18 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
-import { Subscription, finalize } from 'rxjs';
+import { Subscription, finalize, forkJoin } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import {
   EventManagementDrawerDataService,
   EventManagementDayData,
+  EventManagementEventAnalytics,
   EventManagementFormData,
   EventManagementLocationOption,
+  EventManagementParticipantRow,
+  EventManagementReviewRow,
+  ItemApiModel,
+  MenuItemApiModel,
 } from './event-management-drawer-data.service';
+import { EconomyApiService } from '../api/services/economy-api.service';
 
 export type EventManagementDrawerMode = 'create' | 'superuser-manage';
 export type EventManagementDrawerSource = 'organization' | 'superuser-page';
@@ -23,10 +30,10 @@ export type EventManagementDrawerContext = {
 
 export type EventManagementDrawerDayRow = EventManagementDayData;
 
-export type EventManagementDrawerReview = {
-  person: string;
-  comment: string;
-  rating: number;
+export type EventManagementDayAnalytics = {
+  menuCost: number | null;
+  dayPrice: number | null;
+  dayPriceWithPrivileges: number | null;
 };
 
 @Injectable({
@@ -38,6 +45,10 @@ export class EventManagementDrawerStore {
   private loadSubscription: Subscription | null = null;
   private saveEventSubscription: Subscription | null = null;
   private saveDaySubscription: Subscription | null = null;
+  private saveReviewSubscription: Subscription | null = null;
+  private loadDayExtrasSubscription: Subscription | null = null;
+  private saveParticipantsSubscription: Subscription | null = null;
+  private saveMenuItemsSubscription: Subscription | null = null;
 
   readonly currentUsername = signal<string>('Username');
   readonly currentUserId = signal<string>('');
@@ -46,6 +57,9 @@ export class EventManagementDrawerStore {
   readonly isLoading = signal<boolean>(false);
   readonly isSavingSettings = signal<boolean>(false);
   readonly isSavingDay = signal<boolean>(false);
+  readonly isSavingParticipants = signal<boolean>(false);
+  readonly isLoadingMenuItems = signal<boolean>(false);
+  readonly isSavingMenuItems = signal<boolean>(false);
   readonly errorMessage = signal<string>('');
   readonly successMessage = signal<string>('');
   readonly context = signal<EventManagementDrawerContext | null>(null);
@@ -68,7 +82,25 @@ export class EventManagementDrawerStore {
   readonly reviewMaxLen = 250;
   readonly reviewText = signal<string>('');
   readonly reviewRating = signal<number>(0);
-  readonly reviewRows = signal<EventManagementDrawerReview[]>([]);
+  readonly reviewRows = signal<EventManagementReviewRow[]>([]);
+  readonly currentUserRegistrationId = signal<string | null>(null);
+
+  readonly eventAnalytics = signal<EventManagementEventAnalytics>({
+    eventCost: null,
+    fundamentalPrice1D: null,
+    fundamentalPriceNd: null,
+    balance1D: null,
+    balanceNd: null,
+  });
+  readonly eventRating = signal<number>(0);
+  readonly eventPersonCount = signal<number>(0);
+  readonly locationCapacity = signal<number>(0);
+
+  readonly dayAnalytics = signal<EventManagementDayAnalytics | null>(null);
+
+  readonly menuItems = signal<MenuItemApiModel[]>([]);
+  readonly savedMenuItems = signal<MenuItemApiModel[]>([]);
+  readonly availableItems = signal<ItemApiModel[]>([]);
 
   readonly mode = computed(() => this.context()?.mode ?? 'create');
   readonly source = computed(() => this.context()?.source ?? 'organization');
@@ -91,6 +123,10 @@ export class EventManagementDrawerStore {
   });
   readonly dayRows = computed(() => this.dayRowsState());
 
+  readonly selectedDayParticipantsCount = computed(() => {
+    return Number(this.selectedDay()?.participantsCount ?? '0');
+  });
+
   open(context: EventManagementDrawerContext): void {
     this.cancelOngoingRequests();
     this.resetState();
@@ -98,7 +134,6 @@ export class EventManagementDrawerStore {
     this.activeTab.set('settings');
     this.reviewText.set('');
     this.reviewRating.set(0);
-    this.reviewRows.set(this.buildInitialReviewRows());
     this.isLoading.set(true);
     this.isOpen.set(true);
 
@@ -227,11 +262,45 @@ export class EventManagementDrawerStore {
     this.dayDetailsActiveTab.set('settings');
     this.errorMessage.set('');
     this.successMessage.set('');
+    this.dayAnalytics.set(null);
+    this.menuItems.set([]);
+    this.savedMenuItems.set([]);
+    this.availableItems.set([]);
+
+    this.loadDayExtrasSubscription?.unsubscribe();
+    this.isLoadingMenuItems.set(true);
+
+    const economyService = this.injector.get(EconomyApiService);
+
+    this.loadDayExtrasSubscription = forkJoin({
+      menuItemsData: this.dataService.loadMenuItems(day.menuId),
+      menuCost: economyService.getMenuCost(day.menuId).pipe(catchError(() => of(null))),
+      dayPrice: economyService.getDayPrice(day.id).pipe(catchError(() => of(null))),
+      dayPriceWithPrivileges: economyService.getDayPriceWithPrivileges(day.id).pipe(catchError(() => of(null))),
+    })
+      .pipe(finalize(() => this.isLoadingMenuItems.set(false)))
+      .subscribe({
+        next: ({ menuItemsData, menuCost, dayPrice, dayPriceWithPrivileges }) => {
+          this.menuItems.set(menuItemsData.menuItems);
+          this.savedMenuItems.set([...menuItemsData.menuItems]);
+          this.availableItems.set(menuItemsData.availableItems);
+          this.dayAnalytics.set({ menuCost, dayPrice, dayPriceWithPrivileges });
+        },
+        error: () => {
+          this.dayAnalytics.set({ menuCost: null, dayPrice: null, dayPriceWithPrivileges: null });
+        },
+      });
   }
 
   closeDayDetails(): void {
+    this.loadDayExtrasSubscription?.unsubscribe();
+    this.loadDayExtrasSubscription = null;
     this.selectedDay.set(null);
     this.dayDetailsActiveTab.set('settings');
+    this.dayAnalytics.set(null);
+    this.menuItems.set([]);
+    this.savedMenuItems.set([]);
+    this.availableItems.set([]);
   }
 
   setDayDetailsActiveTab(tab: EventManagementDrawerDayDetailsTab): void {
@@ -256,14 +325,31 @@ export class EventManagementDrawerStore {
       return;
     }
 
-    const newReview: EventManagementDrawerReview = {
-      person: this.currentUsername(),
-      comment: this.reviewText().trim(),
-      rating: this.reviewRating(),
-    };
+    const registrationId = this.currentUserRegistrationId();
 
-    this.reviewRows.update((rows) => [newReview, ...rows]);
-    this.cancelReview();
+    if (!registrationId) {
+      this.errorMessage.set('Нельзя оставить отзыв без регистрации на мероприятие.');
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.saveReviewSubscription?.unsubscribe();
+    this.saveReviewSubscription = this.dataService.createReview(
+      {
+        registrationId,
+        comment: this.reviewText().trim(),
+        rate: this.reviewRating(),
+      },
+      this.currentUsername(),
+    ).subscribe({
+      next: (newReview) => {
+        this.reviewRows.update((rows) => [newReview, ...rows]);
+        this.cancelReview();
+      },
+      error: (error: unknown) => {
+        this.errorMessage.set(this.mapSaveReviewErrorMessage(error));
+      },
+    });
   }
 
   saveSelectedDay(payload: { title: string; description: string }): void {
@@ -314,24 +400,76 @@ export class EventManagementDrawerStore {
     this.successMessage.set('');
   }
 
-  private buildInitialReviewRows(): EventManagementDrawerReview[] {
-    return [
-      {
-        person: 'Александр',
-        comment: 'Хорошая организация, всё прошло по плану.',
-        rating: 5,
-      },
-      {
-        person: 'Мария',
-        comment: 'Понравилась программа и общее сопровождение мероприятия.',
-        rating: 4,
-      },
-      {
-        person: 'Иван',
-        comment: 'Удобная логистика и понятное расписание.',
-        rating: 5,
-      },
-    ];
+  saveParticipants(updatedRows: EventManagementParticipantRow[]): void {
+    const eventId = this.eventId();
+    const selectedDay = this.selectedDay();
+
+    if (!eventId || !selectedDay) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.isSavingParticipants.set(true);
+    this.saveParticipantsSubscription?.unsubscribe();
+    this.saveParticipantsSubscription = this.dataService.saveParticipants(
+      updatedRows.map((r) => ({ registrationId: r.registrationId, type: r.type, payment: r.payment })),
+      eventId,
+    )
+      .pipe(finalize(() => this.isSavingParticipants.set(false)))
+      .subscribe({
+        next: () => {
+          const updatedDay = { ...selectedDay, participantRows: updatedRows };
+          this.dayRowsState.update((rows) =>
+            rows.map((r) => (r.id === selectedDay.id ? updatedDay : r))
+          );
+          this.selectedDay.set(updatedDay);
+          this.successMessage.set('Участники сохранены.');
+        },
+        error: () => {
+          this.errorMessage.set('Не удалось сохранить участников.');
+        },
+      });
+  }
+
+  cancelParticipants(): void {
+    this.errorMessage.set('');
+    this.successMessage.set('');
+  }
+
+  saveMenuItems(updatedItems: MenuItemApiModel[]): void {
+    const selectedDay = this.selectedDay();
+
+    if (!selectedDay) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.isSavingMenuItems.set(true);
+    this.saveMenuItemsSubscription?.unsubscribe();
+    this.saveMenuItemsSubscription = this.dataService.saveMenuItems(
+      selectedDay.menuId,
+      this.savedMenuItems(),
+      updatedItems,
+    )
+      .pipe(finalize(() => this.isSavingMenuItems.set(false)))
+      .subscribe({
+        next: () => {
+          this.savedMenuItems.set([...updatedItems]);
+          this.menuItems.set([...updatedItems]);
+          this.successMessage.set('Меню сохранено.');
+        },
+        error: () => {
+          this.errorMessage.set('Не удалось сохранить меню.');
+        },
+      });
+  }
+
+  cancelMenuItems(): void {
+    this.menuItems.set([...this.savedMenuItems()]);
+    this.errorMessage.set('');
+    this.successMessage.set('');
   }
 
   private get dataService(): EventManagementDrawerDataService {
@@ -351,6 +489,12 @@ export class EventManagementDrawerStore {
     this.locationOptions.set(data.locations);
     this.dayRowsState.set(data.dayRows);
     this.initialFormData.set(data);
+    this.reviewRows.set(data.reviewRows);
+    this.currentUserRegistrationId.set(data.currentUserRegistrationId);
+    this.eventAnalytics.set(data.eventAnalytics);
+    this.eventRating.set(data.eventRating);
+    this.eventPersonCount.set(data.personCount);
+    this.locationCapacity.set(data.locationCapacity);
   }
 
   private resetState(): void {
@@ -373,9 +517,21 @@ export class EventManagementDrawerStore {
     this.reviewText.set('');
     this.reviewRating.set(0);
     this.reviewRows.set([]);
+    this.currentUserRegistrationId.set(null);
+    this.eventAnalytics.set({ eventCost: null, fundamentalPrice1D: null, fundamentalPriceNd: null, balance1D: null, balanceNd: null });
+    this.eventRating.set(0);
+    this.eventPersonCount.set(0);
+    this.locationCapacity.set(0);
+    this.dayAnalytics.set(null);
+    this.menuItems.set([]);
+    this.savedMenuItems.set([]);
+    this.availableItems.set([]);
     this.isLoading.set(false);
     this.isSavingSettings.set(false);
     this.isSavingDay.set(false);
+    this.isSavingParticipants.set(false);
+    this.isLoadingMenuItems.set(false);
+    this.isSavingMenuItems.set(false);
     this.errorMessage.set('');
     this.successMessage.set('');
   }
@@ -384,9 +540,17 @@ export class EventManagementDrawerStore {
     this.loadSubscription?.unsubscribe();
     this.saveEventSubscription?.unsubscribe();
     this.saveDaySubscription?.unsubscribe();
+    this.saveReviewSubscription?.unsubscribe();
+    this.loadDayExtrasSubscription?.unsubscribe();
+    this.saveParticipantsSubscription?.unsubscribe();
+    this.saveMenuItemsSubscription?.unsubscribe();
     this.loadSubscription = null;
     this.saveEventSubscription = null;
     this.saveDaySubscription = null;
+    this.saveReviewSubscription = null;
+    this.loadDayExtrasSubscription = null;
+    this.saveParticipantsSubscription = null;
+    this.saveMenuItemsSubscription = null;
   }
 
   private validateEventForm(): string | null {
@@ -453,6 +617,24 @@ export class EventManagementDrawerStore {
     }
 
     return 'Не удалось сохранить настройки дня.';
+  }
+
+  private mapSaveReviewErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Выполните вход, чтобы оставить отзыв.';
+    }
+
+    if (status === 404) {
+      return 'Регистрация для отзыва не найдена.';
+    }
+
+    if (status === 409) {
+      return 'Отзыв для этой регистрации уже существует.';
+    }
+
+    return 'Не удалось сохранить отзыв.';
   }
 
   private extractStatusCode(error: unknown): number | null {

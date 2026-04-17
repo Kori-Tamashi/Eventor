@@ -1,127 +1,133 @@
 <div class="menu-content">
-  <div class="menu-toolbar">
-    <div class="menu-form">
-      <div class="menu-field">
-        <label class="menu-label" for="menuObject">Объект</label>
-        <div class="menu-select-wrap">
-          <select
-            id="menuObject"
-            class="menu-select"
-            [value]="draftObject()"
-            (change)="onDraftObjectChange($any($event.target).value)"
-          >
-            @for (option of objectOptions; track option) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </select>
-          <i class="pi pi-angle-down menu-select-icon" aria-hidden="true"></i>
+  @if (isLoading()) {
+    <div class="menu-loading">Загрузка меню...</div>
+  } @else {
+    <div class="menu-toolbar">
+      <div class="menu-form">
+        <div class="menu-field">
+          <label class="menu-label" for="menuObject">Объект</label>
+          <div class="menu-select-wrap">
+            <select
+              id="menuObject"
+              class="menu-select"
+              [value]="draftItemId()"
+              (change)="onDraftItemChange($any($event.target).value)"
+            >
+              @for (item of availableItems(); track item.id) {
+                <option [value]="item.id">{{ item.title }}</option>
+              }
+            </select>
+            <i class="pi pi-angle-down menu-select-icon" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <div class="menu-field">
+          <label class="menu-label" for="menuQuantity">Количество</label>
+          <input
+            id="menuQuantity"
+            pInputText
+            class="ui-input"
+            type="text"
+            inputmode="numeric"
+            [value]="draftQuantity()"
+            (input)="onDraftQuantityInput($any($event.target).value)"
+          />
         </div>
       </div>
 
-      <div class="menu-field">
-        <label class="menu-label" for="menuQuantity">Количество</label>
-        <input
-          id="menuQuantity"
-          pInputText
-          class="ui-input"
-          type="text"
-          inputmode="numeric"
-          [value]="draftQuantity()"
-          (input)="onDraftQuantityInput($any($event.target).value)"
-        />
-      </div>
+      <button
+        pButton
+        type="button"
+        class="ui-primary-btn menu-submit-btn"
+        [disabled]="!canSubmit() || isSaving()"
+        (click)="submit()"
+      >
+        <span pButtonIcon class="pi" [class.pi-plus]="!isEditing()" [class.pi-check]="isEditing()"></span>
+        <span pButtonLabel>{{ submitButtonLabel() }}</span>
+      </button>
     </div>
 
-    <button
-      pButton
-      type="button"
-      class="ui-primary-btn menu-submit-btn"
-      [disabled]="!canSubmit()"
-      (click)="submit()"
-    >
-      <span pButtonIcon class="pi" [class.pi-plus]="!isEditing()" [class.pi-check]="isEditing()"></span>
-      <span pButtonLabel>{{ submitButtonLabel() }}</span>
-    </button>
-  </div>
+    <div class="menu-table-actions">
+      <button
+        pButton
+        type="button"
+        class="menu-secondary-btn"
+        [disabled]="!canDelete() || isSaving()"
+        (click)="deleteSelected()"
+      >
+        <span pButtonIcon class="pi pi-trash"></span>
+        <span pButtonLabel>Удалить</span>
+      </button>
 
-  <div class="menu-table-actions">
-    <button
-      pButton
-      type="button"
-      class="menu-secondary-btn"
-      [disabled]="!canDelete()"
-      (click)="deleteSelected()"
-    >
-      <span pButtonIcon class="pi pi-trash"></span>
-      <span pButtonLabel>Удалить</span>
-    </button>
+      <button
+        pButton
+        type="button"
+        class="menu-secondary-btn"
+        [disabled]="!canEdit() || isSaving()"
+        (click)="startEditing()"
+      >
+        <span pButtonIcon class="pi pi-pencil"></span>
+        <span pButtonLabel>Редактировать</span>
+      </button>
+    </div>
 
-    <button
-      pButton
-      type="button"
-      class="menu-secondary-btn"
-      [disabled]="!canEdit()"
-      (click)="startEditing()"
-    >
-      <span pButtonIcon class="pi pi-pencil"></span>
-      <span pButtonLabel>Редактировать</span>
-    </button>
-  </div>
+    <app-drawer-card title="Меню" variant="table">
+      <p-table
+        [value]="menuRows()"
+        styleClass="ui-table ui-drawer-table ui-management-day-menu-table"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              <input
+                type="checkbox"
+                class="menu-checkbox"
+                [checked]="areAllRowsSelected()"
+                (change)="toggleAllRows($any($event.target).checked)"
+              />
+            </th>
+            <th>Имя</th>
+            <th>Количество</th>
+          </tr>
+        </ng-template>
 
-  <app-drawer-card title="Меню" variant="table">
-    <p-table
-      [value]="menuRows()"
-      styleClass="ui-table ui-drawer-table ui-management-day-menu-table"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>
-            <input
-              type="checkbox"
-              class="menu-checkbox"
-              [checked]="areAllRowsSelected()"
-              (change)="toggleAllRows($any($event.target).checked)"
-            />
-          </th>
-          <th>Имя</th>
-          <th>Количество</th>
-        </tr>
-      </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                class="menu-checkbox"
+                [checked]="isRowSelected(row.itemId)"
+                (change)="toggleRowSelection(row.itemId, $any($event.target).checked)"
+              />
+            </td>
+            <td>{{ row.title }}</td>
+            <td>{{ row.quantity }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </app-drawer-card>
 
-      <ng-template pTemplate="body" let-row>
-        <tr>
-          <td>
-            <input
-              type="checkbox"
-              class="menu-checkbox"
-              [checked]="isRowSelected(row.id)"
-              (change)="toggleRowSelection(row.id, $any($event.target).checked)"
-            />
-          </td>
-          <td>{{ row.objectName }}</td>
-          <td>{{ row.quantity }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </app-drawer-card>
+    <div class="menu-footer-actions">
+      <button
+        pButton
+        type="button"
+        class="menu-secondary-btn"
+        [disabled]="isSaving()"
+        (click)="cancel()"
+      >
+        <span pButtonLabel>Отменить</span>
+      </button>
 
-  <div class="menu-footer-actions">
-    <button
-      pButton
-      type="button"
-      class="menu-secondary-btn"
-      (click)="cancel()"
-    >
-      <span pButtonLabel>Отменить</span>
-    </button>
-
-    <button
-      pButton
-      type="button"
-      class="ui-primary-btn"
-      (click)="save()"
-    >
-      <span pButtonLabel>Сохранить</span>
-    </button>
-  </div>
+      <button
+        pButton
+        type="button"
+        class="ui-primary-btn"
+        [disabled]="isSaving()"
+        (click)="save()"
+      >
+        <span pButtonLabel>Сохранить</span>
+      </button>
+    </div>
+  }
 </div>

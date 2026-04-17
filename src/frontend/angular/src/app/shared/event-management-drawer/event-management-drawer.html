@@ -87,7 +87,13 @@
         </p-tabpanel>
 
         <p-tabpanel value="analytics">
-          <app-event-management-analytics-tab></app-event-management-analytics-tab>
+          <app-event-management-analytics-tab
+            [eventAnalytics]="eventAnalytics()"
+            [eventRating]="eventRating()"
+            [eventPersonCount]="eventPersonCount()"
+            [eventDaysCount]="eventDaysCount()"
+            [locationCapacity]="locationCapacity()"
+          ></app-event-management-analytics-tab>
         </p-tabpanel>
 
         @if (mode() !== 'create') {
@@ -115,9 +121,21 @@
       [isSaving]="isSavingDay()"
       [errorMessage]="errorMessage()"
       [successMessage]="successMessage()"
+      [participantRows]="participantRows()"
+      [isSavingParticipants]="isSavingParticipants()"
+      [participantsCount]="participantsCount()"
+      [menuItems]="menuItems()"
+      [availableItems]="availableItems()"
+      [isLoadingMenuItems]="isLoadingMenuItems()"
+      [isSavingMenuItems]="isSavingMenuItems()"
+      [dayAnalytics]="dayAnalytics()"
       (tabChange)="onDayDetailsTabChange($event)"
       (saveDay)="saveSelectedDay($event)"
       (cancelDay)="cancelSelectedDay()"
+      (saveParticipants)="onSaveParticipants($event)"
+      (cancelParticipants)="onCancelParticipants()"
+      (saveMenuItems)="onSaveMenuItems($event)"
+      (cancelMenuItems)="onCancelMenuItems()"
     ></app-event-management-day-details-view>
   }
 </p-drawer>
