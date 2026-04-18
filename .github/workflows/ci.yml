@@ -50,7 +50,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
 
       - name: Check backend container status
         run: |
@@ -64,7 +64,7 @@ jobs:
         run: docker exec eventor-backend dotnet build Eventor.sln -c Debug --verbosity=normal
 
       - name: Run backend application and apply migrations
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" && sleep 10
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d eventor-backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" && sleep 10
 
       - name: Verify that __EFMigrationsHistory table exists
         run: |
@@ -91,7 +91,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
 
       - name: Check container status
         run: |
@@ -201,7 +201,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
 
       - name: Check container status
         run: |
@@ -252,7 +252,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
 
       - name: Check backend container status
         run: |
@@ -304,7 +304,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
 
       - name: Check backend container status
         run: |
@@ -316,7 +316,7 @@ jobs:
       
       - name: Run backend app
         run: |
-          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls ${{ env.E2E_BASE_URL }}
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d eventor-backend dotnet run --project Web/Web.csproj -c Debug --urls ${{ env.E2E_BASE_URL }}
           sleep 15
       
       - name: Run E2E tests
@@ -360,7 +360,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
 
       - name: Check backend container status
         run: |
@@ -372,7 +372,7 @@ jobs:
 
       - name: Run backend
         run: |
-          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d eventor-backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
           sleep 30
 
       - name: Check container health
@@ -400,7 +400,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
 
       - name: Check backend container status
         run: |
