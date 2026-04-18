@@ -11,7 +11,7 @@ import { OpenAPI } from './generated';
 export const EVENTOR_API_BASE_URL = new InjectionToken<string>('EVENTOR_API_BASE_URL');
 
 export function provideEventorApi(
-  baseUrl = 'http://localhost:8081'
+  baseUrl = ''
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
     {
