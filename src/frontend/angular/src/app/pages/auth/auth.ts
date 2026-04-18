@@ -93,27 +93,6 @@ export class Auth {
     validators: [this.passwordsMatchValidator],
   });
 
-  readonly submitDisabled = computed(() => {
-    if (this.isSubmitting()) {
-      return true;
-    }
-
-    const controls = this.authForm.controls;
-
-    if (this.isRegisterMode()) {
-      return (
-        !controls.name.value.trim() ||
-        !controls.phone.value.trim() ||
-        !controls.password.value ||
-        !controls.confirmPassword.value ||
-        !!this.authForm.errors?.['passwordMismatch'] ||
-        controls.password.invalid
-      );
-    }
-
-    return !controls.phone.value.trim() || !controls.password.value || controls.password.invalid;
-  });
-
   constructor() {
     effect(() => {
       this.isRegisterMode();
@@ -126,7 +105,27 @@ export class Auth {
   onSubmit(event: Event): void {
     event.preventDefault();
 
-    if (this.submitDisabled()) {
+    if (this.isSubmitting()) {
+      return;
+    }
+
+    const controls = this.authForm.controls;
+    const isRegister = this.isRegisterMode();
+    const isInvalid = isRegister
+      ? (
+          !controls.name.value.trim() ||
+          !controls.phone.value.trim() ||
+          !controls.password.value ||
+          !controls.confirmPassword.value ||
+          !!this.authForm.errors?.['passwordMismatch'] ||
+          controls.password.invalid
+        )
+      : (
+          !controls.phone.value.trim() ||
+          !controls.password.value
+        );
+
+    if (isInvalid) {
       this.errorMessage.set(this.buildValidationMessage());
       return;
     }
@@ -184,15 +183,15 @@ export class Auth {
 
   private buildValidationMessage(): string {
     if (!this.isRegisterMode()) {
-      if (!this.authForm.controls.phone.value.trim() || !this.authForm.controls.password.value) {
-        return 'Заполните номер телефона и пароль.';
-      }
-
-      return 'Проверьте корректность данных для входа.';
+      return 'Заполните номер телефона и пароль.';
     }
 
     if (this.authForm.errors?.['passwordMismatch']) {
       return 'Пароли не совпадают.';
+    }
+
+    if (this.authForm.controls.password.invalid) {
+      return 'Пароль должен содержать не менее 6 символов.';
     }
 
     return 'Заполните все обязательные поля для регистрации.';
