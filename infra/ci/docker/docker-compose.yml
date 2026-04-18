@@ -28,7 +28,7 @@ services:
     networks:
       - eventor-network
 
-  backend:
+  eventor-backend:
     build:
       context: ${CONTEXT}
       dockerfile: ${DOCKER_PATH}/dockerfile.backend
