@@ -50,7 +50,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check backend container status
         run: |
@@ -91,7 +91,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check container status
         run: |
@@ -201,7 +201,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check container status
         run: |
@@ -252,7 +252,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check backend container status
         run: |
@@ -304,7 +304,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check backend container status
         run: |
@@ -360,7 +360,7 @@ jobs:
           fi
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check backend container status
         run: |
@@ -400,7 +400,7 @@ jobs:
         run: docker --version
 
       - name: Lifting the backend container
-        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d eventor-backend
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
 
       - name: Check backend container status
         run: |
