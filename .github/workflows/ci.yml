@@ -54,7 +54,7 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -95,7 +95,7 @@ jobs:
 
       - name: Check container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -205,7 +205,7 @@ jobs:
 
       - name: Check container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -256,7 +256,7 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -308,7 +308,7 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -364,7 +364,7 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -377,7 +377,7 @@ jobs:
 
       - name: Check container health
         run: |
-          status=$(docker inspect -f '{{.State.Health.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Health.Status}}' eventor-backend)
           if [ "$status" != "healthy" ]; then
             echo "Container is not healthy (status: $status)"
             exit 1
@@ -404,7 +404,7 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
