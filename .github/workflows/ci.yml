@@ -212,7 +212,7 @@ jobs:
           fi
       
       - name: Run unit tests
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Unit" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} eventor-backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Unit" --verbosity=normal
 
   integration-tests-backend:
     name: Running backend integration tests
@@ -263,7 +263,7 @@ jobs:
           fi
       
       - name: Run integration tests
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Integration" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} eventor-backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Integration" --verbosity=normal
 
   e2e-tests-backend:
     name: Running backend end-to-end tests
@@ -320,7 +320,7 @@ jobs:
           sleep 15
       
       - name: Run E2E tests
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -e E2E_BASE_URL=${{ env.E2E_BASE_URL }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -e E2E_BASE_URL=${{ env.E2E_BASE_URL }} eventor-backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
 
   run-backend:
     name: Running backend
