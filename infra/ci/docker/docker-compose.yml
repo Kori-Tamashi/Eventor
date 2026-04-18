@@ -32,7 +32,7 @@ services:
     build:
       context: ${CONTEXT}
       dockerfile: ${DOCKER_PATH}/dockerfile.backend
-    container_name: backend
+    container_name: eventor-backend
     environment:
       POSTGRES_HOST: database
       POSTGRES_PORT: ${POSTGRES_PORT}

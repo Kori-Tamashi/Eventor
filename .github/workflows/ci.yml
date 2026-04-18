@@ -54,17 +54,17 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
           fi
 
       - name: Build all projects in solution
-        run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
+        run: docker exec eventor-backend dotnet build Eventor.sln -c Debug --verbosity=normal
 
       - name: Run backend application and apply migrations
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" && sleep 10
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d eventor-backend dotnet run --project Web/Web.csproj --urls "http://0.0.0.0:8080" && sleep 10
 
       - name: Verify that __EFMigrationsHistory table exists
         run: |
@@ -95,14 +95,14 @@ jobs:
 
       - name: Check container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
           fi
 
       - name: Build all projects in solution
-        run: docker exec backend dotnet build Eventor.sln -c Debug --verbosity=normal
+        run: docker exec eventor-backend dotnet build Eventor.sln -c Debug --verbosity=normal
 
   build-frontend:
     name: Building a frontend
@@ -205,14 +205,14 @@ jobs:
 
       - name: Check container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
           fi
       
       - name: Run unit tests
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Unit" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} eventor-backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Unit" --verbosity=normal
 
   integration-tests-backend:
     name: Running backend integration tests
@@ -256,14 +256,14 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
           fi
       
       - name: Run integration tests
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Integration" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} eventor-backend dotnet test Eventor.sln -c Debug --filter "TestCategory=Integration" --verbosity=normal
 
   e2e-tests-backend:
     name: Running backend end-to-end tests
@@ -308,7 +308,7 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -316,11 +316,11 @@ jobs:
       
       - name: Run backend app
         run: |
-          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls ${{ env.E2E_BASE_URL }}
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d eventor-backend dotnet run --project Web/Web.csproj -c Debug --urls ${{ env.E2E_BASE_URL }}
           sleep 15
       
       - name: Run E2E tests
-        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -e E2E_BASE_URL=${{ env.E2E_BASE_URL }} backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
+        run: docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -e E2E_BASE_URL=${{ env.E2E_BASE_URL }} eventor-backend dotnet test Eventor.sln -c Debug --filter "TestCategory=E2E" --verbosity=normal
 
   run-backend:
     name: Running backend
@@ -364,7 +364,7 @@ jobs:
 
       - name: Check backend container status
         run: |
-          status=$(docker inspect -f '{{.State.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
           if [ "$status" != "running" ]; then
             echo "Container is not running (status: $status)"
             exit 1
@@ -372,12 +372,12 @@ jobs:
 
       - name: Run backend
         run: |
-          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
+          docker exec -e JwtOptions__Key=${{ secrets.JWT_KEY }} -d eventor-backend dotnet run --project Web/Web.csproj -c Debug --urls "http://0.0.0.0:8080"
           sleep 30
 
       - name: Check container health
         run: |
-          status=$(docker inspect -f '{{.State.Health.Status}}' backend)
+          status=$(docker inspect -f '{{.State.Health.Status}}' eventor-backend)
           if [ "$status" != "healthy" ]; then
             echo "Container is not healthy (status: $status)"
             exit 1
@@ -399,10 +399,21 @@ jobs:
       - name: Verify Docker installation
         run: docker --version
 
+      - name: Lifting the backend container
+        run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d backend
+
+      - name: Check backend container status
+        run: |
+          status=$(docker inspect -f '{{.State.Status}}' eventor-backend)
+          if [ "$status" != "running" ]; then
+            echo "Container is not running (status: $status)"
+            exit 1
+          fi
+
       - name: Lifting the web-server container
         run: docker compose --env-file ${{ env.ENV_FILE }} -f ${{ env.DOCKER_COMPOSE_PATH }} up -d web-server --wait
 
-      - name: Check container status
+      - name: Check webserver container status
         run: |
           status=$(docker inspect -f '{{.State.Status}}' web-server)
           if [ "$status" != "running" ]; then
@@ -410,7 +421,7 @@ jobs:
             exit 1
           fi
       
-      - name: Check container health
+      - name: Check webserver container health
         run: |
           status=$(docker inspect -f '{{.State.Health.Status}}' web-server)
           if [ "$status" != "healthy" ]; then
