@@ -41,7 +41,7 @@
 
     <p-tabpanel value="analytics">
       <app-event-management-day-analytics-tab
-        [menuCost]="dayAnalytics()?.menuCost ?? null"
+        [dayCost]="dayAnalytics()?.dayCost ?? null"
         [dayPrice]="dayAnalytics()?.dayPrice ?? null"
         [dayPriceWithPrivileges]="dayAnalytics()?.dayPriceWithPrivileges ?? null"
         [participantsCount]="participantsCount()"

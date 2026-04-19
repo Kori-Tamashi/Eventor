@@ -1,9 +1,10 @@
 import { DestroyRef, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged, finalize, forkJoin } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { EconomyApiService } from '../../../core/api/services/economy-api.service';
 import { ItemApiModel, ItemsApiService } from '../../../core/api/services/items-api.service';
 import { AdminItemDrawer } from '../admin-item-drawer/admin-item-drawer';
 import { AdminItemDraftValue, AdminItemEditorMode, AdminItemSavePayload } from '../admin-item-drawer/admin-item.models';
@@ -18,6 +19,7 @@ import { AdminItemDraftValue, AdminItemEditorMode, AdminItemSavePayload } from '
 export class AdminItemsSection {
   private readonly destroyRef = inject(DestroyRef);
   private readonly itemsApiService = inject(ItemsApiService);
+  private readonly economyApiService = inject(EconomyApiService);
 
   private readonly searchInput$ = new Subject<string>();
   private loadSubscription: Subscription | null = null;
@@ -109,13 +111,17 @@ export class AdminItemsSection {
     this.drawerOpen.set(true);
 
     this.drawerLoadSubscription?.unsubscribe();
-    this.drawerLoadSubscription = this.itemsApiService.getItem(row.id)
+    this.drawerLoadSubscription = forkJoin({
+      item: this.itemsApiService.getItem(row.id),
+      calculatedCost: this.economyApiService.getItemCost(row.id),
+    })
       .pipe(finalize(() => this.isDrawerLoading.set(false)))
       .subscribe({
-        next: (item) => {
+        next: ({ item, calculatedCost }) => {
           this.drawerInitialValue.set({
             title: item.title,
             cost: this.formatNumber(item.cost),
+            calculatedCost: this.formatNumber(calculatedCost),
           });
         },
         error: (error: unknown) => {

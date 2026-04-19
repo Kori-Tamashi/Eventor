@@ -1,0 +1,105 @@
+<div class="admin-feedbacks">
+  <div class="admin-feedbacks__head">
+    <div>
+      <h2 class="admin-feedbacks__title">Отзывы</h2>
+      <p class="admin-feedbacks__subtitle">Глобальное администрирование отзывов системы</p>
+    </div>
+
+    <div class="admin-feedbacks__actions">
+      <span class="search ui-search p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Поиск отзывов"
+          [value]="searchTerm()"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </span>
+
+      <div class="admin-feedbacks__pager">
+        <div class="page-count ui-surface">{{ pageLabel() }}</div>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
+          <span pButtonIcon class="pi pi-chevron-left"></span>
+        </button>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
+          <span pButtonIcon class="pi pi-chevron-right"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="ui-feedback-message ui-feedback-message--error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="ui-feedback-message">
+      {{ successMessage() }}
+    </div>
+  }
+
+  <p-table [value]="pagedRows()" styleClass="ui-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Событие</th>
+        <th>Автор</th>
+        <th>Комментарий</th>
+        <th>Оценка</th>
+        <th>Действия</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.eventTitle }}</td>
+        <td>{{ row.author }}</td>
+        <td>{{ row.comment }}</td>
+        <td>{{ row.rate }}</td>
+        <td class="admin-feedbacks__actions-cell">
+          <div class="row-actions">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Related event" (click)="openRelatedEvent(row)">
+              <span pButtonIcon class="pi pi-search"></span>
+            </button>
+
+            <button pButton type="button" class="ui-icon-btn" aria-label="Edit" (click)="openEditDrawer(row)">
+              <span pButtonIcon class="pi pi-pencil"></span>
+            </button>
+
+            <button
+              pButton
+              type="button"
+              class="ui-icon-btn"
+              aria-label="Delete"
+              [disabled]="deletingFeedbackId() === row.id"
+              (click)="deleteFeedback(row)"
+            >
+              <span pButtonIcon class="pi" [class.pi-trash]="deletingFeedbackId() !== row.id" [class.pi-spin]="deletingFeedbackId() === row.id" [class.pi-spinner]="deletingFeedbackId() === row.id"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
+    <div class="ui-feedback-message">
+      Отзывы не найдены.
+    </div>
+  }
+</div>
+
+<app-admin-feedback-drawer
+  [visible]="drawerOpen()"
+  [initialValue]="drawerInitialValue()"
+  [isLoading]="isDrawerLoading()"
+  [isSaving]="isSavingDrawer()"
+  [errorMessage]="drawerErrorMessage()"
+  (visibleChange)="drawerOpen.set($event)"
+  (closeRequested)="closeDrawer()"
+  (saveRequested)="saveFeedback($event)"
+></app-admin-feedback-drawer>

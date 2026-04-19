@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 
 import { Dashboard } from './dashboard';
 import { EventsApiService } from '../../core/api/services/events-api.service';
+import { RegistrationsApiService } from '../../core/api/services/registrations-api.service';
 import { UsersApiService } from '../../core/api/services/users-api.service';
 
 describe('Dashboard', () => {
@@ -29,7 +30,25 @@ describe('Dashboard', () => {
         {
           provide: EventsApiService,
           useValue: {
-            listUserEvents: () => of([]),
+            getEvent: () => of({
+              id: 'event-1',
+              title: 'Мероприятие',
+              description: 'Описание',
+              startDate: '2026-04-19',
+              locationId: 'location-1',
+              daysCount: 1,
+              percent: 10,
+              createdByUserId: 'user-1',
+              rating: 4.5,
+              personCount: 10,
+            }),
+          },
+        },
+        {
+          provide: RegistrationsApiService,
+          useValue: {
+            listByUser: () => of([]),
+            deleteRegistration: () => of(void 0),
           },
         },
       ],

@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import type {
   System_DateOnly,
   Web_Dtos_CreateDayRequest,
@@ -41,6 +42,29 @@ export class EventsApiService {
 
   getEvent(eventId: string): Observable<EventApiModel> {
     return this.eventsService.getApiV1Events1({ eventId }) as Observable<EventApiModel>;
+  }
+
+  getEventTitleMap(eventIds: string[]): Observable<Record<string, string>> {
+    const uniqueIds = Array.from(new Set(eventIds.filter(Boolean)));
+
+    if (uniqueIds.length === 0) {
+      return of({});
+    }
+
+    return forkJoin(
+      uniqueIds.map((eventId) =>
+        this.getEvent(eventId).pipe(
+          map((event) => ({ id: eventId, title: event.title }))
+        )
+      )
+    ).pipe(
+      map((entries) =>
+        entries.reduce<Record<string, string>>((acc, entry) => {
+          acc[entry.id] = entry.title;
+          return acc;
+        }, {})
+      )
+    );
   }
 
   createEvent(payload: Web_Dtos_CreateEventRequest): Observable<EventApiModel> {

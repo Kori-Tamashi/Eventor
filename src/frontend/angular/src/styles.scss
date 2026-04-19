@@ -629,6 +629,36 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   color: #b91c1c;
 }
 
+.settings-row--danger {
+  border-color: #fecaca;
+  background: #fff7f7;
+}
+
+.profile-danger-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+  border: 1px solid #ef4444;
+  background: #fff1f2;
+  color: #b91c1c;
+  box-shadow: none;
+}
+
+button.profile-danger-btn.p-button:hover,
+button.profile-danger-btn.p-button:active,
+button.profile-danger-btn.p-button:focus,
+button.profile-danger-btn.p-button:focus-visible {
+  background: #ffe4e6 !important;
+  border-color: #dc2626 !important;
+  box-shadow: none !important;
+}
+
+button.profile-danger-btn.p-button:hover .p-button-label,
+button.profile-danger-btn.p-button:active .p-button-label,
+button.profile-danger-btn.p-button:focus .p-button-label,
+button.profile-danger-btn.p-button:focus-visible .p-button-label {
+  color: #991b1b !important;
+}
+
 .review-rating .p-rating-icon {
   color: var(--rating-star-empty) !important;
 }

@@ -9,8 +9,36 @@ import { EconomyService } from '../generated';
 export class EconomyApiService {
   private readonly economyService = inject(EconomyService);
 
+  getItemCost(itemId: string): Observable<number> {
+    return this.economyService.getApiV1EconomyItemsCost({ itemId }) as Observable<number>;
+  }
+
+  getDaysCost(dayIds: string[]): Observable<number[]> {
+    const uniqueIds = Array.from(new Set(dayIds.filter(Boolean)));
+
+    if (uniqueIds.length === 0) {
+      return of([]);
+    }
+
+    return this.economyService.postApiV1EconomyDaysCost({
+      requestBody: uniqueIds,
+    }) as Observable<number[]>;
+  }
+
   getDayPrice(dayId: string): Observable<number> {
     return this.economyService.getApiV1EconomyDaysPrice({ dayId }) as Observable<number>;
+  }
+
+  getDaysPrice(dayIds: string[]): Observable<number[]> {
+    const uniqueIds = Array.from(new Set(dayIds.filter(Boolean)));
+
+    if (uniqueIds.length === 0) {
+      return of([]);
+    }
+
+    return this.economyService.postApiV1EconomyDaysPrice({
+      requestBody: uniqueIds,
+    }) as Observable<number[]>;
   }
 
   getDayPriceMap(dayIds: string[]): Observable<Record<string, number>> {
@@ -20,16 +48,13 @@ export class EconomyApiService {
       return of({});
     }
 
-    return forkJoin(
-      uniqueIds.map((dayId) =>
-        this.getDayPrice(dayId).pipe(
-          map((price) => ({ id: dayId, price }))
-        )
-      )
-    ).pipe(
-      map((entries) =>
-        entries.reduce<Record<string, number>>((acc, entry) => {
-          acc[entry.id] = entry.price;
+    return this.getDaysPrice(uniqueIds).pipe(
+      map((prices) =>
+        uniqueIds.reduce<Record<string, number>>((acc, dayId, index) => {
+          const price = prices[index];
+          if (typeof price === 'number') {
+            acc[dayId] = price;
+          }
           return acc;
         }, {})
       )

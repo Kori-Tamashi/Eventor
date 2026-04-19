@@ -59,6 +59,20 @@
         />
       </div>
 
+      @if (calculatedCost()) {
+        <div class="admin-item-field">
+          <label class="admin-item-label" for="itemCalculatedCost">Рассчитанная стоимость</label>
+          <input
+            id="itemCalculatedCost"
+            pInputText
+            class="ui-input"
+            type="text"
+            [value]="calculatedCost()"
+            readonly
+          />
+        </div>
+      }
+
       <div class="admin-item-actions">
         <button
           pButton

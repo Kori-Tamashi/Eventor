@@ -1,18 +1,24 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { finalize, switchMap } from 'rxjs';
+import { finalize, forkJoin, of, switchMap } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { EventsApiService } from '../../core/api/services/events-api.service';
+import { RegistrationsApiService } from '../../core/api/services/registrations-api.service';
 import { UsersApiService } from '../../core/api/services/users-api.service';
 import { EventApiModel } from '../../core/api/models/event.models';
+import { RegistrationApiModel } from '../../core/api/models/registration.models';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
 
 type DashboardRow = {
-  id: string;
-  name: string;
+  registrationId: string;
+  eventId: string;
+  eventTitle: string;
   description: string;
   date: string;
+  typeLabel: string;
+  paymentLabel: string;
+  daysLabel: string;
   rating: number;
 };
 
@@ -26,13 +32,16 @@ type DashboardRow = {
 export class Dashboard {
   private readonly usersApiService = inject(UsersApiService);
   private readonly eventsApiService = inject(EventsApiService);
+  private readonly registrationsApiService = inject(RegistrationsApiService);
   private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
 
   readonly pageSize = signal<number>(9);
   readonly pageIndex = signal<number>(0);
   readonly searchTerm = signal<string>('');
   readonly isLoading = signal<boolean>(true);
+  readonly cancelingRegistrationId = signal<string | null>(null);
   readonly errorMessage = signal<string>('');
+  readonly successMessage = signal<string>('');
   readonly currentUsername = signal<string>('Username');
 
   readonly allRows = signal<DashboardRow[]>([]);
@@ -49,8 +58,11 @@ export class Dashboard {
       }
 
       return (
-        row.name.toLowerCase().includes(query) ||
-        row.description.toLowerCase().includes(query)
+        row.eventTitle.toLowerCase().includes(query) ||
+        row.description.toLowerCase().includes(query) ||
+        row.typeLabel.toLowerCase().includes(query) ||
+        row.paymentLabel.toLowerCase().includes(query) ||
+        row.daysLabel.toLowerCase().includes(query)
       );
     });
     const size = this.pageSize();
@@ -107,28 +119,87 @@ export class Dashboard {
 
   openDetails(row: DashboardRow): void {
     this.eventDetailsDrawerStore.openForEvent({
-      eventId: row.id,
+      eventId: row.eventId,
       source: 'dashboard',
       viewerRole: 'user',
-      fallbackTitle: row.name,
+      fallbackTitle: row.eventTitle,
     });
+  }
+
+  cancelRegistration(row: DashboardRow): void {
+    if (this.cancelingRegistrationId()) {
+      return;
+    }
+
+    if (typeof window !== 'undefined' && !window.confirm(`Отменить регистрацию на "${row.eventTitle}"?`)) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.cancelingRegistrationId.set(row.registrationId);
+
+    this.registrationsApiService.deleteRegistration(row.registrationId)
+      .pipe(finalize(() => this.cancelingRegistrationId.set(null)))
+      .subscribe({
+        next: () => {
+          this.allRows.update((rows) => rows.filter((item) => item.registrationId !== row.registrationId));
+          this.clampPageIndexAfterDeletion();
+          this.successMessage.set('Регистрация отменена.');
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.mapCancelErrorMessage(error));
+        },
+      });
   }
 
   private loadDashboardEvents(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
+    this.successMessage.set('');
 
     this.usersApiService.getMe()
       .pipe(
         switchMap((user) => {
           this.currentUsername.set(user.name);
-          return this.eventsApiService.listUserEvents(user.id);
+          return this.registrationsApiService.listByUser(user.id);
+        }),
+        switchMap((registrations) => {
+          const eventIds = Array.from(new Set(registrations.map((registration) => registration.eventId)));
+
+          if (eventIds.length === 0) {
+            return of({
+              registrations,
+              eventMap: {} as Record<string, EventApiModel>,
+            });
+          }
+
+          return forkJoin({
+            registrations: of(registrations),
+            events: forkJoin(
+              eventIds.map((eventId) => this.eventsApiService.getEvent(eventId))
+            ),
+          }).pipe(
+            switchMap(({ registrations: loadedRegistrations, events }) =>
+              of({
+                registrations: loadedRegistrations,
+                eventMap: events.reduce<Record<string, EventApiModel>>((acc, event) => {
+                  acc[event.id] = event;
+                  return acc;
+                }, {}),
+              })
+            )
+          );
         }),
         finalize(() => this.isLoading.set(false))
       )
       .subscribe({
-        next: (events) => {
-          this.allRows.set(events.map((event) => this.mapEventToRow(event)));
+        next: ({ registrations, eventMap }) => {
+          this.allRows.set(
+            registrations
+              .map((registration) => this.mapRegistrationToRow(registration, eventMap[registration.eventId]))
+              .filter((row): row is DashboardRow => row !== null)
+          );
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapErrorMessage(error));
@@ -137,14 +208,46 @@ export class Dashboard {
       });
   }
 
-  private mapEventToRow(event: EventApiModel): DashboardRow {
+  private mapRegistrationToRow(
+    registration: RegistrationApiModel,
+    event: EventApiModel | undefined,
+  ): DashboardRow | null {
+    if (!event) {
+      return null;
+    }
+
     return {
-      id: event.id,
-      name: event.title,
+      registrationId: registration.id,
+      eventId: event.id,
+      eventTitle: event.title,
       description: event.description ?? 'Без описания',
       date: this.formatDate(event.startDate),
+      typeLabel: this.typeLabel(registration.type),
+      paymentLabel: registration.payment ? 'Оплачено' : 'Не оплачено',
+      daysLabel: this.formatDays(registration),
       rating: event.rating,
     };
+  }
+
+  private typeLabel(type: 0 | 1 | 2): string {
+    switch (type) {
+      case 0: return 'Простой';
+      case 1: return 'VIP';
+      case 2: return 'Организатор';
+      default: return 'Не указано';
+    }
+  }
+
+  private formatDays(registration: RegistrationApiModel): string {
+    if (registration.days.length === 0) {
+      return 'Дни не выбраны';
+    }
+
+    return registration.days
+      .slice()
+      .sort((a, b) => a.sequenceNumber - b.sequenceNumber)
+      .map((day) => day.title?.trim() || `День ${day.sequenceNumber}`)
+      .join(', ');
   }
 
   private formatDate(date: string): string {
@@ -161,10 +264,34 @@ export class Dashboard {
     const status = this.extractStatusCode(error);
 
     if (status === 401) {
-      return 'Выполните вход, чтобы просматривать ваши мероприятия.';
+      return 'Выполните вход, чтобы просматривать ваши регистрации.';
     }
 
-    return 'Не удалось загрузить последние мероприятия.';
+    return 'Не удалось загрузить ваши регистрации.';
+  }
+
+  private mapCancelErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Выполните вход, чтобы отменять регистрацию.';
+    }
+
+    if (status === 404) {
+      return 'Регистрация не найдена.';
+    }
+
+    return 'Не удалось отменить регистрацию.';
+  }
+
+  private clampPageIndexAfterDeletion(): void {
+    const size = this.pageSize();
+    const totalRows = this.allRows().length;
+    const maxPageIndex = Math.max(0, Math.ceil(totalRows / size) - 1);
+
+    if (this.pageIndex() > maxPageIndex) {
+      this.pageIndex.set(maxPageIndex);
+    }
   }
 
   private extractStatusCode(error: unknown): number | null {

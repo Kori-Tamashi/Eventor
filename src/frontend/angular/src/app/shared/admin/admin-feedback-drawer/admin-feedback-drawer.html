@@ -1,0 +1,81 @@
+<p-drawer
+  position="right"
+  [visible]="visible()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer admin-feedback-drawer-shell"
+>
+  <div class="drawer-topbar">
+    <button
+      pButton
+      type="button"
+      class="ui-icon-btn drawer-nav-btn"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span pButtonIcon class="pi pi-times"></span>
+    </button>
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">Редактировать отзыв</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="ui-feedback-message">Загрузка данных отзыва...</div>
+  } @else {
+    <div class="admin-feedback-form ui-surface">
+      @if (errorMessage()) {
+        <div class="ui-feedback-message ui-feedback-message--error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="admin-feedback-field">
+        <div class="admin-feedback-label-row">
+          <label class="admin-feedback-label" for="feedbackComment">Комментарий</label>
+          <span class="admin-feedback-counter">{{ commentCountLabel() }}</span>
+        </div>
+
+        <textarea
+          id="feedbackComment"
+          pTextarea
+          class="ui-input admin-feedback-textarea"
+          rows="6"
+          [value]="comment()"
+          (input)="onCommentInput(($any($event.target)).value)"
+        ></textarea>
+      </div>
+
+      <div class="admin-feedback-field">
+        <label class="admin-feedback-label">Оценка</label>
+        <p-rating
+          [ngModel]="rate()"
+          (ngModelChange)="onRateChange($event)"
+          [stars]="5"
+        ></p-rating>
+      </div>
+
+      <div class="admin-feedback-actions">
+        <button
+          pButton
+          type="button"
+          class="admin-feedback-secondary-btn"
+          [disabled]="isSaving()"
+          (click)="close()"
+        >
+          <span pButtonLabel>Отменить</span>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn"
+          [disabled]="!canSave()"
+          (click)="save()"
+        >
+          <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить' }}</span>
+        </button>
+      </div>
+    </div>
+  }
+</p-drawer>

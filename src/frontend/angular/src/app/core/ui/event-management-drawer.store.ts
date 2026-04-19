@@ -1,6 +1,6 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { Subscription, finalize, forkJoin } from 'rxjs';
-import { catchError, of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import {
   EventManagementDrawerDataService,
   EventManagementDayData,
@@ -31,7 +31,7 @@ export type EventManagementDrawerContext = {
 export type EventManagementDrawerDayRow = EventManagementDayData;
 
 export type EventManagementDayAnalytics = {
-  menuCost: number | null;
+  dayCost: number | null;
   dayPrice: number | null;
   dayPriceWithPrivileges: number | null;
 };
@@ -274,20 +274,23 @@ export class EventManagementDrawerStore {
 
     this.loadDayExtrasSubscription = forkJoin({
       menuItemsData: this.dataService.loadMenuItems(day.menuId),
-      menuCost: economyService.getMenuCost(day.menuId).pipe(catchError(() => of(null))),
+      dayCost: economyService.getDaysCost([day.id]).pipe(
+        map((values) => values[0] ?? null),
+        catchError(() => of(null))
+      ),
       dayPrice: economyService.getDayPrice(day.id).pipe(catchError(() => of(null))),
       dayPriceWithPrivileges: economyService.getDayPriceWithPrivileges(day.id).pipe(catchError(() => of(null))),
     })
       .pipe(finalize(() => this.isLoadingMenuItems.set(false)))
       .subscribe({
-        next: ({ menuItemsData, menuCost, dayPrice, dayPriceWithPrivileges }) => {
+        next: ({ menuItemsData, dayCost, dayPrice, dayPriceWithPrivileges }) => {
           this.menuItems.set(menuItemsData.menuItems);
           this.savedMenuItems.set([...menuItemsData.menuItems]);
           this.availableItems.set(menuItemsData.availableItems);
-          this.dayAnalytics.set({ menuCost, dayPrice, dayPriceWithPrivileges });
+          this.dayAnalytics.set({ dayCost, dayPrice, dayPriceWithPrivileges });
         },
         error: () => {
-          this.dayAnalytics.set({ menuCost: null, dayPrice: null, dayPriceWithPrivileges: null });
+          this.dayAnalytics.set({ dayCost: null, dayPrice: null, dayPriceWithPrivileges: null });
         },
       });
   }

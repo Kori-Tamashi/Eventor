@@ -31,6 +31,7 @@ export class AdminItemDrawer {
 
   readonly title = signal<string>('');
   readonly cost = signal<string>('');
+  readonly calculatedCost = signal<string>('');
 
   readonly drawerTitle = computed(() => this.mode() === 'edit' ? 'Редактировать объект' : 'Создать объект');
   readonly titleCountLabel = computed(() => `${this.title().length}/${this.titleMaxLen}`);
@@ -45,6 +46,7 @@ export class AdminItemDrawer {
       const value = this.initialValue();
       this.title.set(value?.title ?? '');
       this.cost.set(value?.cost ?? '');
+      this.calculatedCost.set(value?.calculatedCost ?? '');
     });
   }
 

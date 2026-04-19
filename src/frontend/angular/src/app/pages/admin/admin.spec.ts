@@ -7,7 +7,11 @@ import { ItemsApiService } from '../../core/api/services/items-api.service';
 import { LocationsApiService } from '../../core/api/services/locations-api.service';
 import { MenusApiService } from '../../core/api/services/menus-api.service';
 import { AdminEventsApiService } from '../../core/api/services/admin-events-api.service';
+import { AdminFeedbacksApiService } from '../../core/api/services/admin-feedbacks-api.service';
 import { AdminUsersApiService } from '../../core/api/services/admin-users-api.service';
+import { FeedbacksApiService } from '../../core/api/services/feedbacks-api.service';
+import { RegistrationsApiService } from '../../core/api/services/registrations-api.service';
+import { EventsApiService } from '../../core/api/services/events-api.service';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
 import { EventManagementDrawerStore } from '../../core/ui/event-management-drawer.store';
 
@@ -122,6 +126,57 @@ describe('Admin', () => {
           useValue: {
             listEvents: () => of([]),
             deleteEvent: () => of(void 0),
+          },
+        },
+        {
+          provide: FeedbacksApiService,
+          useValue: {
+            listFeedbacks: () => of([]),
+            listByEvent: () => of([]),
+            getFeedback: () => of({
+              id: 'feedback-1',
+              registrationId: 'registration-1',
+              comment: 'Комментарий',
+              rate: 4,
+            }),
+            createFeedback: () => of({
+              id: 'feedback-1',
+              registrationId: 'registration-1',
+              comment: 'Комментарий',
+              rate: 4,
+            }),
+            updateFeedback: () => of({
+              id: 'feedback-1',
+              registrationId: 'registration-1',
+              comment: 'Комментарий',
+              rate: 4,
+            }),
+            deleteFeedback: () => of(void 0),
+          },
+        },
+        {
+          provide: AdminFeedbacksApiService,
+          useValue: {
+            deleteFeedback: () => of(void 0),
+          },
+        },
+        {
+          provide: RegistrationsApiService,
+          useValue: {
+            getRegistration: () => of({
+              id: 'registration-1',
+              eventId: 'event-1',
+              userId: 'user-1',
+              type: 0,
+              payment: false,
+              days: [],
+            }),
+          },
+        },
+        {
+          provide: EventsApiService,
+          useValue: {
+            getEventTitleMap: () => of({}),
           },
         },
         {
