@@ -19,12 +19,6 @@
         </span>
 
         <div class="pager">
-          <button pButton type="button" class="ui-icon-btn" aria-label="Filter">
-            <span pButtonIcon class="pi pi-filter"></span>
-          </button>
-
-          <span class="v-sep" aria-hidden="true"></span>
-
           <div class="page-count ui-surface">{{ pageLabel() }}</div>
 
           <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
@@ -55,6 +49,12 @@
       </div>
     }
 
+    @if (successMessage()) {
+      <div class="ui-feedback-message">
+        {{ successMessage() }}
+      </div>
+    }
+
     <p-table [value]="pagedRows()" styleClass="ui-table">
       <ng-template pTemplate="header">
         <tr>
@@ -66,7 +66,7 @@
           <th>Количество дней</th>
           <th>Наценка</th>
           <th>Рейтинг</th>
-          <th>Детали</th>
+          <th>Действия</th>
         </tr>
       </ng-template>
 
@@ -81,9 +81,26 @@
           <td>{{ row.markup }}</td>
           <td>{{ row.rating }}</td>
           <td class="details-cell">
-            <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
-              <span pButtonIcon class="pi pi-search"></span>
-            </button>
+            <div class="row-actions">
+              <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
+                <span pButtonIcon class="pi pi-search"></span>
+              </button>
+
+              <button pButton type="button" class="ui-icon-btn" aria-label="Manage" (click)="openManageEventDrawer(row)">
+                <span pButtonIcon class="pi pi-pencil"></span>
+              </button>
+
+              <button
+                pButton
+                type="button"
+                class="ui-icon-btn"
+                aria-label="Delete"
+                [disabled]="deletingEventId() === row.id"
+                (click)="deleteEvent(row)"
+              >
+                <span pButtonIcon class="pi" [class.pi-trash]="deletingEventId() !== row.id" [class.pi-spin]="deletingEventId() === row.id" [class.pi-spinner]="deletingEventId() === row.id"></span>
+              </button>
+            </div>
           </td>
         </tr>
       </ng-template>

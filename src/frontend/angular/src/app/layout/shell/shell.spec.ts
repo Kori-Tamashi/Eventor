@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { Shell } from './shell';
+import { AuthApiService } from '../../core/api/services/auth-api.service';
 
 describe('Shell', () => {
   let component: Shell;
@@ -10,7 +11,15 @@ describe('Shell', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Shell],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AuthApiService,
+          useValue: {
+            logout: () => undefined,
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Shell);

@@ -115,6 +115,23 @@
         </button>
       </div>
 
+      <div class="settings-row settings-row--danger">
+        <div>
+          <div class="settings-row__title">Удаление аккаунта</div>
+          <div class="settings-row__text">Аккаунт будет удален без возможности восстановления</div>
+        </div>
+
+        <button
+          pButton
+          type="button"
+          class="profile-danger-btn"
+          [disabled]="isLoading() || isSaving() || isDeleting()"
+          (click)="deleteAccount()"
+        >
+          <span pButtonLabel>{{ isDeleting() ? 'Удаление...' : 'Удалить' }}</span>
+        </button>
+      </div>
+
       @if (passwordEditorOpen()) {
         <div class="password-grid" [formGroup]="profileForm">
           <div class="form-field">
@@ -158,7 +175,7 @@
       type="button"
       class="profile-secondary-btn"
       aria-label="Cancel changes"
-      [disabled]="isLoading() || isSaving()"
+      [disabled]="isLoading() || isSaving() || isDeleting()"
       (click)="cancelChanges()"
     >
       <span pButtonLabel>Отменить</span>
@@ -169,7 +186,7 @@
       type="button"
       class="ui-primary-btn"
       aria-label="Save changes"
-      [disabled]="!canSave()"
+      [disabled]="!canSave() || isDeleting()"
       (click)="saveChanges()"
     >
       <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить изменения' }}</span>

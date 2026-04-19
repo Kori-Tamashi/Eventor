@@ -1,6 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import type {
+  Web_Dtos_CreateUserRequest,
+  Web_Dtos_Gender,
+  Web_Dtos_UpdateUserRequest,
+  Web_Dtos_UserRole,
+} from '../generated';
 import { AdminUsersService } from '../generated';
 import { CurrentUser } from '../models/user.models';
 
@@ -10,8 +16,45 @@ import { CurrentUser } from '../models/user.models';
 export class AdminUsersApiService {
   private readonly adminUsersService = inject(AdminUsersService);
 
+  listUsers(filters: {
+    nameContains?: string;
+    phone?: string;
+    role?: Web_Dtos_UserRole;
+    gender?: Web_Dtos_Gender;
+    pageNumber?: number;
+    pageSize?: number;
+  } = {}): Observable<CurrentUser[]> {
+    return this.adminUsersService.getApiV1AdminUsers({
+      nameContains: filters.nameContains,
+      phone: filters.phone,
+      role: filters.role,
+      gender: filters.gender,
+      pageNumber: filters.pageNumber,
+      pageSize: filters.pageSize,
+    }) as Observable<CurrentUser[]>;
+  }
+
   getUser(userId: string): Observable<CurrentUser> {
     return this.adminUsersService.getApiV1AdminUsers1({ userId }) as Observable<CurrentUser>;
+  }
+
+  createUser(payload: Web_Dtos_CreateUserRequest): Observable<CurrentUser> {
+    return this.adminUsersService.postApiV1AdminUsers({
+      requestBody: payload,
+    }) as Observable<CurrentUser>;
+  }
+
+  updateUser(userId: string, payload: Web_Dtos_UpdateUserRequest): Observable<void> {
+    return this.adminUsersService.putApiV1AdminUsers({
+      userId,
+      requestBody: payload,
+    }) as Observable<void>;
+  }
+
+  deleteUser(userId: string): Observable<void> {
+    return this.adminUsersService.deleteApiV1AdminUsers({
+      userId,
+    }) as Observable<void>;
   }
 
   getUserNameMap(userIds: string[]): Observable<Record<string, string>> {

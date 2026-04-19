@@ -28,9 +28,29 @@
     >
       <i class="pi pi-list"></i>
     </a>
+
+    <a
+      class="nav-item"
+      routerLink="/app/admin"
+      routerLinkActive="active"
+      aria-label="Admin"
+    >
+      <i class="pi pi-cog"></i>
+    </a>
   </nav>
 
   <div class="bottom">
+    <button
+      type="button"
+      class="nav-item"
+      (click)="logoutRequested.emit()"
+      aria-label="Logout"
+    >
+      <i class="pi pi-sign-out"></i>
+    </button>
+
+    <div class="bottom-separator" aria-hidden="true"></div>
+
     <button
       type="button"
       class="nav-item"

@@ -24,12 +24,6 @@
         </span>
 
         <div class="pager">
-          <button pButton type="button" class="ui-icon-btn" aria-label="Filter">
-            <span pButtonIcon class="pi pi-filter"></span>
-          </button>
-
-          <span class="v-sep" aria-hidden="true"></span>
-
           <div class="page-count ui-surface">{{ pageLabel() }}</div>
 
           <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">

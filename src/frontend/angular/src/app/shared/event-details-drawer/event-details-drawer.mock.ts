@@ -68,7 +68,12 @@ export function buildMockEventDetailsDrawerContext(
       participantsCount,
       dayRows,
       reviewRows,
+      currentUserId: null,
+      currentUsername: null,
       currentUserRegistrationId: null,
+      currentUserRegistrationType: null,
+      currentUserRegistrationPayment: null,
+      currentUserRegistrationDayIds: [],
     },
   };
 }

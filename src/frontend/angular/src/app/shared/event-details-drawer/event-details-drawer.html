@@ -61,7 +61,19 @@
               [daysCount]="daysCount()"
               [participantsCount]="participantsCount()"
               [dayRows]="dayRows()"
+              [currentUserId]="currentUserId()"
+              [currentUserRegistrationId]="currentUserRegistrationId()"
+              [currentUserRegistrationPayment]="currentUserRegistrationPayment()"
+              [registrationType]="registrationType()"
+              [registrationDayIds]="registrationDayIds()"
+              [canSaveRegistration]="canSaveRegistration()"
+              [isSavingRegistration]="isSavingRegistration()"
+              [registrationMessage]="registrationMessage()"
               (dayParticipantsOpen)="openDayParticipants($event)"
+              (registrationTypeChange)="onRegistrationTypeChange($event)"
+              (registrationDayToggle)="onRegistrationDayToggle($event)"
+              (registrationSave)="saveRegistration()"
+              (registrationDelete)="deleteRegistration()"
             ></app-event-details-info-tab>
           </p-tabpanel>
 

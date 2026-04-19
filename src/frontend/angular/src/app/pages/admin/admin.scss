@@ -1,0 +1,83 @@
+.page {
+  padding: 0;
+}
+
+.page-card {
+  height: calc(100vh - (var(--shell-gutter) * 2));
+  padding: var(--space-7) var(--space-7) var(--space-5);
+  overflow: hidden auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--shell-gutter);
+}
+
+.title-block {
+  min-width: 280px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-h3);
+  color: var(--eventor-selected);
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: var(--text-caption);
+  color: var(--eventor-muted);
+}
+
+.admin-tabs {
+  width: 100%;
+}
+
+.admin-tabs .p-tablist {
+  background: var(--sidebar-bg) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 5px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.admin-tabs .p-tab {
+  border-radius: calc(var(--radius-lg) - var(--space-1)) !important;
+  background: transparent !important;
+  color: var(--eventor-muted) !important;
+  min-height: 32px !important;
+  padding: 6px 14px !important;
+  font-size: var(--drawer-tab-text) !important;
+  line-height: 20px !important;
+  font-weight: var(--font-weight-h4);
+}
+
+.admin-tabs .p-tab.p-tab-active {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+  box-shadow: none !important;
+}
+
+.admin-tabs .p-tabs .p-tablist-ink-bar {
+  display: none !important;
+}
+
+.admin-tabs .p-tabpanels,
+.admin-tabs .p-tabpanel {
+  background: var(--eventor-surface) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.admin-tabs .p-tabpanels {
+  padding: 0 !important;
+}
+
+.admin-tabs .p-tabpanel {
+  padding: var(--space-4) 0 0 !important;
+}

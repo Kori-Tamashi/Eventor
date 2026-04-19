@@ -1,0 +1,85 @@
+<p-drawer
+  position="right"
+  [visible]="visible()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer admin-item-drawer-shell"
+>
+  <div class="drawer-topbar">
+    <button
+      pButton
+      type="button"
+      class="ui-icon-btn drawer-nav-btn"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span pButtonIcon class="pi pi-times"></span>
+    </button>
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">{{ drawerTitle() }}</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="ui-feedback-message">Загрузка данных объекта...</div>
+  } @else {
+    <div class="admin-item-form ui-surface">
+      @if (errorMessage()) {
+        <div class="ui-feedback-message ui-feedback-message--error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="admin-item-field">
+        <div class="admin-item-label-row">
+          <label class="admin-item-label" for="itemTitle">Название</label>
+          <span class="admin-item-counter">{{ titleCountLabel() }}</span>
+        </div>
+
+        <input
+          id="itemTitle"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="title()"
+          (input)="onTitleInput($any($event.target).value)"
+        />
+      </div>
+
+      <div class="admin-item-field">
+        <label class="admin-item-label" for="itemCost">Стоимость</label>
+        <input
+          id="itemCost"
+          pInputText
+          class="ui-input"
+          type="text"
+          inputmode="decimal"
+          [value]="cost()"
+          (input)="onCostInput($any($event.target).value)"
+        />
+      </div>
+
+      <div class="admin-item-actions">
+        <button
+          pButton
+          type="button"
+          class="admin-item-secondary-btn"
+          [disabled]="isSaving()"
+          (click)="close()"
+        >
+          <span pButtonLabel>Отменить</span>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn"
+          [disabled]="!canSave()"
+          (click)="save()"
+        >
+          <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить' }}</span>
+        </button>
+      </div>
+    </div>
+  }
+</p-drawer>

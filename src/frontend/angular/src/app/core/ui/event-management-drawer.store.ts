@@ -14,7 +14,7 @@ import {
 } from './event-management-drawer-data.service';
 import { EconomyApiService } from '../api/services/economy-api.service';
 
-export type EventManagementDrawerMode = 'create' | 'superuser-manage';
+export type EventManagementDrawerMode = 'create' | 'manage' | 'superuser-manage';
 export type EventManagementDrawerSource = 'organization' | 'superuser-page';
 export type EventManagementDrawerViewerRole = 'user' | 'superuser';
 export type EventManagementDrawerTab = 'settings' | 'days' | 'analytics' | 'reviews';

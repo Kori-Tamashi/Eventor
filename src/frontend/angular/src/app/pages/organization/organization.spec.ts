@@ -41,6 +41,7 @@ describe('Organization', () => {
           provide: EventsApiService,
           useValue: {
             listOrganizedEvents: () => of([]),
+            deleteEvent: () => of(void 0),
           },
         },
         {

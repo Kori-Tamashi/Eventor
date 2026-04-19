@@ -22,13 +22,20 @@ export type EventDetailsDrawerReview = {
   rating: number;
 };
 
+export type EventDetailsDrawerRegistrationType = 0 | 1 | 2;
+
 export type EventDetailsDrawerData = {
   title: string;
   daysCount: number;
   participantsCount: number;
   dayRows: EventDetailsDrawerDay[];
   reviewRows: EventDetailsDrawerReview[];
+  currentUserId: string | null;
+  currentUsername: string | null;
   currentUserRegistrationId: string | null;
+  currentUserRegistrationType: EventDetailsDrawerRegistrationType | null;
+  currentUserRegistrationPayment: boolean | null;
+  currentUserRegistrationDayIds: string[];
 };
 
 export type EventDetailsDrawerContext = {

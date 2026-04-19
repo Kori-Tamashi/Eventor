@@ -1,0 +1,116 @@
+<p-drawer
+  position="right"
+  [visible]="visible()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer admin-location-drawer-shell"
+>
+  <div class="drawer-topbar">
+    <button
+      pButton
+      type="button"
+      class="ui-icon-btn drawer-nav-btn"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span pButtonIcon class="pi pi-times"></span>
+    </button>
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">{{ drawerTitle() }}</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="ui-feedback-message">Загрузка данных локации...</div>
+  } @else {
+    <div class="admin-location-form ui-surface">
+      @if (errorMessage()) {
+        <div class="ui-feedback-message ui-feedback-message--error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="admin-location-field">
+        <div class="admin-location-label-row">
+          <label class="admin-location-label" for="locationTitle">Название</label>
+          <span class="admin-location-counter">{{ titleCountLabel() }}</span>
+        </div>
+
+        <input
+          id="locationTitle"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="title()"
+          (input)="onTitleInput($any($event.target).value)"
+        />
+      </div>
+
+      <div class="admin-location-field">
+        <div class="admin-location-label-row">
+          <label class="admin-location-label" for="locationDescription">Описание</label>
+          <span class="admin-location-counter">{{ descriptionCountLabel() }}</span>
+        </div>
+
+        <textarea
+          id="locationDescription"
+          pTextarea
+          class="ui-input admin-location-textarea"
+          rows="4"
+          [value]="description()"
+          (input)="onDescriptionInput($any($event.target).value)"
+        ></textarea>
+      </div>
+
+      <div class="admin-location-grid">
+        <div class="admin-location-field">
+          <label class="admin-location-label" for="locationCost">Стоимость</label>
+          <input
+            id="locationCost"
+            pInputText
+            class="ui-input"
+            type="text"
+            inputmode="decimal"
+            [value]="cost()"
+            (input)="onCostInput($any($event.target).value)"
+          />
+        </div>
+
+        <div class="admin-location-field">
+          <label class="admin-location-label" for="locationCapacity">Вместимость</label>
+          <input
+            id="locationCapacity"
+            pInputText
+            class="ui-input"
+            type="text"
+            inputmode="numeric"
+            [value]="capacity()"
+            (input)="onCapacityInput($any($event.target).value)"
+          />
+        </div>
+      </div>
+
+      <div class="admin-location-actions">
+        <button
+          pButton
+          type="button"
+          class="admin-location-secondary-btn"
+          [disabled]="isSaving()"
+          (click)="close()"
+        >
+          <span pButtonLabel>Отменить</span>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn"
+          [disabled]="!canSave()"
+          (click)="save()"
+        >
+          <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить' }}</span>
+        </button>
+      </div>
+    </div>
+  }
+</p-drawer>

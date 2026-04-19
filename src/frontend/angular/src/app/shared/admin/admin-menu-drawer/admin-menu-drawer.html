@@ -1,0 +1,165 @@
+<p-drawer
+  position="right"
+  [visible]="visible()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer admin-menu-drawer-shell"
+>
+  <div class="drawer-topbar">
+    <button
+      pButton
+      type="button"
+      class="ui-icon-btn drawer-nav-btn"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span pButtonIcon class="pi pi-times"></span>
+    </button>
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">{{ drawerTitle() }}</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="ui-feedback-message">Загрузка данных меню...</div>
+  } @else {
+    <div class="admin-menu-form ui-surface">
+      @if (errorMessage()) {
+        <div class="ui-feedback-message ui-feedback-message--error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="admin-menu-field">
+        <div class="admin-menu-label-row">
+          <label class="admin-menu-label" for="menuTitle">Название</label>
+          <span class="admin-menu-counter">{{ titleCountLabel() }}</span>
+        </div>
+
+        <input
+          id="menuTitle"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="title()"
+          (input)="onTitleInput($any($event.target).value)"
+        />
+      </div>
+
+      <div class="admin-menu-field">
+        <div class="admin-menu-label-row">
+          <label class="admin-menu-label" for="menuDescription">Описание</label>
+          <span class="admin-menu-counter">{{ descriptionCountLabel() }}</span>
+        </div>
+
+        <textarea
+          id="menuDescription"
+          pTextarea
+          class="ui-input admin-menu-textarea"
+          rows="4"
+          [value]="description()"
+          (input)="onDescriptionInput($any($event.target).value)"
+        ></textarea>
+      </div>
+
+      <div class="admin-menu-items">
+        <div class="admin-menu-items__head">Состав меню</div>
+
+        <div class="admin-menu-items__toolbar">
+          <div class="admin-menu-items__grid">
+            <div class="admin-menu-field">
+              <label class="admin-menu-label" for="menuItem">Объект</label>
+              <div class="ui-select-wrap">
+                <select
+                  id="menuItem"
+                  class="ui-select"
+                  [value]="draftItemId()"
+                  (change)="onDraftItemChange($any($event.target).value)"
+                >
+                  @for (item of availableItems(); track item.id) {
+                    <option [value]="item.id">{{ item.title }}</option>
+                  }
+                </select>
+                <i class="pi pi-angle-down ui-select-icon" aria-hidden="true"></i>
+              </div>
+            </div>
+
+            <div class="admin-menu-field">
+              <label class="admin-menu-label" for="menuAmount">Количество</label>
+              <input
+                id="menuAmount"
+                pInputText
+                class="ui-input"
+                type="text"
+                inputmode="numeric"
+                [value]="draftAmount()"
+                (input)="onDraftAmountInput($any($event.target).value)"
+              />
+            </div>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            class="ui-primary-btn"
+            [disabled]="!canSubmitItem()"
+            (click)="submitItem()"
+          >
+            <span pButtonIcon class="pi" [class.pi-plus]="!isEditingRow()" [class.pi-check]="isEditingRow()"></span>
+            <span pButtonLabel>{{ isEditingRow() ? 'Обновить' : 'Добавить' }}</span>
+          </button>
+        </div>
+
+        <p-table [value]="rows()" styleClass="ui-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Объект</th>
+              <th>Количество</th>
+              <th>Действия</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td>{{ row.title }}</td>
+              <td>{{ row.amount }}</td>
+              <td class="admin-menu-actions-cell">
+                <div class="row-actions">
+                  <button pButton type="button" class="ui-icon-btn" aria-label="Edit item" (click)="editItem(row)">
+                    <span pButtonIcon class="pi pi-pencil"></span>
+                  </button>
+
+                  <button pButton type="button" class="ui-icon-btn" aria-label="Delete item" (click)="deleteItem(row)">
+                    <span pButtonIcon class="pi pi-trash"></span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div class="admin-menu-actions">
+        <button
+          pButton
+          type="button"
+          class="admin-menu-secondary-btn"
+          [disabled]="isSaving()"
+          (click)="close()"
+        >
+          <span pButtonLabel>Отменить</span>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn"
+          [disabled]="!canSave()"
+          (click)="save()"
+        >
+          <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить' }}</span>
+        </button>
+      </div>
+    </div>
+  }
+</p-drawer>

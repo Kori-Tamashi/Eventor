@@ -9,6 +9,7 @@ import {
 import { finalize } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { AuthApiService } from '../../core/api/services/auth-api.service';
 import { UsersApiService } from '../../core/api/services/users-api.service';
 import {
   CurrentUser,
@@ -31,8 +32,10 @@ type GenderOption = {
 export class Profile {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly usersApiService = inject(UsersApiService);
+  private readonly authApiService = inject(AuthApiService);
 
   readonly closeRequested = output<void>();
+  readonly sessionEnded = output<void>();
 
   readonly genderOptions: GenderOption[] = [
     { label: 'Мужской', value: 0 },
@@ -41,6 +44,7 @@ export class Profile {
 
   readonly isLoading = signal<boolean>(true);
   readonly isSaving = signal<boolean>(false);
+  readonly isDeleting = signal<boolean>(false);
   readonly loadErrorMessage = signal<string>('');
   readonly saveMessage = signal<string>('');
   readonly passwordEditorOpen = signal<boolean>(false);
@@ -181,6 +185,27 @@ export class Profile {
       });
   }
 
+  deleteAccount(): void {
+    if (this.isLoading() || this.isSaving() || this.isDeleting()) {
+      return;
+    }
+
+    this.saveMessage.set('');
+    this.isDeleting.set(true);
+
+    this.usersApiService.deleteMe()
+      .pipe(finalize(() => this.isDeleting.set(false)))
+      .subscribe({
+        next: () => {
+          this.authApiService.logout();
+          this.sessionEnded.emit();
+        },
+        error: (error: unknown) => {
+          this.saveMessage.set(this.mapDeleteErrorMessage(error));
+        },
+      });
+  }
+
   private loadProfile(): void {
     this.isLoading.set(true);
     this.loadErrorMessage.set('');
@@ -236,6 +261,20 @@ export class Profile {
     }
 
     return 'Сервер временно недоступен. Повторите попытку позже.';
+  }
+
+  private mapDeleteErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Сессия недействительна. Выполните вход снова.';
+    }
+
+    if (status === 404) {
+      return 'Профиль пользователя не найден.';
+    }
+
+    return 'Не удалось удалить аккаунт.';
   }
 
   private extractStatusCode(error: unknown): number | null {

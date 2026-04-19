@@ -11,4 +11,5 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class Sidebar {
   readonly profileOpen = input<boolean>(false);
   readonly profileToggle = output<void>();
+  readonly logoutRequested = output<void>();
 }

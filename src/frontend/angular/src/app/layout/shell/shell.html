@@ -2,6 +2,7 @@
   <app-sidebar
     [profileOpen]="profileDrawerOpen()"
     (profileToggle)="toggleProfileDrawer()"
+    (logoutRequested)="logout()"
   ></app-sidebar>
 
   <main class="main">
@@ -17,7 +18,10 @@
   (visibleChange)="profileDrawerOpen.set($event)"
   styleClass="event-drawer profile-drawer"
 >
-  <app-profile (closeRequested)="profileDrawerOpen.set(false)"></app-profile>
+  <app-profile
+    (closeRequested)="profileDrawerOpen.set(false)"
+    (sessionEnded)="logout()"
+  ></app-profile>
 </p-drawer>
 
 <app-event-details-drawer></app-event-details-drawer>

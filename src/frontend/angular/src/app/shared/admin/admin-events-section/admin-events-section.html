@@ -1,0 +1,104 @@
+<div class="admin-events">
+  <div class="admin-events__head">
+    <div>
+      <h2 class="admin-events__title">Мероприятия</h2>
+      <p class="admin-events__subtitle">Глобальное администрирование мероприятий системы</p>
+    </div>
+
+    <div class="admin-events__actions">
+      <span class="search ui-search p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Поиск мероприятий"
+          [value]="searchTerm()"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </span>
+
+      <div class="admin-events__pager">
+        <div class="page-count ui-surface">{{ pageLabel() }}</div>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
+          <span pButtonIcon class="pi pi-chevron-left"></span>
+        </button>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
+          <span pButtonIcon class="pi pi-chevron-right"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="ui-feedback-message ui-feedback-message--error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="ui-feedback-message">
+      {{ successMessage() }}
+    </div>
+  }
+
+  <p-table [value]="pagedRows()" styleClass="ui-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Название</th>
+        <th>Организатор</th>
+        <th>Локация</th>
+        <th>Описание</th>
+        <th>Дата</th>
+        <th>Люди</th>
+        <th>Дни</th>
+        <th>Наценка</th>
+        <th>Рейтинг</th>
+        <th>Действия</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.title }}</td>
+        <td>{{ row.organizer }}</td>
+        <td>{{ row.location }}</td>
+        <td>{{ row.description }}</td>
+        <td>{{ row.date }}</td>
+        <td>{{ row.peopleCount }}</td>
+        <td>{{ row.daysCount }}</td>
+        <td>{{ row.markup }}</td>
+        <td>{{ row.rating }}</td>
+        <td class="admin-events__actions-cell">
+          <div class="row-actions">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
+              <span pButtonIcon class="pi pi-search"></span>
+            </button>
+
+            <button pButton type="button" class="ui-icon-btn" aria-label="Manage" (click)="openManageDrawer(row)">
+              <span pButtonIcon class="pi pi-pencil"></span>
+            </button>
+
+            <button
+              pButton
+              type="button"
+              class="ui-icon-btn"
+              aria-label="Delete"
+              [disabled]="deletingEventId() === row.id"
+              (click)="deleteEvent(row)"
+            >
+              <span pButtonIcon class="pi" [class.pi-trash]="deletingEventId() !== row.id" [class.pi-spin]="deletingEventId() === row.id" [class.pi-spinner]="deletingEventId() === row.id"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
+    <div class="ui-feedback-message">
+      Мероприятия не найдены.
+    </div>
+  }
+</div>

@@ -8,6 +8,83 @@
   </app-drawer-card>
 </div>
 
+<app-drawer-card title="Регистрация на мероприятие" variant="default">
+  <div class="registration-block">
+    <div class="registration-copy">
+      <div class="registration-message">{{ registrationMessage() }}</div>
+
+      @if (paymentLabel(); as paymentLabelValue) {
+        <div class="registration-payment" [class.registration-payment--paid]="currentUserRegistrationPayment() === true">
+          {{ paymentLabelValue }}
+        </div>
+      }
+    </div>
+
+    @if (currentUserId()) {
+      <div class="registration-form">
+        <label class="registration-label" for="registrationType">Тип участия</label>
+        <div class="ui-select-wrap registration-select-wrap">
+          <select
+            id="registrationType"
+            class="ui-select"
+            [value]="registrationType()"
+            [disabled]="isSavingRegistration()"
+            (change)="onRegistrationTypeChange($any($event.target).value)"
+          >
+            <option value="0">Простой</option>
+            <option value="1">VIP</option>
+            <option value="2">Организатор</option>
+          </select>
+          <i class="pi pi-angle-down ui-select-icon" aria-hidden="true"></i>
+        </div>
+
+        <div class="registration-label">Дни участия</div>
+        <div class="registration-days">
+          @for (day of dayRows(); track day.id; let i = $index) {
+            <label class="registration-day-option">
+              <input
+                type="checkbox"
+                class="registration-checkbox"
+                [checked]="isDaySelected(day.id)"
+                [disabled]="isSavingRegistration()"
+                (change)="onRegistrationDayToggle(day.id, $any($event.target).checked)"
+              />
+              <span class="registration-day-copy">
+                <span class="registration-day-title">День {{ i + 1 }}. {{ day.name }}</span>
+                <span class="registration-day-meta">{{ day.price }}</span>
+              </span>
+            </label>
+          }
+        </div>
+
+        <div class="registration-actions">
+          @if (isCurrentUserRegistered()) {
+            <button
+              pButton
+              type="button"
+              class="registration-secondary-btn"
+              [disabled]="isSavingRegistration()"
+              (click)="deleteRegistration()"
+            >
+              <span pButtonLabel>Отменить участие</span>
+            </button>
+          }
+
+          <button
+            pButton
+            type="button"
+            class="ui-primary-btn registration-submit-btn"
+            [disabled]="!canSaveRegistration() || isSavingRegistration()"
+            (click)="saveRegistration()"
+          >
+            <span pButtonLabel>{{ isCurrentUserRegistered() ? 'Сохранить изменения' : 'Записаться' }}</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</app-drawer-card>
+
 <app-drawer-card title="Информация о днях" variant="table">
   <p-table [value]="dayRows()" styleClass="ui-table ui-drawer-table ui-event-details-days-table">
     <ng-template pTemplate="header">

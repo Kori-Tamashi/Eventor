@@ -56,6 +56,12 @@ export class EventsApiService {
     }) as Observable<void>;
   }
 
+  deleteEvent(eventId: string): Observable<void> {
+    return this.eventsService.deleteApiV1Events({
+      eventId,
+    }) as Observable<void>;
+  }
+
   createDay(eventId: string, payload: Web_Dtos_CreateDayRequest): Observable<void> {
     return this.eventsService.postApiV1EventsDays({
       eventId,
