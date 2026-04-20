@@ -29,14 +29,16 @@
       <i class="pi pi-list"></i>
     </a>
 
-    <a
-      class="nav-item"
-      routerLink="/app/admin"
-      routerLinkActive="active"
-      aria-label="Admin"
-    >
-      <i class="pi pi-cog"></i>
-    </a>
+    @if (showAdmin()) {
+      <a
+        class="nav-item"
+        routerLink="/app/admin"
+        routerLinkActive="active"
+        aria-label="Admin"
+      >
+        <i class="pi pi-cog"></i>
+      </a>
+    }
   </nav>
 
   <div class="bottom">

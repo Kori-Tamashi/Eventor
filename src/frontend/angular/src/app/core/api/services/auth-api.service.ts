@@ -3,6 +3,7 @@ import { Observable, tap } from 'rxjs';
 import type { Web_Dtos_LoginRequest, Web_Dtos_RegisterRequest } from '../generated';
 import { AuthService } from '../generated';
 import { AuthSessionStore } from '../../auth/auth-session.store';
+import { CurrentUserStore } from '../../auth/current-user.store';
 import {
   AuthTokenResponse,
   LoginPayload,
@@ -15,6 +16,7 @@ import {
 export class AuthApiService {
   private readonly authService = inject(AuthService);
   private readonly authSessionStore = inject(AuthSessionStore);
+  private readonly currentUserStore = inject(CurrentUserStore);
 
   register(payload: RegisterPayload): Observable<unknown> {
     return this.authService.postApiV1AuthRegister({
@@ -38,5 +40,6 @@ export class AuthApiService {
 
   logout(): void {
     this.authSessionStore.clearToken();
+    this.currentUserStore.clear();
   }
 }

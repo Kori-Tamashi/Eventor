@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { DrawerModule } from 'primeng/drawer';
 import { AuthApiService } from '../../core/api/services/auth-api.service';
+import { CurrentUserStore } from '../../core/auth/current-user.store';
 import { Sidebar } from '../sidebar/sidebar';
 import { Profile } from '../../pages/profile/profile';
 import { EventDetailsDrawer } from '../../shared/event-details-drawer/event-details-drawer';
@@ -24,8 +25,14 @@ import { EventManagementDrawer } from '../../shared/event-management-drawer/even
 export class Shell {
   private readonly router = inject(Router);
   private readonly authApiService = inject(AuthApiService);
+  private readonly currentUserStore = inject(CurrentUserStore);
 
   readonly profileDrawerOpen = signal<boolean>(false);
+  readonly isAdmin = this.currentUserStore.isAdmin;
+
+  constructor() {
+    this.currentUserStore.ensureLoaded().subscribe();
+  }
 
   toggleProfileDrawer(): void {
     this.profileDrawerOpen.update((value) => !value);

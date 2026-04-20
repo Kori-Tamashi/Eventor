@@ -1,6 +1,7 @@
 <div class="shell">
   <app-sidebar
     [profileOpen]="profileDrawerOpen()"
+    [showAdmin]="isAdmin()"
     (profileToggle)="toggleProfileDrawer()"
     (logoutRequested)="logout()"
   ></app-sidebar>

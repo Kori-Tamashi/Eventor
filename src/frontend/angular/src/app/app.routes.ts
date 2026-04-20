@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminCanActivate, adminCanMatch } from './core/auth/admin.guard';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,8 @@ export const routes: Routes = [
       },
       {
         path: 'admin',
+        canActivate: [adminCanActivate],
+        canMatch: [adminCanMatch],
         loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin)
       },
     ]
