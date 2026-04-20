@@ -521,6 +521,31 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   margin-top: var(--space-4);
 }
 
+.event-drawer .eventor-tablist {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+}
+
+.event-drawer .eventor-tab {
+  appearance: none;
+  border: 0 !important;
+  box-shadow: none !important;
+  font: inherit;
+  font-weight: var(--font-weight-h4);
+  cursor: pointer;
+}
+
+.event-drawer .eventor-tablist + * {
+  margin-top: var(--space-4);
+}
+
+.event-drawer .eventor-tablist ~ app-event-management-settings-tab,
+.event-drawer .eventor-tablist ~ app-event-details-reviews-tab {
+  display: block;
+  margin-top: var(--space-4);
+}
+
 .event-drawer .admin-location-form,
 .event-drawer .admin-item-form,
 .event-drawer .admin-menu-form,
@@ -799,6 +824,18 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   border-color: #fecaca;
   background: #fef2f2;
   color: #b91c1c;
+}
+
+.ui-empty-state {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--eventor-muted);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  padding: var(--space-8) var(--space-4);
 }
 
 .settings-row--danger {

@@ -8,6 +8,7 @@ import { EconomyApiService } from '../../../core/api/services/economy-api.servic
 import { ItemApiModel, ItemsApiService } from '../../../core/api/services/items-api.service';
 import { AdminItemDrawer } from '../admin-item-drawer/admin-item-drawer';
 import { AdminItemDraftValue, AdminItemEditorMode, AdminItemSavePayload } from '../admin-item-drawer/admin-item.models';
+import { UiNotificationsService } from '../../../core/ui/ui-notifications.service';
 
 @Component({
   selector: 'app-admin-items-section',
@@ -20,6 +21,7 @@ export class AdminItemsSection {
   private readonly destroyRef = inject(DestroyRef);
   private readonly itemsApiService = inject(ItemsApiService);
   private readonly economyApiService = inject(EconomyApiService);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   private readonly searchInput$ = new Subject<string>();
   private loadSubscription: Subscription | null = null;
@@ -158,7 +160,7 @@ export class AdminItemsSection {
         next: () => {
           const mode = this.drawerMode();
           this.closeDrawer();
-          this.successMessage.set(mode === 'edit' ? 'Объект обновлен.' : 'Объект создан.');
+          this.uiNotificationsService.success(mode === 'edit' ? 'Объект обновлен.' : 'Объект создан.');
           this.loadItems(this.searchTerm().trim());
         },
         error: (error: unknown) => {
@@ -186,7 +188,7 @@ export class AdminItemsSection {
         next: () => {
           this.rows.update((rows) => rows.filter((item) => item.id !== row.id));
           this.clampPageIndex();
-          this.successMessage.set('Объект удален.');
+          this.uiNotificationsService.success('Объект удален.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapDeleteErrorMessage(error));

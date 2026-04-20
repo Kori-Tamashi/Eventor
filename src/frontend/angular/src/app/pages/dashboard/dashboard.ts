@@ -9,6 +9,7 @@ import { UsersApiService } from '../../core/api/services/users-api.service';
 import { EventApiModel } from '../../core/api/models/event.models';
 import { RegistrationApiModel } from '../../core/api/models/registration.models';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
+import { UiNotificationsService } from '../../core/ui/ui-notifications.service';
 
 type DashboardRow = {
   registrationId: string;
@@ -36,6 +37,7 @@ export class Dashboard {
   private readonly eventsApiService = inject(EventsApiService);
   private readonly registrationsApiService = inject(RegistrationsApiService);
   private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   readonly pageSize = signal<number>(9);
   readonly pageIndex = signal<number>(0);
@@ -147,7 +149,7 @@ export class Dashboard {
         next: () => {
           this.allRows.update((rows) => rows.filter((item) => item.registrationId !== row.registrationId));
           this.clampPageIndexAfterDeletion();
-          this.successMessage.set('Регистрация отменена.');
+          this.uiNotificationsService.success('Регистрация отменена.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapCancelErrorMessage(error));

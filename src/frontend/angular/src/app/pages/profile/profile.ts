@@ -16,6 +16,7 @@ import {
   UpdateCurrentUserPayload,
 } from '../../core/api/models/user.models';
 import { Web_Dtos_Gender } from '../../core/api/generated';
+import { UiNotificationsService } from '../../core/ui/ui-notifications.service';
 
 type GenderOption = {
   label: string;
@@ -33,6 +34,7 @@ export class Profile {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly usersApiService = inject(UsersApiService);
   private readonly authApiService = inject(AuthApiService);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   readonly closeRequested = output<void>();
   readonly sessionEnded = output<void>();
@@ -177,7 +179,8 @@ export class Profile {
           this.profileForm.controls.password.setValue('');
           this.profileForm.controls.confirmPassword.setValue('');
           this.passwordEditorOpen.set(false);
-          this.saveMessage.set('Изменения сохранены.');
+          this.saveMessage.set('');
+          this.uiNotificationsService.success('Изменения сохранены.');
         },
         error: (error: unknown) => {
           this.saveMessage.set(this.mapErrorMessage(error));

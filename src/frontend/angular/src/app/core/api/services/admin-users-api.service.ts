@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import type {
   Web_Dtos_CreateUserRequest,
   Web_Dtos_Gender,
@@ -14,6 +14,7 @@ import { CurrentUser } from '../models/user.models';
   providedIn: 'root',
 })
 export class AdminUsersApiService {
+  private static readonly EMPTY_GUID = '00000000-0000-0000-0000-000000000000';
   private readonly adminUsersService = inject(AdminUsersService);
 
   listUsers(filters: {
@@ -58,7 +59,14 @@ export class AdminUsersApiService {
   }
 
   getUserNameMap(userIds: string[]): Observable<Record<string, string>> {
-    const uniqueIds = Array.from(new Set(userIds.filter(Boolean)));
+    const uniqueIds = Array.from(
+      new Set(
+        userIds.filter(
+          (userId): userId is string =>
+            !!userId && userId !== AdminUsersApiService.EMPTY_GUID
+        )
+      )
+    );
 
     if (uniqueIds.length === 0) {
       return of({});
@@ -67,12 +75,17 @@ export class AdminUsersApiService {
     return forkJoin(
       uniqueIds.map((userId) =>
         this.getUser(userId).pipe(
-          map((user) => ({ id: userId, name: user.name }))
+          map((user) => ({ id: userId, name: user.name })),
+          catchError(() => of(null))
         )
       )
     ).pipe(
       map((entries) =>
         entries.reduce<Record<string, string>>((acc, entry) => {
+          if (!entry) {
+            return acc;
+          }
+
           acc[entry.id] = entry.name;
           return acc;
         }, {})

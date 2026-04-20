@@ -69,7 +69,7 @@
     </p-table>
 
     @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
-      <div class="ui-feedback-message">
+      <div class="ui-empty-state">
         Мероприятия не найдены.
       </div>
     }

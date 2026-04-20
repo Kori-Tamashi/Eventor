@@ -13,6 +13,7 @@ import {
   MenuItemApiModel,
 } from './event-management-drawer-data.service';
 import { EconomyApiService } from '../api/services/economy-api.service';
+import { UiNotificationsService } from './ui-notifications.service';
 
 export type EventManagementDrawerMode = 'create' | 'manage' | 'superuser-manage';
 export type EventManagementDrawerSource = 'organization' | 'superuser-page';
@@ -26,6 +27,7 @@ export type EventManagementDrawerContext = {
   viewerRole: EventManagementDrawerViewerRole;
   title: string;
   eventId?: string | null;
+  initialTab?: EventManagementDrawerTab;
 };
 
 export type EventManagementDrawerDayRow = EventManagementDayData;
@@ -41,6 +43,7 @@ export type EventManagementDayAnalytics = {
 })
 export class EventManagementDrawerStore {
   private readonly injector = inject(Injector);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   private loadSubscription: Subscription | null = null;
   private saveEventSubscription: Subscription | null = null;
@@ -133,7 +136,7 @@ export class EventManagementDrawerStore {
     this.cancelOngoingRequests();
     this.resetState();
     this.context.set(context);
-    this.activeTab.set('settings');
+    this.activeTab.set(context.initialTab ?? 'settings');
     this.reviewText.set('');
     this.reviewRating.set(0);
     this.isLoading.set(true);
@@ -248,7 +251,7 @@ export class EventManagementDrawerStore {
               eventId: data.eventId,
             };
           });
-          this.successMessage.set('Настройки мероприятия сохранены.');
+          this.uiNotificationsService.success('Настройки мероприятия сохранены.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapSaveEventErrorMessage(error));
@@ -381,7 +384,7 @@ export class EventManagementDrawerStore {
           this.applyLoadedData(data);
           const refreshedDay = this.dayRowsState().find((day) => day.id === selectedDayId) ?? null;
           this.selectedDay.set(refreshedDay);
-          this.successMessage.set('Настройки дня сохранены.');
+          this.uiNotificationsService.success('Настройки дня сохранены.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapSaveDayErrorMessage(error));
@@ -452,7 +455,7 @@ export class EventManagementDrawerStore {
             rows.map((r) => (r.id === selectedDay.id ? updatedDay : r))
           );
           this.selectedDay.set(updatedDay);
-          this.successMessage.set('Участники сохранены.');
+          this.uiNotificationsService.success('Участники сохранены.');
         },
         error: () => {
           this.errorMessage.set('Не удалось сохранить участников.');
@@ -486,7 +489,7 @@ export class EventManagementDrawerStore {
         next: () => {
           this.savedMenuItems.set([...updatedItems]);
           this.menuItems.set([...updatedItems]);
-          this.successMessage.set('Меню сохранено.');
+          this.uiNotificationsService.success('Меню сохранено.');
         },
         error: () => {
           this.errorMessage.set('Не удалось сохранить меню.');

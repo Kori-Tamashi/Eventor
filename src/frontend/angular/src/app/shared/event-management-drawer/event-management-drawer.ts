@@ -1,7 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
-import { TabsModule } from 'primeng/tabs';
 import {
   EventManagementDrawerStore,
   EventManagementDrawerDayDetailsTab,
@@ -21,7 +20,6 @@ import { EventManagementDayDetailsView } from './sections/event-management-day-d
   imports: [
     ButtonModule,
     DrawerModule,
-    TabsModule,
     EventManagementSettingsTab,
     EventManagementDaysTab,
     EventManagementAnalyticsTab,

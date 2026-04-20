@@ -9,6 +9,7 @@ import { UsersApiService } from '../../core/api/services/users-api.service';
 import { EventApiModel } from '../../core/api/models/event.models';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
 import { EventManagementDrawerStore } from '../../core/ui/event-management-drawer.store';
+import { UiNotificationsService } from '../../core/ui/ui-notifications.service';
 
 type OrganizationEventRow = {
   id: string;
@@ -35,6 +36,7 @@ export class Organization {
   private readonly locationsApiService = inject(LocationsApiService);
   private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
   private readonly eventManagementDrawerStore = inject(EventManagementDrawerStore);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   readonly pageSize = signal<number>(10);
   readonly pageIndex = signal<number>(0);
@@ -171,7 +173,7 @@ export class Organization {
         next: () => {
           this.allRows.update((rows) => rows.filter((item) => item.id !== row.id));
           this.clampPageIndexAfterDeletion();
-          this.successMessage.set('Мероприятие удалено.');
+          this.uiNotificationsService.success('Мероприятие удалено.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapDeleteErrorMessage(error));

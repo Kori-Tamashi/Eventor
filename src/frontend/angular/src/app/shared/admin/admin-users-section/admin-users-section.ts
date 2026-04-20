@@ -9,6 +9,7 @@ import { AdminUsersApiService } from '../../../core/api/services/admin-users-api
 import { CurrentUser } from '../../../core/api/models/user.models';
 import { AdminUserDrawer } from '../admin-user-drawer/admin-user-drawer';
 import { AdminUserDraftValue, AdminUserEditorMode, AdminUserSavePayload } from '../admin-user-drawer/admin-user.models';
+import { UiNotificationsService } from '../../../core/ui/ui-notifications.service';
 
 @Component({
   selector: 'app-admin-users-section',
@@ -20,6 +21,7 @@ import { AdminUserDraftValue, AdminUserEditorMode, AdminUserSavePayload } from '
 export class AdminUsersSection {
   private readonly destroyRef = inject(DestroyRef);
   private readonly adminUsersApiService = inject(AdminUsersApiService);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   private readonly searchInput$ = new Subject<string>();
   private loadSubscription: Subscription | null = null;
@@ -169,7 +171,7 @@ export class AdminUsersSection {
         next: () => {
           const mode = this.drawerMode();
           this.closeDrawer();
-          this.successMessage.set(mode === 'edit' ? 'Пользователь обновлен.' : 'Пользователь создан.');
+          this.uiNotificationsService.success(mode === 'edit' ? 'Пользователь обновлен.' : 'Пользователь создан.');
           this.loadUsers(this.searchTerm().trim());
         },
         error: (error: unknown) => {
@@ -197,7 +199,7 @@ export class AdminUsersSection {
         next: () => {
           this.rows.update((rows) => rows.filter((user) => user.id !== row.id));
           this.clampPageIndex();
-          this.successMessage.set('Пользователь удален.');
+          this.uiNotificationsService.success('Пользователь удален.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapDeleteErrorMessage(error));

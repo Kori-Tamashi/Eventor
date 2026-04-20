@@ -42,12 +42,6 @@
     </div>
   }
 
-  @if (successMessage()) {
-    <div class="ui-feedback-message">
-      {{ successMessage() }}
-    </div>
-  }
-
   <p-table [value]="pagedRows()" styleClass="ui-table">
     <ng-template pTemplate="header">
       <tr>
@@ -86,7 +80,7 @@
   </p-table>
 
   @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
-    <div class="ui-feedback-message">
+    <div class="ui-empty-state">
       Меню не найдены.
     </div>
   }

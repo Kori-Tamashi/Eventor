@@ -13,6 +13,7 @@ import {
   AdminMenuEditorMode,
   AdminMenuSavePayload,
 } from '../admin-menu-drawer/admin-menu.models';
+import { UiNotificationsService } from '../../../core/ui/ui-notifications.service';
 
 type AdminMenuRow = {
   id: string;
@@ -32,6 +33,7 @@ export class AdminMenusSection {
   private readonly destroyRef = inject(DestroyRef);
   private readonly menusApiService = inject(MenusApiService);
   private readonly itemsApiService = inject(ItemsApiService);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   private readonly searchInput$ = new Subject<string>();
   private loadSubscription: Subscription | null = null;
@@ -201,7 +203,7 @@ export class AdminMenusSection {
         next: () => {
           const mode = this.drawerMode();
           this.closeDrawer();
-          this.successMessage.set(mode === 'edit' ? 'Меню обновлено.' : 'Меню создано.');
+          this.uiNotificationsService.success(mode === 'edit' ? 'Меню обновлено.' : 'Меню создано.');
           this.loadMenus(this.searchTerm().trim());
         },
         error: (error: unknown) => {
@@ -229,7 +231,7 @@ export class AdminMenusSection {
         next: () => {
           this.rows.update((rows) => rows.filter((menu) => menu.id !== row.id));
           this.clampPageIndex();
-          this.successMessage.set('Меню удалено.');
+          this.uiNotificationsService.success('Меню удалено.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapDeleteErrorMessage(error));

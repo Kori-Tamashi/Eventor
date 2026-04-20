@@ -6,12 +6,6 @@
       </div>
     }
 
-    @if (successMessage()) {
-      <div class="ui-feedback-message">
-        {{ successMessage() }}
-      </div>
-    }
-
     <div class="settings-field">
       <div class="settings-label-row">
         <label class="settings-label" for="eventTitle">Название мероприятия</label>
@@ -74,7 +68,6 @@
             [value]="date()"
             (input)="onDateInput(($any($event.target)).value)"
           />
-          <i class="pi pi-calendar settings-date-icon" aria-hidden="true"></i>
         </div>
       </div>
 

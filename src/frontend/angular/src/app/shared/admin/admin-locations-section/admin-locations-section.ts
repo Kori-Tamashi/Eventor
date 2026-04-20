@@ -12,6 +12,7 @@ import {
   AdminLocationEditorMode,
   AdminLocationSavePayload,
 } from '../admin-location-drawer/admin-location.models';
+import { UiNotificationsService } from '../../../core/ui/ui-notifications.service';
 
 @Component({
   selector: 'app-admin-locations-section',
@@ -23,6 +24,7 @@ import {
 export class AdminLocationsSection {
   private readonly destroyRef = inject(DestroyRef);
   private readonly locationsApiService = inject(LocationsApiService);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   private readonly searchInput$ = new Subject<string>();
   private loadSubscription: Subscription | null = null;
@@ -167,10 +169,9 @@ export class AdminLocationsSection {
       .pipe(finalize(() => this.isSavingDrawer.set(false)))
       .subscribe({
         next: () => {
+          const mode = this.drawerMode();
           this.closeDrawer();
-          this.successMessage.set(
-            this.drawerMode() === 'edit' ? 'Локация обновлена.' : 'Локация создана.'
-          );
+          this.uiNotificationsService.success(mode === 'edit' ? 'Локация обновлена.' : 'Локация создана.');
           this.loadLocations(this.searchTerm().trim());
         },
         error: (error: unknown) => {
@@ -198,7 +199,7 @@ export class AdminLocationsSection {
         next: () => {
           this.rows.update((rows) => rows.filter((item) => item.id !== row.id));
           this.clampPageIndex();
-          this.successMessage.set('Локация удалена.');
+          this.uiNotificationsService.success('Локация удалена.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapDeleteErrorMessage(error));

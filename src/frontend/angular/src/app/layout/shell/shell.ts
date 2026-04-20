@@ -9,6 +9,7 @@ import { Sidebar } from '../sidebar/sidebar';
 import { Profile } from '../../pages/profile/profile';
 import { EventDetailsDrawer } from '../../shared/event-details-drawer/event-details-drawer';
 import { EventManagementDrawer } from '../../shared/event-management-drawer/event-management-drawer';
+import { UiNotifications } from '../../shared/ui/ui-notifications/ui-notifications';
 
 @Component({
   selector: 'app-shell',
@@ -20,6 +21,7 @@ import { EventManagementDrawer } from '../../shared/event-management-drawer/even
     Profile,
     EventDetailsDrawer,
     EventManagementDrawer,
+    UiNotifications,
   ],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',

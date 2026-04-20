@@ -160,10 +160,10 @@
     </div>
   </section>
 
-  @if (saveMessage()) {
+  @if (saveMessage() && saveMessage() !== 'Изменения сохранены.') {
     <div
       class="ui-feedback-message"
-      [class.ui-feedback-message--error]="saveMessage() !== 'Изменения сохранены.'"
+      [class.ui-feedback-message--error]="true"
     >
       {{ saveMessage() }}
     </div>

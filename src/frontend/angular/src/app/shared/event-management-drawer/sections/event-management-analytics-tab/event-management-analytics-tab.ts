@@ -1,16 +1,9 @@
-import { Component, computed, input } from '@angular/core';
-import { DrawerCard } from '../../../drawer-card/drawer-card';
+import { Component, input } from '@angular/core';
 import { EventManagementEventAnalytics } from '../../../../core/ui/event-management-drawer-data.service';
-
-type EventManagementAnalyticsMetric = {
-  label: string;
-  value: string;
-};
 
 @Component({
   selector: 'app-event-management-analytics-tab',
   standalone: true,
-  imports: [DrawerCard],
   templateUrl: './event-management-analytics-tab.html',
   styleUrl: './event-management-analytics-tab.scss',
 })
@@ -21,42 +14,44 @@ export class EventManagementAnalyticsTab {
   readonly eventDaysCount = input.required<number>();
   readonly locationCapacity = input.required<number>();
 
-  readonly generalMetrics = computed<EventManagementAnalyticsMetric[]>(() => {
-    const analytics = this.eventAnalytics();
-    const personCount = this.eventPersonCount();
-    const capacity = this.locationCapacity();
-    const daysCount = this.eventDaysCount();
+  participantSummary(): string {
+    return `${this.eventPersonCount()}/${this.locationCapacity()}`;
+  }
+
+  ratingValue(): string {
     const rating = this.eventRating();
-    const cost = analytics.eventCost;
-    const avgDayCost = cost !== null && daysCount > 0 ? cost / daysCount : null;
+    return this.formatNullable(rating === 0 ? null : rating);
+  }
 
-    return [
-      { label: 'Количество участников', value: `${personCount}/${capacity}` },
-      { label: 'Рейтинг', value: this.formatNullable(rating === 0 ? null : rating) },
-      { label: 'Стоимость мероприятия', value: this.formatNullable(cost) },
-      { label: 'Средняя стоимость дня', value: this.formatNullable(avgDayCost) },
-      { label: 'N-мерность мероприятия', value: String(daysCount) },
-    ];
-  });
+  eventCostValue(): string {
+    return this.formatNullable(this.eventAnalytics().eventCost);
+  }
 
-  readonly pricingMetrics = computed<EventManagementAnalyticsMetric[]>(() => {
-    const analytics = this.eventAnalytics();
+  avgDayCostValue(): string {
+    const cost = this.eventAnalytics().eventCost;
+    const daysCount = this.eventDaysCount();
+    return this.formatNullable(cost !== null && daysCount > 0 ? cost / daysCount : null);
+  }
 
-    return [
-      { label: 'Фундаментальная цена (1 день)', value: this.formatNullable(analytics.fundamentalPrice1D) },
-      { label: 'Фундаментальная цена (N дней)', value: this.formatNullable(analytics.fundamentalPriceNd) },
-    ];
-  });
+  daysCountValue(): string {
+    return String(this.eventDaysCount());
+  }
 
-  readonly profitMetrics = computed<EventManagementAnalyticsMetric[]>(() => {
-    const analytics = this.eventAnalytics();
+  fundamentalPrice1DValue(): string {
+    return this.formatNullable(this.eventAnalytics().fundamentalPrice1D);
+  }
 
-    return [
-      { label: 'Расходы', value: this.formatNullable(analytics.eventCost) },
-      { label: 'Баланс (1 день)', value: this.formatNullable(analytics.balance1D) },
-      { label: 'Баланс (N дней)', value: this.formatNullable(analytics.balanceNd) },
-    ];
-  });
+  fundamentalPriceNdValue(): string {
+    return this.formatNullable(this.eventAnalytics().fundamentalPriceNd);
+  }
+
+  balance1DValue(): string {
+    return this.formatNullable(this.eventAnalytics().balance1D);
+  }
+
+  balanceNdValue(): string {
+    return this.formatNullable(this.eventAnalytics().balanceNd);
+  }
 
   private formatNullable(value: number | null | undefined): string {
     if (value === null || value === undefined) {

@@ -9,6 +9,7 @@ import { AdminUsersApiService } from '../../../core/api/services/admin-users-api
 import { LocationsApiService } from '../../../core/api/services/locations-api.service';
 import { EventDetailsDrawerStore } from '../../../core/ui/event-details-drawer.store';
 import { EventManagementDrawerStore } from '../../../core/ui/event-management-drawer.store';
+import { UiNotificationsService } from '../../../core/ui/ui-notifications.service';
 
 type AdminEventRow = {
   id: string;
@@ -31,11 +32,13 @@ type AdminEventRow = {
   styleUrl: './admin-events-section.scss',
 })
 export class AdminEventsSection {
+  private static readonly EMPTY_GUID = '00000000-0000-0000-0000-000000000000';
   private readonly adminEventsApiService = inject(AdminEventsApiService);
   private readonly locationsApiService = inject(LocationsApiService);
   private readonly adminUsersApiService = inject(AdminUsersApiService);
   private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
   private readonly eventManagementDrawerStore = inject(EventManagementDrawerStore);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   readonly pageSize = signal<number>(10);
   readonly pageIndex = signal<number>(0);
@@ -110,6 +113,18 @@ export class AdminEventsSection {
   }
 
   openManageDrawer(row: AdminEventRow): void {
+    this.openDrawer(row, 'settings');
+  }
+
+  openDaysDrawer(row: AdminEventRow): void {
+    this.openDrawer(row, 'days');
+  }
+
+  openReviewsDrawer(row: AdminEventRow): void {
+    this.openDrawer(row, 'reviews');
+  }
+
+  private openDrawer(row: AdminEventRow, initialTab: 'settings' | 'days' | 'reviews'): void {
     this.successMessage.set('');
     this.eventManagementDrawerStore.open({
       mode: 'superuser-manage',
@@ -117,6 +132,7 @@ export class AdminEventsSection {
       viewerRole: 'superuser',
       title: row.title,
       eventId: row.id,
+      initialTab,
     });
   }
 
@@ -139,7 +155,7 @@ export class AdminEventsSection {
         next: () => {
           this.allRows.update((rows) => rows.filter((item) => item.id !== row.id));
           this.clampPageIndex();
-          this.successMessage.set('Мероприятие удалено.');
+          this.uiNotificationsService.success('Мероприятие удалено.');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.mapDeleteErrorMessage(error));
@@ -169,7 +185,7 @@ export class AdminEventsSection {
         next: ({ events, locationMap, userMap }) => {
           this.allRows.set(events.map((event) => this.mapRow(event, {
             location: locationMap[event.locationId] ?? event.locationId,
-            organizer: userMap[event.createdByUserId] ?? event.createdByUserId,
+            organizer: userMap[event.createdByUserId] ?? this.resolveOrganizerLabel(event.createdByUserId),
           })));
           this.clampPageIndex();
         },
@@ -203,6 +219,14 @@ export class AdminEventsSection {
     }
 
     return `${day}.${month}.${year}`;
+  }
+
+  private resolveOrganizerLabel(userId: string): string {
+    if (!userId || userId === AdminEventsSection.EMPTY_GUID) {
+      return 'Не указан';
+    }
+
+    return userId;
   }
 
   private clampPageIndex(): void {
