@@ -18,6 +18,10 @@ import {
 import { DayApiModel } from '../api/models/day.models';
 import { CreateFeedbackPayload } from '../api/models/feedback.models';
 import { RegistrationApiModel } from '../api/models/registration.models';
+import type {
+  Web_Dtos_CreateRegistrationRequest,
+  Web_Dtos_UpdateRegistrationRequest,
+} from '../api/generated';
 
 export type LoadEventDetailsParams = {
   eventId: string;
@@ -48,7 +52,7 @@ export class EventDetailsDrawerDataService {
       days: this.daysApiService.listByEvent(params.eventId),
       feedbacks: this.feedbacksApiService.listByEvent(params.eventId),
       registrations: this.registrationsApiService.listByEvent(params.eventId),
-      currentUser: this.usersApiService.getMe(),
+      currentUser: this.usersApiService.getMe().pipe(catchError(() => of(null))),
     }).pipe(
       switchMap(({ event, days, feedbacks, registrations, currentUser }) => {
         const userIds = registrations.map((registration) => registration.userId);
@@ -63,17 +67,25 @@ export class EventDetailsDrawerDataService {
               return acc;
             }, {});
 
-            const currentUserRegistration = registrations.find(
-              (registration) => registration.userId === currentUser.id
-            );
+            const currentUserRegistration = currentUser
+              ? registrations.find((registration) => registration.userId === currentUser.id) ?? null
+              : null;
 
             const dayRows = this.buildDayRows(days, registrations, userMap, dayPriceMap);
             const reviewRows = feedbacks.map((feedback) =>
-              this.mapReviewRow(feedback.registrationId, feedback.comment, feedback.rate, registrationById, userMap)
+              this.mapReviewRow(
+                feedback.id,
+                feedback.registrationId,
+                feedback.comment,
+                feedback.rate,
+                registrationById,
+                userMap,
+                currentUser?.id ?? null,
+              )
             );
 
             return {
-              currentUsername: currentUser.name,
+              currentUsername: currentUser?.name ?? 'Гость',
               context: {
                 eventId: event.id,
                 source: params.source,
@@ -84,7 +96,12 @@ export class EventDetailsDrawerDataService {
                   participantsCount: registrations.length,
                   dayRows,
                   reviewRows,
+                  currentUserId: currentUser?.id ?? null,
+                  currentUsername: currentUser?.name ?? null,
                   currentUserRegistrationId: currentUserRegistration?.id ?? null,
+                  currentUserRegistrationType: currentUserRegistration?.type ?? null,
+                  currentUserRegistrationPayment: currentUserRegistration?.payment ?? null,
+                  currentUserRegistrationDayIds: currentUserRegistration?.days.map((day) => day.id) ?? [],
                 },
               },
             };
@@ -97,11 +114,32 @@ export class EventDetailsDrawerDataService {
   createReview(payload: CreateFeedbackPayload, person: string): Observable<EventDetailsDrawerReview> {
     return this.feedbacksApiService.createFeedback(payload).pipe(
       map((feedback) => ({
+        feedbackId: feedback.id,
         person,
         comment: feedback.comment,
         rating: feedback.rate,
+        isOwnedByCurrentUser: true,
       }))
     );
+  }
+
+  deleteReview(feedbackId: string): Observable<void> {
+    return this.feedbacksApiService.deleteFeedback(feedbackId);
+  }
+
+  createRegistration(payload: Web_Dtos_CreateRegistrationRequest): Observable<RegistrationApiModel> {
+    return this.registrationsApiService.createRegistration(payload);
+  }
+
+  updateRegistration(
+    registrationId: string,
+    payload: Web_Dtos_UpdateRegistrationRequest,
+  ): Observable<RegistrationApiModel> {
+    return this.registrationsApiService.updateRegistration(registrationId, payload);
+  }
+
+  deleteRegistration(registrationId: string): Observable<void> {
+    return this.registrationsApiService.deleteRegistration(registrationId);
   }
 
   private buildDayRows(
@@ -131,19 +169,23 @@ export class EventDetailsDrawerDataService {
   }
 
   private mapReviewRow(
+    feedbackId: string,
     registrationId: string,
     comment: string,
     rating: number,
     registrationById: Record<string, RegistrationApiModel>,
-    userMap: Record<string, string>
+    userMap: Record<string, string>,
+    currentUserId: string | null,
   ): EventDetailsDrawerReview {
     const registration = registrationById[registrationId];
     const person = registration ? userMap[registration.userId] ?? 'Участник' : 'Участник';
 
     return {
+      feedbackId,
       person,
       comment,
       rating,
+      isOwnedByCurrentUser: currentUserId !== null && registration?.userId === currentUserId,
     };
   }
 

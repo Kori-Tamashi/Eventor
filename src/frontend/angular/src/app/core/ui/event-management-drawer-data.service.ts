@@ -33,9 +33,11 @@ export type EventManagementParticipantRow = {
 };
 
 export type EventManagementReviewRow = {
+  feedbackId: string;
   person: string;
   comment: string;
   rating: number;
+  isOwnedByCurrentUser: boolean;
 };
 
 export type EventManagementEventAnalytics = {
@@ -185,7 +187,7 @@ export class EventManagementDrawerDataService {
             dayRows: this.buildDayRows(days, registrations, dayPriceMap, userMap),
             currentUserId: currentUser.id,
             currentUsername: currentUser.name,
-            reviewRows: this.buildReviewRows(feedbacks, registrations, userMap),
+            reviewRows: this.buildReviewRows(feedbacks, registrations, userMap, currentUser.id),
             currentUserRegistrationId: registrations.find((r) => r.userId === currentUser.id)?.id ?? null,
             eventAnalytics: { eventCost, fundamentalPrice1D, fundamentalPriceNd, balance1D, balanceNd },
             eventRating: event.rating,
@@ -208,6 +210,7 @@ export class EventManagementDrawerDataService {
         percent: payload.markup,
       }).pipe(
         switchMap(() => this.syncDays(payload.eventId as string, payload.daysCount)),
+        switchMap(() => this.ensureOrganizerRegistration(payload.eventId as string, payload.currentUserId)),
         switchMap(() => this.loadEventData(payload.eventId as string))
       );
     }
@@ -223,6 +226,7 @@ export class EventManagementDrawerDataService {
     }).pipe(
       switchMap((event: EventApiModel) =>
         this.syncDays(event.id, payload.daysCount).pipe(
+          switchMap(() => this.ensureOrganizerRegistration(event.id, payload.currentUserId)),
           switchMap(() => this.loadEventData(event.id))
         )
       )
@@ -301,11 +305,17 @@ export class EventManagementDrawerDataService {
   createReview(payload: CreateFeedbackPayload, person: string): Observable<EventManagementReviewRow> {
     return this.feedbacksApiService.createFeedback(payload).pipe(
       map((feedback) => ({
+        feedbackId: feedback.id,
         person,
         comment: feedback.comment,
         rating: feedback.rate,
+        isOwnedByCurrentUser: true,
       }))
     );
+  }
+
+  deleteReview(feedbackId: string): Observable<void> {
+    return this.feedbacksApiService.deleteFeedback(feedbackId);
   }
 
   private syncDays(eventId: string, targetDaysCount: number): Observable<void> {
@@ -346,6 +356,28 @@ export class EventManagementDrawerDataService {
         return this.runSequentially(
           daysToDelete.map((day) => () => this.daysApiService.deleteDay(day.id))
         );
+      })
+    );
+  }
+
+  private ensureOrganizerRegistration(eventId: string, userId: string): Observable<void> {
+    return this.registrationsApiService.listByEvent(eventId).pipe(
+      switchMap((registrations) => {
+        const hasOrganizerRegistration = registrations.some(
+          (registration) => registration.userId === userId && registration.type === 2
+        );
+
+        if (hasOrganizerRegistration) {
+          return of(void 0);
+        }
+
+        return this.registrationsApiService.createRegistration({
+          eventId,
+          userId,
+          type: 2,
+          payment: true,
+          dayIds: [],
+        }).pipe(map(() => void 0));
       })
     );
   }
@@ -397,6 +429,7 @@ export class EventManagementDrawerDataService {
     feedbacks: FeedbackApiModel[],
     registrations: RegistrationApiModel[],
     userMap: Record<string, string>,
+    currentUserId: string,
   ): EventManagementReviewRow[] {
     const registrationById = registrations.reduce<Record<string, RegistrationApiModel>>((acc, r) => {
       acc[r.id] = r;
@@ -406,17 +439,18 @@ export class EventManagementDrawerDataService {
     return feedbacks.map((feedback) => {
       const registration = registrationById[feedback.registrationId];
       const person = registration ? (userMap[registration.userId] ?? 'Участник') : 'Участник';
-      return { person, comment: feedback.comment, rating: feedback.rate };
+      return {
+        feedbackId: feedback.id,
+        person,
+        comment: feedback.comment,
+        rating: feedback.rate,
+        isOwnedByCurrentUser: registration?.userId === currentUserId,
+      };
     });
   }
 
-  private mapDateOnly(value: string): { year: number; month: number; day: number } {
-    const [year, month, day] = value.split('-').map(Number);
-    return {
-      year,
-      month,
-      day,
-    };
+  private mapDateOnly(value: string): string {
+    return value;
   }
 
   private formatDateStringForInput(value: string): string {

@@ -14,13 +14,13 @@ type EventManagementDayAnalyticsMetric = {
   styleUrl: './event-management-day-analytics-tab.scss',
 })
 export class EventManagementDayAnalyticsTab {
-  readonly menuCost = input<number | null>(null);
+  readonly dayCost = input<number | null>(null);
   readonly dayPrice = input<number | null>(null);
   readonly dayPriceWithPrivileges = input<number | null>(null);
   readonly participantsCount = input.required<number>();
 
   readonly metrics = computed<EventManagementDayAnalyticsMetric[]>(() => {
-    const menuCost = this.menuCost();
+    const dayCost = this.dayCost();
     const dayPrice = this.dayPrice();
     const dayPriceWithPrivileges = this.dayPriceWithPrivileges();
     const participantsCount = this.participantsCount();
@@ -31,7 +31,7 @@ export class EventManagementDayAnalyticsTab {
         : null;
 
     return [
-      { label: 'Стоимость', value: this.formatNullable(menuCost) },
+      { label: 'Стоимость', value: this.formatNullable(dayCost) },
       { label: 'Цена', value: this.formatNullable(dayPrice) },
       { label: 'Цена (с привилегиями)', value: this.formatNullable(dayPriceWithPrivileges) },
       { label: 'Количество участников', value: String(participantsCount) },

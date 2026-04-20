@@ -9,12 +9,14 @@ import {
 import { finalize } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { AuthApiService } from '../../core/api/services/auth-api.service';
 import { UsersApiService } from '../../core/api/services/users-api.service';
 import {
   CurrentUser,
   UpdateCurrentUserPayload,
 } from '../../core/api/models/user.models';
 import { Web_Dtos_Gender } from '../../core/api/generated';
+import { UiNotificationsService } from '../../core/ui/ui-notifications.service';
 
 type GenderOption = {
   label: string;
@@ -31,8 +33,11 @@ type GenderOption = {
 export class Profile {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly usersApiService = inject(UsersApiService);
+  private readonly authApiService = inject(AuthApiService);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   readonly closeRequested = output<void>();
+  readonly sessionEnded = output<void>();
 
   readonly genderOptions: GenderOption[] = [
     { label: 'Мужской', value: 0 },
@@ -41,6 +46,7 @@ export class Profile {
 
   readonly isLoading = signal<boolean>(true);
   readonly isSaving = signal<boolean>(false);
+  readonly isDeleting = signal<boolean>(false);
   readonly loadErrorMessage = signal<string>('');
   readonly saveMessage = signal<string>('');
   readonly passwordEditorOpen = signal<boolean>(false);
@@ -74,7 +80,7 @@ export class Profile {
       case 0:
         return 'Администратор';
       case 1:
-        return 'Организатор мероприятий';
+        return 'Пользователь';
       case 2:
         return 'Гость';
       default:
@@ -173,10 +179,32 @@ export class Profile {
           this.profileForm.controls.password.setValue('');
           this.profileForm.controls.confirmPassword.setValue('');
           this.passwordEditorOpen.set(false);
-          this.saveMessage.set('Изменения сохранены.');
+          this.saveMessage.set('');
+          this.uiNotificationsService.success('Изменения сохранены.');
         },
         error: (error: unknown) => {
           this.saveMessage.set(this.mapErrorMessage(error));
+        },
+      });
+  }
+
+  deleteAccount(): void {
+    if (this.isLoading() || this.isSaving() || this.isDeleting()) {
+      return;
+    }
+
+    this.saveMessage.set('');
+    this.isDeleting.set(true);
+
+    this.usersApiService.deleteMe()
+      .pipe(finalize(() => this.isDeleting.set(false)))
+      .subscribe({
+        next: () => {
+          this.authApiService.logout();
+          this.sessionEnded.emit();
+        },
+        error: (error: unknown) => {
+          this.saveMessage.set(this.mapDeleteErrorMessage(error));
         },
       });
   }
@@ -236,6 +264,20 @@ export class Profile {
     }
 
     return 'Сервер временно недоступен. Повторите попытку позже.';
+  }
+
+  private mapDeleteErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Сессия недействительна. Выполните вход снова.';
+    }
+
+    if (status === 404) {
+      return 'Профиль пользователя не найден.';
+    }
+
+    return 'Не удалось удалить аккаунт.';
   }
 
   private extractStatusCode(error: unknown): number | null {

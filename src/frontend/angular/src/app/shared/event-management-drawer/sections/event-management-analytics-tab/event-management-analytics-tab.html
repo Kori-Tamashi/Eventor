@@ -1,34 +1,65 @@
 <div class="analytics-content">
-  <app-drawer-card title="Общая информация">
-    <div class="analytics-list">
-      @for (metric of generalMetrics(); track metric.label) {
+  <section class="analytics-card">
+    <div class="analytics-card__title">Общая информация</div>
+    <div class="analytics-card__inner">
+      <div class="analytics-list">
         <div class="analytics-row">
-          <div class="analytics-label">{{ metric.label }}</div>
-          <div class="analytics-value">{{ metric.value }}</div>
+          <div class="analytics-label">Количество участников</div>
+          <div class="analytics-value">{{ participantSummary() }}</div>
         </div>
-      }
+        <div class="analytics-row">
+          <div class="analytics-label">Рейтинг</div>
+          <div class="analytics-value">{{ ratingValue() }}</div>
+        </div>
+        <div class="analytics-row">
+          <div class="analytics-label">Стоимость мероприятия</div>
+          <div class="analytics-value">{{ eventCostValue() }}</div>
+        </div>
+        <div class="analytics-row">
+          <div class="analytics-label">Средняя стоимость дня</div>
+          <div class="analytics-value">{{ avgDayCostValue() }}</div>
+        </div>
+        <div class="analytics-row">
+          <div class="analytics-label">N-мерность мероприятия</div>
+          <div class="analytics-value">{{ daysCountValue() }}</div>
+        </div>
+      </div>
     </div>
-  </app-drawer-card>
+  </section>
 
-  <app-drawer-card title="Ценообразование">
-    <div class="analytics-list">
-      @for (metric of pricingMetrics(); track metric.label) {
+  <section class="analytics-card">
+    <div class="analytics-card__title">Ценообразование</div>
+    <div class="analytics-card__inner">
+      <div class="analytics-list">
         <div class="analytics-row">
-          <div class="analytics-label">{{ metric.label }}</div>
-          <div class="analytics-value">{{ metric.value }}</div>
+          <div class="analytics-label">Фундаментальная цена (1 день)</div>
+          <div class="analytics-value">{{ fundamentalPrice1DValue() }}</div>
         </div>
-      }
+        <div class="analytics-row">
+          <div class="analytics-label">Фундаментальная цена (N дней)</div>
+          <div class="analytics-value">{{ fundamentalPriceNdValue() }}</div>
+        </div>
+      </div>
     </div>
-  </app-drawer-card>
+  </section>
 
-  <app-drawer-card title="Прибыль">
-    <div class="analytics-list">
-      @for (metric of profitMetrics(); track metric.label) {
+  <section class="analytics-card">
+    <div class="analytics-card__title">Прибыль</div>
+    <div class="analytics-card__inner">
+      <div class="analytics-list">
         <div class="analytics-row">
-          <div class="analytics-label">{{ metric.label }}</div>
-          <div class="analytics-value">{{ metric.value }}</div>
+          <div class="analytics-label">Расходы</div>
+          <div class="analytics-value">{{ eventCostValue() }}</div>
         </div>
-      }
+        <div class="analytics-row">
+          <div class="analytics-label">Баланс (1 день)</div>
+          <div class="analytics-value">{{ balance1DValue() }}</div>
+        </div>
+        <div class="analytics-row">
+          <div class="analytics-label">Баланс (N дней)</div>
+          <div class="analytics-value">{{ balanceNdValue() }}</div>
+        </div>
+      </div>
     </div>
-  </app-drawer-card>
+  </section>
 </div>

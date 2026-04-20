@@ -1,7 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LocationsService } from '../generated';
+import type {
+  Web_Dtos_CreateLocationRequest,
+  Web_Dtos_UpdateLocationRequest,
+} from '../generated';
+import { AdminLocationsService, LocationsService } from '../generated';
 import { LocationApiModel } from '../models/location.models';
 
 @Injectable({
@@ -9,6 +13,7 @@ import { LocationApiModel } from '../models/location.models';
 })
 export class LocationsApiService {
   private readonly locationsService = inject(LocationsService);
+  private readonly adminLocationsService = inject(AdminLocationsService);
 
   listLocations(titleContains?: string): Observable<LocationApiModel[]> {
     return this.locationsService.getApiV1Locations({
@@ -18,6 +23,25 @@ export class LocationsApiService {
 
   getLocation(locationId: string): Observable<LocationApiModel> {
     return this.locationsService.getApiV1Locations1({ locationId }) as Observable<LocationApiModel>;
+  }
+
+  createLocation(payload: Web_Dtos_CreateLocationRequest): Observable<LocationApiModel> {
+    return this.adminLocationsService.postApiV1AdminLocations({
+      requestBody: payload,
+    }) as Observable<LocationApiModel>;
+  }
+
+  updateLocation(locationId: string, payload: Web_Dtos_UpdateLocationRequest): Observable<void> {
+    return this.adminLocationsService.putApiV1AdminLocations({
+      locationId,
+      requestBody: payload,
+    }) as Observable<void>;
+  }
+
+  deleteLocation(locationId: string): Observable<void> {
+    return this.adminLocationsService.deleteApiV1AdminLocations({
+      locationId,
+    }) as Observable<void>;
   }
 
   getLocationTitleMap(locationIds: string[]): Observable<Record<string, string>> {

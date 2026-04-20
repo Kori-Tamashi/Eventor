@@ -58,6 +58,17 @@
   color: var(--eventor-text);
 }
 
+.drawer-loading-surface {
+  margin-top: var(--space-4);
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  color: var(--eventor-muted);
+  text-align: center;
+}
+
 p-tabpanel > app-event-management-settings-tab {
   display: block;
   margin-top: var(--space-4);

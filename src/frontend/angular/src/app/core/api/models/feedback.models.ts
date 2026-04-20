@@ -10,3 +10,8 @@ export type CreateFeedbackPayload = {
   comment: string;
   rate: number;
 };
+
+export type UpdateFeedbackPayload = {
+  comment?: string | null;
+  rate?: number | null;
+};

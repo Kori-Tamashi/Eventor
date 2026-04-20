@@ -8,6 +8,25 @@
   gap: var(--space-4);
 }
 
+.analytics-card {
+  background: var(--sidebar-bg);
+  border-radius: var(--ui-radius);
+  padding: var(--space-4);
+}
+
+.analytics-card__title {
+  margin-bottom: var(--space-2);
+  font-size: var(--drawer-card-title);
+  font-weight: var(--font-weight-h6);
+  color: var(--eventor-text);
+}
+
+.analytics-card__inner {
+  background: var(--eventor-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
 .analytics-list {
   display: flex;
   flex-direction: column;

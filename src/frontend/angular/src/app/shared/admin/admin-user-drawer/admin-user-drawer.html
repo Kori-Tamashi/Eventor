@@ -1,0 +1,134 @@
+<p-drawer
+  position="right"
+  appendTo="body"
+  [visible]="visible()"
+  (visibleChange)="onDrawerVisibleChange($event)"
+  styleClass="event-drawer admin-user-drawer-shell"
+>
+  <div class="drawer-topbar">
+    <button
+      pButton
+      type="button"
+      class="ui-icon-btn drawer-nav-btn"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span pButtonIcon class="pi pi-times"></span>
+    </button>
+  </div>
+
+  <div class="drawer-header">
+    <div class="drawer-title">{{ drawerTitle() }}</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="ui-feedback-message">Загрузка данных пользователя...</div>
+  } @else {
+    <div class="admin-user-form ui-surface">
+      @if (errorMessage()) {
+        <div class="ui-feedback-message ui-feedback-message--error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="admin-user-field">
+        <div class="admin-user-label-row">
+          <label class="admin-user-label" for="userName">Имя</label>
+          <span class="admin-user-counter">{{ titleCountLabel() }}</span>
+        </div>
+        <input
+          id="userName"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="name()"
+          (input)="onNameInput($any($event.target).value)"
+        />
+      </div>
+
+      <div class="admin-user-field">
+        <label class="admin-user-label" for="userPhone">Телефон</label>
+        <input
+          id="userPhone"
+          pInputText
+          class="ui-input"
+          type="text"
+          [value]="phone()"
+          (input)="onPhoneInput($any($event.target).value)"
+        />
+      </div>
+
+      <div class="admin-user-grid">
+        <div class="admin-user-field">
+          <label class="admin-user-label" for="userGender">Пол</label>
+          <div class="ui-select-wrap">
+            <select
+              id="userGender"
+              class="ui-select"
+              [value]="gender()"
+              (change)="onGenderChange($any($event.target).value)"
+            >
+              @for (option of genderOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <i class="pi pi-angle-down ui-select-icon" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <div class="admin-user-field">
+          <label class="admin-user-label" for="userRole">Роль</label>
+          <div class="ui-select-wrap">
+            <select
+              id="userRole"
+              class="ui-select"
+              [value]="role()"
+              (change)="onRoleChange($any($event.target).value)"
+            >
+              @for (option of roleOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <i class="pi pi-angle-down ui-select-icon" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-user-field">
+        <label class="admin-user-label" for="userPassword">
+          {{ passwordRequired() ? 'Пароль' : 'Новый пароль (опционально)' }}
+        </label>
+        <input
+          id="userPassword"
+          pInputText
+          class="ui-input"
+          type="password"
+          [value]="password()"
+          (input)="onPasswordInput($any($event.target).value)"
+        />
+      </div>
+
+      <div class="admin-user-actions">
+        <button
+          pButton
+          type="button"
+          class="admin-user-secondary-btn"
+          [disabled]="isSaving()"
+          (click)="close()"
+        >
+          <span pButtonLabel>Отменить</span>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn"
+          [disabled]="!canSave()"
+          (click)="save()"
+        >
+          <span pButtonLabel>{{ isSaving() ? 'Сохранение...' : 'Сохранить' }}</span>
+        </button>
+      </div>
+    </div>
+  }
+</p-drawer>

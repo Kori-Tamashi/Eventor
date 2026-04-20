@@ -1,0 +1,44 @@
+<div class="page">
+  <div class="ui-surface page-card admin-page-card">
+    <header class="header">
+      <div class="title-block">
+        <h1 class="title">Администрирование</h1>
+        <p class="subtitle">Системное управление сущностями backend</p>
+      </div>
+    </header>
+
+    <div class="admin-tabs-shell">
+      <p-tabs value="locations" styleClass="admin-tabs">
+        <p-tablist>
+          <p-tab value="locations">Локации</p-tab>
+          <p-tab value="items">Объекты</p-tab>
+          <p-tab value="menus">Меню</p-tab>
+          <p-tab value="users">Пользователи</p-tab>
+          <p-tab value="events">Мероприятия</p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+          <p-tabpanel value="locations">
+            <app-admin-locations-section></app-admin-locations-section>
+          </p-tabpanel>
+
+          <p-tabpanel value="items">
+            <app-admin-items-section></app-admin-items-section>
+          </p-tabpanel>
+
+          <p-tabpanel value="menus">
+            <app-admin-menus-section></app-admin-menus-section>
+          </p-tabpanel>
+
+          <p-tabpanel value="users">
+            <app-admin-users-section></app-admin-users-section>
+          </p-tabpanel>
+
+          <p-tabpanel value="events">
+            <app-admin-events-section></app-admin-events-section>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </div>
+  </div>
+</div>

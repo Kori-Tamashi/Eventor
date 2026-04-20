@@ -7,8 +7,8 @@
   <div class="ui-surface page-card">
     <header class="header">
       <div class="title-block">
-        <h2 class="title">Последние мероприятия</h2>
-        <p class="subtitle">Последние выбранные вами мероприятия</p>
+        <h2 class="title">Мои регистрации</h2>
+        <p class="subtitle">Список мероприятий, на которые вы зарегистрированы</p>
       </div>
 
       <div class="actions">
@@ -17,19 +17,13 @@
           <input
             pInputText
             type="text"
-            placeholder="Поиск мероприятий"
+            placeholder="Поиск регистраций"
             [value]="searchTerm()"
             (input)="onSearchInput($any($event.target).value)"
           />
         </span>
 
         <div class="pager">
-          <button pButton type="button" class="ui-icon-btn" aria-label="Filter">
-            <span pButtonIcon class="pi pi-filter"></span>
-          </button>
-
-          <span class="v-sep" aria-hidden="true"></span>
-
           <div class="page-count ui-surface">{{ pageLabel() }}</div>
 
           <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
@@ -52,32 +46,57 @@
     <p-table [value]="pagedRows()" styleClass="ui-table">
       <ng-template pTemplate="header">
         <tr>
-          <th>Название</th>
+          <th>Мероприятие</th>
           <th>Описание</th>
           <th>Дата</th>
+          <th>Тип</th>
+          <th>Оплата</th>
+          <th>Дни</th>
           <th>Рейтинг</th>
-          <th>Детали</th>
+          <th>Действия</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-row>
         <tr>
-          <td>{{ row.name }}</td>
+          <td>{{ row.eventTitle }}</td>
           <td>{{ row.description }}</td>
           <td>{{ row.date }}</td>
+          <td>{{ row.typeLabel }}</td>
+          <td>{{ row.paymentLabel }}</td>
+          <td>{{ row.daysLabel }}</td>
           <td>{{ row.rating }}</td>
           <td class="details-cell">
-            <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
-              <span pButtonIcon class="pi pi-search"></span>
-            </button>
+            <div class="row-actions">
+              <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
+                <span pButtonIcon class="pi pi-search"></span>
+              </button>
+
+              <button
+                pButton
+                type="button"
+                class="ui-icon-btn"
+                aria-label="Cancel registration"
+                [disabled]="!row.canCancel || cancelingRegistrationId() === row.registrationId"
+                (click)="cancelRegistration(row)"
+              >
+                <span
+                  pButtonIcon
+                  class="pi"
+                  [class.pi-times]="cancelingRegistrationId() !== row.registrationId"
+                  [class.pi-spin]="cancelingRegistrationId() === row.registrationId"
+                  [class.pi-spinner]="cancelingRegistrationId() === row.registrationId"
+                ></span>
+              </button>
+            </div>
           </td>
         </tr>
       </ng-template>
     </p-table>
 
     @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
-      <div class="ui-feedback-message">
-        У вас пока нет мероприятий для отображения.
+      <div class="ui-empty-state">
+        У вас пока нет регистраций для отображения.
       </div>
     }
   </div>

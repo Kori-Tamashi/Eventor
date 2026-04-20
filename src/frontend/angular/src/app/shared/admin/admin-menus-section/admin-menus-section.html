@@ -1,0 +1,99 @@
+<div class="admin-menus">
+  <div class="admin-menus__head">
+    <div>
+      <h2 class="admin-menus__title">Меню</h2>
+      <p class="admin-menus__subtitle">Управление меню и составом объектов внутри них</p>
+    </div>
+
+    <div class="admin-menus__actions">
+      <span class="search ui-search p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Поиск меню"
+          [value]="searchTerm()"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </span>
+
+      <div class="admin-menus__pager">
+        <div class="page-count ui-surface">{{ pageLabel() }}</div>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
+          <span pButtonIcon class="pi pi-chevron-left"></span>
+        </button>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
+          <span pButtonIcon class="pi pi-chevron-right"></span>
+        </button>
+
+        <button pButton type="button" class="ui-primary-btn" (click)="openCreateDrawer()">
+          <span pButtonIcon class="pi pi-plus"></span>
+          <span pButtonLabel>Создать меню</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="ui-feedback-message ui-feedback-message--error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <p-table [value]="pagedRows()" styleClass="ui-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Количество объектов</th>
+        <th>Действия</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.title }}</td>
+        <td>{{ row.description || 'Без описания' }}</td>
+        <td>{{ row.itemsCount }}</td>
+        <td class="admin-menus__actions-cell">
+          <div class="row-actions">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Edit" (click)="openEditDrawer(row)">
+              <span pButtonIcon class="pi pi-pencil"></span>
+            </button>
+
+            <button
+              pButton
+              type="button"
+              class="ui-icon-btn"
+              aria-label="Delete"
+              [disabled]="deletingMenuId() === row.id"
+              (click)="deleteMenu(row)"
+            >
+              <span pButtonIcon class="pi" [class.pi-trash]="deletingMenuId() !== row.id" [class.pi-spin]="deletingMenuId() === row.id" [class.pi-spinner]="deletingMenuId() === row.id"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
+    <div class="ui-empty-state">
+      Меню не найдены.
+    </div>
+  }
+</div>
+
+<app-admin-menu-drawer
+  [visible]="drawerOpen()"
+  [mode]="drawerMode()"
+  [data]="drawerData()"
+  [isLoading]="isDrawerLoading()"
+  [isSaving]="isSavingDrawer()"
+  [errorMessage]="drawerErrorMessage()"
+  (visibleChange)="drawerOpen.set($event)"
+  (closeRequested)="closeDrawer()"
+  (saveRequested)="saveMenu($event)"
+></app-admin-menu-drawer>

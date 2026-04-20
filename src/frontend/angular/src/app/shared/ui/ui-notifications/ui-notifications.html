@@ -1,0 +1,19 @@
+<div class="ui-notifications" aria-live="polite" aria-atomic="true">
+  @for (notification of notifications(); track notification.id) {
+    <div class="ui-notification" [class.ui-notification--error]="notification.kind === 'error'">
+      <div class="ui-notification__body">
+        {{ notification.message }}
+      </div>
+
+      <button
+        pButton
+        type="button"
+        class="ui-notification__close"
+        aria-label="Close notification"
+        (click)="dismiss(notification.id)"
+      >
+        <span pButtonIcon class="pi pi-times"></span>
+      </button>
+    </div>
+  }
+</div>

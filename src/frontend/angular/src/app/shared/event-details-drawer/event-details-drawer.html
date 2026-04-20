@@ -61,7 +61,21 @@
               [daysCount]="daysCount()"
               [participantsCount]="participantsCount()"
               [dayRows]="dayRows()"
+              [currentUserId]="currentUserId()"
+              [currentUserRegistrationId]="currentUserRegistrationId()"
+              [currentUserRegistrationPayment]="currentUserRegistrationPayment()"
+              [isOrganizerRegistration]="isOrganizerRegistration()"
+              [registrationType]="registrationType()"
+              [registrationDayIds]="registrationDayIds()"
+              [canSaveRegistration]="canSaveRegistration()"
+              [canDeleteRegistration]="canDeleteRegistration()"
+              [isSavingRegistration]="isSavingRegistration()"
+              [registrationMessage]="registrationMessage()"
               (dayParticipantsOpen)="openDayParticipants($event)"
+              (registrationTypeChange)="onRegistrationTypeChange($event)"
+              (registrationDayToggle)="onRegistrationDayToggle($event)"
+              (registrationSave)="saveRegistration()"
+              (registrationDelete)="deleteRegistration()"
             ></app-event-details-info-tab>
           </p-tabpanel>
 
@@ -70,12 +84,14 @@
               [reviewText]="reviewText()"
               [reviewRating]="reviewRating()"
               [reviewRows]="reviewRows()"
+              [deletingFeedbackId]="deletingFeedbackId()"
               [reviewCountLabel]="reviewCountLabel()"
               [canSaveReview]="canSaveReview()"
               (reviewTextChange)="onReviewInput($event)"
               (reviewRatingChange)="onReviewRatingChange($event)"
               (reviewCancel)="cancelReview()"
               (reviewSave)="saveReview()"
+              (reviewDelete)="deleteReview($event)"
             ></app-event-details-reviews-tab>
           </p-tabpanel>
         </p-tabpanels>

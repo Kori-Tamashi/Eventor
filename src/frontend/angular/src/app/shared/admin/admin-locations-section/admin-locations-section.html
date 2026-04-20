@@ -1,0 +1,106 @@
+<div class="admin-locations">
+  <div class="admin-locations__head">
+    <div>
+      <h2 class="admin-locations__title">Локации</h2>
+      <p class="admin-locations__subtitle">Управление площадками, их стоимостью и вместимостью</p>
+    </div>
+
+    <div class="admin-locations__actions">
+      <span class="search ui-search p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Поиск локаций"
+          [value]="searchTerm()"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </span>
+
+      <div class="admin-locations__pager">
+        <div class="page-count ui-surface">{{ pageLabel() }}</div>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
+          <span pButtonIcon class="pi pi-chevron-left"></span>
+        </button>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
+          <span pButtonIcon class="pi pi-chevron-right"></span>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          class="ui-primary-btn"
+          (click)="openCreateDrawer()"
+        >
+          <span pButtonIcon class="pi pi-plus"></span>
+          <span pButtonLabel>Создать локацию</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="ui-feedback-message ui-feedback-message--error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <p-table [value]="pagedRows()" styleClass="ui-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Стоимость</th>
+        <th>Вместимость</th>
+        <th>Действия</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.title }}</td>
+        <td>{{ row.description || 'Без описания' }}</td>
+        <td>{{ row.cost }}</td>
+        <td>{{ row.capacity }}</td>
+        <td class="admin-locations__actions-cell">
+          <div class="row-actions">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Edit" (click)="openEditDrawer(row)">
+              <span pButtonIcon class="pi pi-pencil"></span>
+            </button>
+
+            <button
+              pButton
+              type="button"
+              class="ui-icon-btn"
+              aria-label="Delete"
+              [disabled]="deletingLocationId() === row.id"
+              (click)="deleteLocation(row)"
+            >
+              <span pButtonIcon class="pi" [class.pi-trash]="deletingLocationId() !== row.id" [class.pi-spin]="deletingLocationId() === row.id" [class.pi-spinner]="deletingLocationId() === row.id"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
+    <div class="ui-empty-state">
+      Локации не найдены.
+    </div>
+  }
+</div>
+
+<app-admin-location-drawer
+  [visible]="drawerOpen()"
+  [mode]="drawerMode()"
+  [initialValue]="drawerInitialValue()"
+  [isLoading]="isDrawerLoading()"
+  [isSaving]="isSavingDrawer()"
+  [errorMessage]="drawerErrorMessage()"
+  (visibleChange)="drawerOpen.set($event)"
+  (closeRequested)="closeDrawer()"
+  (saveRequested)="saveLocation($event)"
+></app-admin-location-drawer>

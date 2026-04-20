@@ -17,10 +17,14 @@ export type EventDetailsDrawerDay = {
 };
 
 export type EventDetailsDrawerReview = {
+  feedbackId: string;
   person: string;
   comment: string;
   rating: number;
+  isOwnedByCurrentUser: boolean;
 };
+
+export type EventDetailsDrawerRegistrationType = 0 | 1 | 2;
 
 export type EventDetailsDrawerData = {
   title: string;
@@ -28,7 +32,12 @@ export type EventDetailsDrawerData = {
   participantsCount: number;
   dayRows: EventDetailsDrawerDay[];
   reviewRows: EventDetailsDrawerReview[];
+  currentUserId: string | null;
+  currentUsername: string | null;
   currentUserRegistrationId: string | null;
+  currentUserRegistrationType: EventDetailsDrawerRegistrationType | null;
+  currentUserRegistrationPayment: boolean | null;
+  currentUserRegistrationDayIds: string[];
 };
 
 export type EventDetailsDrawerContext = {

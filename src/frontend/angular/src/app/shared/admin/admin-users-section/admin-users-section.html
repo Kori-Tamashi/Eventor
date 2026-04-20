@@ -1,0 +1,101 @@
+<div class="admin-users">
+  <div class="admin-users__head">
+    <div>
+      <h2 class="admin-users__title">Пользователи</h2>
+      <p class="admin-users__subtitle">Управление учетными записями, ролями и полом пользователей</p>
+    </div>
+
+    <div class="admin-users__actions">
+      <span class="search ui-search p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Поиск пользователей"
+          [value]="searchTerm()"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </span>
+
+      <div class="admin-users__pager">
+        <div class="page-count ui-surface">{{ pageLabel() }}</div>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
+          <span pButtonIcon class="pi pi-chevron-left"></span>
+        </button>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
+          <span pButtonIcon class="pi pi-chevron-right"></span>
+        </button>
+
+        <button pButton type="button" class="ui-primary-btn" (click)="openCreateDrawer()">
+          <span pButtonIcon class="pi pi-plus"></span>
+          <span pButtonLabel>Создать пользователя</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="ui-feedback-message ui-feedback-message--error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <p-table [value]="pagedRows()" styleClass="ui-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Имя</th>
+        <th>Телефон</th>
+        <th>Пол</th>
+        <th>Роль</th>
+        <th>Действия</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.name }}</td>
+        <td>{{ row.phone }}</td>
+        <td>{{ genderLabel(row.gender) }}</td>
+        <td>{{ roleLabel(row.role) }}</td>
+        <td class="admin-users__actions-cell">
+          <div class="row-actions">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Edit" (click)="openEditDrawer(row)">
+              <span pButtonIcon class="pi pi-pencil"></span>
+            </button>
+
+            <button
+              pButton
+              type="button"
+              class="ui-icon-btn"
+              aria-label="Delete"
+              [disabled]="deletingUserId() === row.id"
+              (click)="deleteUser(row)"
+            >
+              <span pButtonIcon class="pi" [class.pi-trash]="deletingUserId() !== row.id" [class.pi-spin]="deletingUserId() === row.id" [class.pi-spinner]="deletingUserId() === row.id"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
+    <div class="ui-empty-state">
+      Пользователи не найдены.
+    </div>
+  }
+</div>
+
+<app-admin-user-drawer
+  [visible]="drawerOpen()"
+  [mode]="drawerMode()"
+  [initialValue]="drawerInitialValue()"
+  [isLoading]="isDrawerLoading()"
+  [isSaving]="isSavingDrawer()"
+  [errorMessage]="drawerErrorMessage()"
+  (visibleChange)="drawerOpen.set($event)"
+  (closeRequested)="closeDrawer()"
+  (saveRequested)="saveUser($event)"
+></app-admin-user-drawer>

@@ -1,13 +1,31 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import type {
   System_DateOnly,
   Web_Dtos_CreateDayRequest,
-  Web_Dtos_CreateEventRequest,
-  Web_Dtos_UpdateEventRequest,
 } from '../generated';
 import { EventsService } from '../generated';
 import { EventApiModel, EventListFilters } from '../models/event.models';
+
+export type CreateEventPayload = {
+  title: string;
+  description?: string | null;
+  startDate: string;
+  locationId: string;
+  daysCount: number;
+  percent: number;
+  createdByUserId: string;
+};
+
+export type UpdateEventPayload = {
+  title?: string | null;
+  description?: string | null;
+  startDate?: string | null;
+  locationId?: string | null;
+  daysCount?: number | null;
+  percent?: number | null;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -43,16 +61,45 @@ export class EventsApiService {
     return this.eventsService.getApiV1Events1({ eventId }) as Observable<EventApiModel>;
   }
 
-  createEvent(payload: Web_Dtos_CreateEventRequest): Observable<EventApiModel> {
+  getEventTitleMap(eventIds: string[]): Observable<Record<string, string>> {
+    const uniqueIds = Array.from(new Set(eventIds.filter(Boolean)));
+
+    if (uniqueIds.length === 0) {
+      return of({});
+    }
+
+    return forkJoin(
+      uniqueIds.map((eventId) =>
+        this.getEvent(eventId).pipe(
+          map((event) => ({ id: eventId, title: event.title }))
+        )
+      )
+    ).pipe(
+      map((entries) =>
+        entries.reduce<Record<string, string>>((acc, entry) => {
+          acc[entry.id] = entry.title;
+          return acc;
+        }, {})
+      )
+    );
+  }
+
+  createEvent(payload: CreateEventPayload): Observable<EventApiModel> {
     return this.eventsService.postApiV1Events({
-      requestBody: payload,
+      requestBody: payload as never,
     }) as Observable<EventApiModel>;
   }
 
-  updateEvent(eventId: string, payload: Web_Dtos_UpdateEventRequest): Observable<void> {
+  updateEvent(eventId: string, payload: UpdateEventPayload): Observable<void> {
     return this.eventsService.putApiV1Events({
       eventId,
-      requestBody: payload,
+      requestBody: payload as never,
+    }) as Observable<void>;
+  }
+
+  deleteEvent(eventId: string): Observable<void> {
+    return this.eventsService.deleteApiV1Events({
+      eventId,
     }) as Observable<void>;
   }
 

@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { adminCanActivate, adminCanMatch } from './core/auth/admin.guard';
+import { appCanActivate, appCanMatch } from './core/auth/app.guard';
 
 export const routes: Routes = [
   {
@@ -13,6 +15,8 @@ export const routes: Routes = [
   },
   {
     path: 'app',
+    canActivate: [appCanActivate],
+    canMatch: [appCanMatch],
     loadComponent: () =>
       import('./layout/shell/shell').then((m) => m.Shell),
     children: [
@@ -28,6 +32,12 @@ export const routes: Routes = [
       {
         path: 'organization',
         loadComponent: () => import('./pages/organization/organization').then((m) => m.Organization)
+      },
+      {
+        path: 'admin',
+        canActivate: [adminCanActivate],
+        canMatch: [adminCanMatch],
+        loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin)
       },
     ]
   },

@@ -11,6 +11,20 @@ export class DaysApiService {
   private readonly daysService = inject(DaysService);
   private readonly eventsService = inject(EventsService);
 
+  listDays(filters: {
+    eventId?: string;
+    menuId?: string;
+    pageNumber?: number;
+    pageSize?: number;
+  } = {}): Observable<DayApiModel[]> {
+    return this.daysService.getApiV1Days({
+      eventId: filters.eventId,
+      menuId: filters.menuId,
+      pageNumber: filters.pageNumber,
+      pageSize: filters.pageSize,
+    }) as Observable<DayApiModel[]>;
+  }
+
   listByEvent(eventId: string, pageNumber?: number, pageSize?: number): Observable<DayApiModel[]> {
     return this.eventsService.getApiV1EventsDays({
       eventId,

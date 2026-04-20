@@ -4,3 +4,153 @@
   gap: var(--space-4);
   margin-bottom: var(--space-4);
 }
+
+.registration-block {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.registration-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.registration-message {
+  color: var(--eventor-text-body);
+  font-size: var(--text-body);
+}
+
+.registration-payment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border-radius: 999px;
+  background: var(--status-unpaid-bg);
+  color: var(--status-unpaid-text);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-h4);
+}
+
+.registration-payment--paid {
+  background: var(--status-paid-bg);
+  color: var(--status-paid-text);
+}
+
+.registration-form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.registration-label {
+  color: var(--eventor-text-body);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-h4);
+}
+
+.registration-select-wrap {
+  max-width: 240px;
+}
+
+.registration-days {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.registration-day-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--eventor-border);
+  border-radius: var(--radius-md);
+  background: var(--eventor-surface);
+  cursor: pointer;
+}
+
+.registration-day-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.registration-day-title {
+  color: var(--eventor-text);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-h4);
+}
+
+.registration-day-meta {
+  color: var(--eventor-muted);
+  font-size: var(--text-caption);
+}
+
+.registration-checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  border: 1px solid var(--eventor-border);
+  border-radius: 5px;
+  accent-color: var(--eventor-selected);
+  cursor: pointer;
+}
+
+.registration-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.registration-secondary-btn.p-button,
+.registration-submit-btn.p-button {
+  width: 100%;
+}
+
+.registration-secondary-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--eventor-border);
+  background: var(--eventor-surface);
+  color: var(--eventor-text);
+  box-shadow: none;
+}
+
+button.registration-secondary-btn.p-button:hover,
+button.registration-secondary-btn.p-button:active,
+button.registration-secondary-btn.p-button:focus,
+button.registration-secondary-btn.p-button:focus-visible {
+  background: var(--eventor-hover-surface) !important;
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+}
+
+button.registration-secondary-btn.p-button:hover .p-button-label,
+button.registration-secondary-btn.p-button:active .p-button-label,
+button.registration-secondary-btn.p-button:focus .p-button-label,
+button.registration-secondary-btn.p-button:focus-visible .p-button-label {
+  color: var(--eventor-text) !important;
+}
+
+@media (max-width: 960px) {
+  .registration-day-copy,
+  .registration-actions,
+  .drawer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .registration-day-copy {
+    display: grid;
+  }
+
+  .registration-copy {
+    align-items: flex-start;
+  }
+}

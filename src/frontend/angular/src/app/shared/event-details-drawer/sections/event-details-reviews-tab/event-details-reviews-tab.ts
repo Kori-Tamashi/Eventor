@@ -23,6 +23,7 @@ export class EventDetailsReviewsTab {
   readonly reviewText = input.required<string>();
   readonly reviewRating = input.required<number>();
   readonly reviewRows = input.required<EventDetailsDrawerReview[]>();
+  readonly deletingFeedbackId = input<string | null>(null);
   readonly reviewCountLabel = input.required<string>();
   readonly canSaveReview = input.required<boolean>();
 
@@ -30,6 +31,7 @@ export class EventDetailsReviewsTab {
   readonly reviewRatingChange = output<number>();
   readonly reviewCancel = output<void>();
   readonly reviewSave = output<void>();
+  readonly reviewDelete = output<string>();
 
   onReviewInput(value: string): void {
     this.reviewTextChange.emit(value);
@@ -45,5 +47,9 @@ export class EventDetailsReviewsTab {
 
   saveReview(): void {
     this.reviewSave.emit();
+  }
+
+  deleteReview(feedbackId: string): void {
+    this.reviewDelete.emit(feedbackId);
   }
 }

@@ -1,0 +1,56 @@
+.admin-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.admin-item-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-item-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.admin-item-label,
+.admin-item-counter {
+  font-size: var(--text-caption);
+  color: var(--eventor-muted);
+}
+
+.admin-item-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.admin-item-secondary-btn.p-button {
+  height: var(--control-height);
+  border-radius: var(--radius-sm);
+  background: var(--eventor-surface);
+  border: 1px solid var(--eventor-border);
+  color: var(--eventor-text);
+  box-shadow: none;
+}
+
+button.admin-item-secondary-btn.p-button:hover,
+button.admin-item-secondary-btn.p-button:active,
+button.admin-item-secondary-btn.p-button:focus,
+button.admin-item-secondary-btn.p-button:focus-visible {
+  background: var(--eventor-hover-surface) !important;
+  border-color: var(--eventor-hover-border) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 640px) {
+  .admin-item-actions {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,79 @@
+<div class="admin-days">
+  <div class="admin-days__head">
+    <div>
+      <h2 class="admin-days__title">Дни</h2>
+      <p class="admin-days__subtitle">Глобальный список дней мероприятий из общего endpoint</p>
+    </div>
+
+    <div class="admin-days__actions">
+      <span class="search ui-search p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Поиск дней"
+          [value]="searchTerm()"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </span>
+
+      <div class="admin-days__pager">
+        <div class="page-count ui-surface">{{ pageLabel() }}</div>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Prev" (click)="prevPage()" [disabled]="!canPrev()">
+          <span pButtonIcon class="pi pi-chevron-left"></span>
+        </button>
+
+        <button pButton type="button" class="ui-icon-btn" aria-label="Next" (click)="nextPage()" [disabled]="!canNext()">
+          <span pButtonIcon class="pi pi-chevron-right"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="ui-feedback-message ui-feedback-message--error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <p-table [value]="pagedRows()" styleClass="ui-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Мероприятие</th>
+        <th>Номер</th>
+        <th>Название дня</th>
+        <th>Меню</th>
+        <th>Описание</th>
+        <th>Действия</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.eventTitle }}</td>
+        <td>{{ row.sequenceNumber }}</td>
+        <td>{{ row.title }}</td>
+        <td>{{ row.menuTitle }}</td>
+        <td>{{ row.description }}</td>
+        <td class="admin-days__actions-cell">
+          <div class="row-actions">
+            <button pButton type="button" class="ui-icon-btn" aria-label="Details" (click)="openDetails(row)">
+              <span pButtonIcon class="pi pi-search"></span>
+            </button>
+
+            <button pButton type="button" class="ui-icon-btn" aria-label="Manage" (click)="openManageDrawer(row)">
+              <span pButtonIcon class="pi pi-pencil"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (!isLoading() && !errorMessage() && pagedRows().length === 0) {
+    <div class="ui-feedback-message">
+      Дни не найдены.
+    </div>
+  }
+</div>

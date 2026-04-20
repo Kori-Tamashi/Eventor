@@ -51,9 +51,9 @@ export function buildMockEventDetailsDrawerContext(
   ];
 
   const reviewRows = [
-    { person: 'Александр', comment: 'Хорошая организация, всё прошло по плану.', rating: 5 },
-    { person: 'Мария', comment: 'Понравилась программа и общее сопровождение мероприятия.', rating: 4 },
-    { person: 'Иван', comment: 'Удобная логистика и понятное расписание.', rating: 5 },
+    { feedbackId: 'feedback-1', person: 'Александр', comment: 'Хорошая организация, всё прошло по плану.', rating: 5, isOwnedByCurrentUser: false },
+    { feedbackId: 'feedback-2', person: 'Мария', comment: 'Понравилась программа и общее сопровождение мероприятия.', rating: 4, isOwnedByCurrentUser: true },
+    { feedbackId: 'feedback-3', person: 'Иван', comment: 'Удобная логистика и понятное расписание.', rating: 5, isOwnedByCurrentUser: false },
   ];
 
   const participantsCount = dayRows.reduce((sum, day) => sum + day.participantRows.length, 0);
@@ -68,7 +68,12 @@ export function buildMockEventDetailsDrawerContext(
       participantsCount,
       dayRows,
       reviewRows,
+      currentUserId: null,
+      currentUsername: null,
       currentUserRegistrationId: null,
+      currentUserRegistrationType: null,
+      currentUserRegistrationPayment: null,
+      currentUserRegistrationDayIds: [],
     },
   };
 }

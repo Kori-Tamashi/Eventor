@@ -1,0 +1,39 @@
+.page {
+  padding: 0;
+}
+
+.page-card {
+  height: calc(100vh - (var(--shell-gutter) * 2));
+  padding: var(--space-7) var(--space-7) var(--space-5);
+  overflow: hidden auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--shell-gutter);
+}
+
+.title-block {
+  min-width: 280px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-h3);
+  color: var(--eventor-selected);
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: var(--text-caption);
+  color: var(--eventor-muted);
+}
+
+.admin-tabs {
+  width: 100%;
+}

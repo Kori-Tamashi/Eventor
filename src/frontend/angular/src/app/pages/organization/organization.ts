@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { finalize, switchMap } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -9,6 +9,7 @@ import { UsersApiService } from '../../core/api/services/users-api.service';
 import { EventApiModel } from '../../core/api/models/event.models';
 import { EventDetailsDrawerStore } from '../../core/ui/event-details-drawer.store';
 import { EventManagementDrawerStore } from '../../core/ui/event-management-drawer.store';
+import { UiNotificationsService } from '../../core/ui/ui-notifications.service';
 
 type OrganizationEventRow = {
   id: string;
@@ -35,17 +36,31 @@ export class Organization {
   private readonly locationsApiService = inject(LocationsApiService);
   private readonly eventDetailsDrawerStore = inject(EventDetailsDrawerStore);
   private readonly eventManagementDrawerStore = inject(EventManagementDrawerStore);
+  private readonly uiNotificationsService = inject(UiNotificationsService);
 
   readonly pageSize = signal<number>(10);
   readonly pageIndex = signal<number>(0);
   readonly searchTerm = signal<string>('');
   readonly isLoading = signal<boolean>(true);
+  readonly deletingEventId = signal<string | null>(null);
   readonly errorMessage = signal<string>('');
+  readonly successMessage = signal<string>('');
 
   readonly allRows = signal<OrganizationEventRow[]>([]);
+  private wasDrawerOpen = false;
 
   constructor() {
     this.loadOrganizedEvents();
+
+    effect(() => {
+      const isDrawerOpen = this.eventManagementDrawerStore.isOpen();
+
+      if (this.wasDrawerOpen && !isDrawerOpen) {
+        this.loadOrganizedEvents();
+      }
+
+      this.wasDrawerOpen = isDrawerOpen;
+    });
   }
 
   private readonly paginationState = computed(() => {
@@ -123,12 +138,47 @@ export class Organization {
   }
 
   openCreateEventDrawer(): void {
+    this.successMessage.set('');
     this.eventManagementDrawerStore.open({
       mode: 'create',
       source: 'organization',
       viewerRole: 'user',
       title: 'Создать мероприятие',
     });
+  }
+
+  openManageEventDrawer(row: OrganizationEventRow): void {
+    this.successMessage.set('');
+    this.eventManagementDrawerStore.open({
+      mode: 'manage',
+      source: 'organization',
+      viewerRole: 'user',
+      title: row.name,
+      eventId: row.id,
+    });
+  }
+
+  deleteEvent(row: OrganizationEventRow): void {
+    if (this.deletingEventId() || typeof window !== 'undefined' && !window.confirm(`Удалить мероприятие "${row.name}"?`)) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.deletingEventId.set(row.id);
+
+    this.eventsApiService.deleteEvent(row.id)
+      .pipe(finalize(() => this.deletingEventId.set(null)))
+      .subscribe({
+        next: () => {
+          this.allRows.update((rows) => rows.filter((item) => item.id !== row.id));
+          this.clampPageIndexAfterDeletion();
+          this.uiNotificationsService.success('Мероприятие удалено.');
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.mapDeleteErrorMessage(error));
+        },
+      });
   }
 
   private loadOrganizedEvents(): void {
@@ -190,6 +240,30 @@ export class Organization {
     }
 
     return 'Не удалось загрузить организованные мероприятия.';
+  }
+
+  private mapDeleteErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Выполните вход, чтобы удалять мероприятия.';
+    }
+
+    if (status === 404) {
+      return 'Мероприятие не найдено.';
+    }
+
+    return 'Не удалось удалить мероприятие.';
+  }
+
+  private clampPageIndexAfterDeletion(): void {
+    const size = this.pageSize();
+    const totalRows = this.allRows().length;
+    const maxPageIndex = Math.max(0, Math.ceil(totalRows / size) - 1);
+
+    if (this.pageIndex() > maxPageIndex) {
+      this.pageIndex.set(maxPageIndex);
+    }
   }
 
   private extractStatusCode(error: unknown): number | null {

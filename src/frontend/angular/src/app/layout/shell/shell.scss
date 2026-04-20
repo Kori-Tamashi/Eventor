@@ -1,3 +1,31 @@
+@keyframes appPageEnterA {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes appPageEnterB {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
 .shell {
   min-height: 100vh;
   background: var(--eventor-bg);
@@ -12,4 +40,17 @@
 
 .content {
   height: 100%;
+}
+
+.route-stage {
+  min-height: 100%;
+  will-change: transform, opacity, filter;
+
+  &--enter-a {
+    animation: appPageEnterA 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &--enter-b {
+    animation: appPageEnterB 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  }
 }

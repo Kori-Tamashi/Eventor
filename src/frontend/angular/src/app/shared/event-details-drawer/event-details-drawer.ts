@@ -34,10 +34,21 @@ export class EventDetailsDrawer {
   readonly daysCount = this.store.daysCount;
   readonly participantsCount = this.store.participantsCount;
   readonly dayRows = this.store.dayRows;
+  readonly currentUserId = this.store.currentUserId;
+  readonly currentUserRegistrationId = this.store.currentUserRegistrationId;
+  readonly currentUserRegistrationPayment = this.store.currentUserRegistrationPayment;
+  readonly isOrganizerRegistration = this.store.isOrganizerRegistration;
+  readonly registrationType = this.store.registrationType;
+  readonly registrationDayIds = this.store.registrationDayIds;
+  readonly canSaveRegistration = this.store.canSaveRegistration;
+  readonly canDeleteRegistration = this.store.canDeleteRegistration;
+  readonly isSavingRegistration = this.store.isSavingRegistration;
+  readonly registrationMessage = this.store.registrationMessage;
   readonly selectedDayParticipants = this.store.selectedDayParticipants;
   readonly reviewText = this.store.reviewText;
   readonly reviewRating = this.store.reviewRating;
   readonly reviewRows = this.store.reviewRows;
+  readonly deletingFeedbackId = this.store.deletingFeedbackId;
   readonly reviewCountLabel = this.store.reviewCountLabel;
   readonly canSaveReview = this.store.canSaveReview;
 
@@ -51,6 +62,22 @@ export class EventDetailsDrawer {
 
   openDayParticipants(day: EventDetailsDrawerDay): void {
     this.store.openDayParticipants(day);
+  }
+
+  onRegistrationTypeChange(value: 0 | 1 | 2): void {
+    this.store.setRegistrationType(value);
+  }
+
+  onRegistrationDayToggle(event: { dayId: string; checked: boolean }): void {
+    this.store.toggleRegistrationDay(event.dayId, event.checked);
+  }
+
+  saveRegistration(): void {
+    this.store.saveRegistration();
+  }
+
+  deleteRegistration(): void {
+    this.store.deleteRegistration();
   }
 
   closeDayParticipants(): void {
@@ -71,5 +98,9 @@ export class EventDetailsDrawer {
 
   saveReview(): void {
     this.store.saveReview();
+  }
+
+  deleteReview(feedbackId: string): void {
+    this.store.deleteReview(feedbackId);
   }
 }

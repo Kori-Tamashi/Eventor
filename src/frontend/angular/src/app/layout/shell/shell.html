@@ -1,12 +1,20 @@
 <div class="shell">
   <app-sidebar
     [profileOpen]="profileDrawerOpen()"
+    [showAdmin]="isAdmin()"
     (profileToggle)="toggleProfileDrawer()"
+    (logoutRequested)="logout()"
   ></app-sidebar>
 
   <main class="main">
     <section class="content">
-      <router-outlet></router-outlet>
+      <div
+        class="route-stage"
+        [class.route-stage--enter-a]="routeAnimationPhase() === 'enter-a'"
+        [class.route-stage--enter-b]="routeAnimationPhase() === 'enter-b'"
+      >
+        <router-outlet></router-outlet>
+      </div>
     </section>
   </main>
 </div>
@@ -17,8 +25,12 @@
   (visibleChange)="profileDrawerOpen.set($event)"
   styleClass="event-drawer profile-drawer"
 >
-  <app-profile (closeRequested)="profileDrawerOpen.set(false)"></app-profile>
+  <app-profile
+    (closeRequested)="profileDrawerOpen.set(false)"
+    (sessionEnded)="logout()"
+  ></app-profile>
 </p-drawer>
 
 <app-event-details-drawer></app-event-details-drawer>
 <app-event-management-drawer></app-event-management-drawer>
+<app-ui-notifications></app-ui-notifications>
