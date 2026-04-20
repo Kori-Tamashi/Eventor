@@ -208,7 +208,7 @@ export class AdminUsersSection {
   roleLabel(role: Web_Dtos_UserRole): string {
     switch (role) {
       case 0: return 'Администратор';
-      case 1: return 'Организатор';
+      case 1: return 'Пользователь';
       case 2: return 'Гость';
       default: return 'Не указано';
     }

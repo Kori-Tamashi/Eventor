@@ -8,7 +8,13 @@
 
   <main class="main">
     <section class="content">
-      <router-outlet></router-outlet>
+      <div
+        class="route-stage"
+        [class.route-stage--enter-a]="routeAnimationPhase() === 'enter-a'"
+        [class.route-stage--enter-b]="routeAnimationPhase() === 'enter-b'"
+      >
+        <router-outlet></router-outlet>
+      </div>
     </section>
   </main>
 </div>

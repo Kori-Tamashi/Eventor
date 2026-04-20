@@ -16,10 +16,12 @@ type DashboardRow = {
   eventTitle: string;
   description: string;
   date: string;
+  type: 0 | 1 | 2;
   typeLabel: string;
   paymentLabel: string;
   daysLabel: string;
   rating: number;
+  canCancel: boolean;
 };
 
 @Component({
@@ -127,7 +129,7 @@ export class Dashboard {
   }
 
   cancelRegistration(row: DashboardRow): void {
-    if (this.cancelingRegistrationId()) {
+    if (this.cancelingRegistrationId() || !row.canCancel) {
       return;
     }
 
@@ -197,6 +199,7 @@ export class Dashboard {
         next: ({ registrations, eventMap }) => {
           this.allRows.set(
             registrations
+              .filter((registration) => registration.type !== 2)
               .map((registration) => this.mapRegistrationToRow(registration, eventMap[registration.eventId]))
               .filter((row): row is DashboardRow => row !== null)
           );
@@ -222,10 +225,12 @@ export class Dashboard {
       eventTitle: event.title,
       description: event.description ?? 'Без описания',
       date: this.formatDate(event.startDate),
+      type: registration.type,
       typeLabel: this.typeLabel(registration.type),
       paymentLabel: registration.payment ? 'Оплачено' : 'Не оплачено',
       daysLabel: this.formatDays(registration),
       rating: event.rating,
+      canCancel: registration.type !== 2,
     };
   }
 

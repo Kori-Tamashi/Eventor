@@ -164,10 +164,7 @@ export class EventManagementDrawerStore {
   onDrawerVisibleChange(visible: boolean): void {
     if (!visible) {
       this.close();
-      return;
     }
-
-    this.isOpen.set(true);
   }
 
   setActiveTab(tab: EventManagementDrawerTab): void {

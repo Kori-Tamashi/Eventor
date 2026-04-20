@@ -63,7 +63,9 @@ export class EventDetailsDrawerStore {
   readonly currentUserRegistrationType = computed(() => this.context()?.data.currentUserRegistrationType ?? null);
   readonly currentUserRegistrationDayIds = computed(() => this.context()?.data.currentUserRegistrationDayIds ?? []);
   readonly isCurrentUserRegistered = computed(() => this.currentUserRegistrationId() !== null);
-  readonly canManageRegistration = computed(() => this.currentUserId() !== null);
+  readonly isOrganizerRegistration = computed(() => this.currentUserRegistrationType() === 2);
+  readonly canManageRegistration = computed(() => this.currentUserId() !== null && !this.isOrganizerRegistration());
+  readonly canDeleteRegistration = computed(() => this.currentUserRegistrationId() !== null && !this.isOrganizerRegistration());
   readonly canSaveRegistration = computed(() => {
     if (!this.canManageRegistration()) {
       return false;
@@ -87,11 +89,14 @@ export class EventDetailsDrawerStore {
   readonly registrationTypeOptions = [
     { value: 0 as const, label: 'Простой' },
     { value: 1 as const, label: 'VIP' },
-    { value: 2 as const, label: 'Организатор' },
   ];
   readonly registrationMessage = computed(() => {
-    if (!this.canManageRegistration()) {
+    if (!this.currentUserId()) {
       return 'Выполните вход, чтобы записаться на мероприятие.';
+    }
+
+    if (this.isOrganizerRegistration()) {
+      return 'Вы являетесь организатором этого мероприятия. Управление доступно в разделе организации.';
     }
 
     if (!this.isCurrentUserRegistered()) {
@@ -278,6 +283,10 @@ export class EventDetailsDrawerStore {
   }
 
   deleteRegistration(): void {
+    if (!this.canDeleteRegistration()) {
+      return;
+    }
+
     const registrationId = this.currentUserRegistrationId();
     if (!registrationId) {
       return;

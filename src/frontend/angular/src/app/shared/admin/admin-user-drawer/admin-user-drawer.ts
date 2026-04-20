@@ -40,7 +40,7 @@ export class AdminUserDrawer {
 
   readonly roleOptions: SelectOption<Web_Dtos_UserRole>[] = [
     { label: 'Администратор', value: 0 },
-    { label: 'Организатор мероприятий', value: 1 },
+    { label: 'Пользователь', value: 1 },
     { label: 'Гость', value: 2 },
   ];
 

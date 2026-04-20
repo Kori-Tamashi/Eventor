@@ -1,5 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { DrawerModule } from 'primeng/drawer';
 import { AuthApiService } from '../../core/api/services/auth-api.service';
 import { CurrentUserStore } from '../../core/auth/current-user.store';
@@ -23,15 +25,26 @@ import { EventManagementDrawer } from '../../shared/event-management-drawer/even
   styleUrl: './shell.scss',
 })
 export class Shell {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly authApiService = inject(AuthApiService);
   private readonly currentUserStore = inject(CurrentUserStore);
 
   readonly profileDrawerOpen = signal<boolean>(false);
   readonly isAdmin = this.currentUserStore.isAdmin;
+  readonly routeAnimationPhase = signal<'enter-a' | 'enter-b'>('enter-a');
 
   constructor() {
     this.currentUserStore.ensureLoaded().subscribe();
+
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.routeAnimationPhase.update((phase) => phase === 'enter-a' ? 'enter-b' : 'enter-a');
+      });
   }
 
   toggleProfileDrawer(): void {

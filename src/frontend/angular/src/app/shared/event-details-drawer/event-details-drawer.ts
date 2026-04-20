@@ -37,9 +37,11 @@ export class EventDetailsDrawer {
   readonly currentUserId = this.store.currentUserId;
   readonly currentUserRegistrationId = this.store.currentUserRegistrationId;
   readonly currentUserRegistrationPayment = this.store.currentUserRegistrationPayment;
+  readonly isOrganizerRegistration = this.store.isOrganizerRegistration;
   readonly registrationType = this.store.registrationType;
   readonly registrationDayIds = this.store.registrationDayIds;
   readonly canSaveRegistration = this.store.canSaveRegistration;
+  readonly canDeleteRegistration = this.store.canDeleteRegistration;
   readonly isSavingRegistration = this.store.isSavingRegistration;
   readonly registrationMessage = this.store.registrationMessage;
   readonly selectedDayParticipants = this.store.selectedDayParticipants;

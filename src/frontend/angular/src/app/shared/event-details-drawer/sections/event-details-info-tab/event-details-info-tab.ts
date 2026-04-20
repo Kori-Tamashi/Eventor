@@ -21,9 +21,11 @@ export class EventDetailsInfoTab {
   readonly currentUserId = input<string | null>(null);
   readonly currentUserRegistrationId = input<string | null>(null);
   readonly currentUserRegistrationPayment = input<boolean | null>(null);
+  readonly isOrganizerRegistration = input<boolean>(false);
   readonly registrationType = input.required<EventDetailsDrawerRegistrationType>();
   readonly registrationDayIds = input.required<string[]>();
   readonly canSaveRegistration = input<boolean>(false);
+  readonly canDeleteRegistration = input<boolean>(false);
   readonly isSavingRegistration = input<boolean>(false);
   readonly registrationMessage = input<string>('');
 

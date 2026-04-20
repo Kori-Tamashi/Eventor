@@ -41,76 +41,98 @@
     </div>
   </div>
 
-  @if (isLoading()) {
-    <div class="ui-feedback-message">Загрузка данных мероприятия...</div>
-  } @else if (!dayDetailsOpen()) {
+  @if (!dayDetailsOpen()) {
     <p-tabs [value]="activeTab()" (valueChange)="onTabValueChange($event)">
       <p-tablist>
-        <p-tab value="settings">Настройки</p-tab>
-        <p-tab value="days">Дни мероприятия</p-tab>
-        <p-tab value="analytics">Анализ мероприятия</p-tab>
+        <p-tab value="settings" (click)="setActiveTab('settings')">Настройки</p-tab>
+        <p-tab value="days" (click)="setActiveTab('days')">Дни мероприятия</p-tab>
+        <p-tab value="analytics" (click)="setActiveTab('analytics')">Анализ мероприятия</p-tab>
 
         @if (mode() !== 'create') {
-          <p-tab value="reviews">Отзывы</p-tab>
+          <p-tab value="reviews" (click)="setActiveTab('reviews')">Отзывы</p-tab>
         }
       </p-tablist>
 
       <p-tabpanels>
         <p-tabpanel value="settings">
-          <app-event-management-settings-tab
-            [eventTitleValue]="eventTitle()"
-            [descriptionValue]="eventDescription()"
-            [locationIdValue]="eventLocationId()"
-            [startDateValue]="eventStartDate()"
-            [daysCountValue]="settingsDaysCount()"
-            [markupValue]="eventMarkup()"
-            [locations]="locationOptions()"
-            [isSaving]="isSavingSettings()"
-            [errorMessage]="errorMessage()"
-            [successMessage]="successMessage()"
-            (eventTitleChange)="onEventTitleChange($event)"
-            (descriptionChange)="onEventDescriptionChange($event)"
-            (locationIdChange)="onEventLocationIdChange($event)"
-            (startDateChange)="onEventStartDateChange($event)"
-            (daysCountChange)="onSettingsDaysCountChange($event)"
-            (markupChange)="onEventMarkupChange($event)"
-            (cancelRequested)="cancelSettings()"
-            (saveRequested)="saveSettings()"
-          ></app-event-management-settings-tab>
+          @if (isLoading()) {
+            <div class="drawer-loading-surface ui-surface">
+              Загрузка данных мероприятия...
+            </div>
+          } @else {
+            <app-event-management-settings-tab
+              [eventTitleValue]="eventTitle()"
+              [descriptionValue]="eventDescription()"
+              [locationIdValue]="eventLocationId()"
+              [startDateValue]="eventStartDate()"
+              [daysCountValue]="settingsDaysCount()"
+              [markupValue]="eventMarkup()"
+              [locations]="locationOptions()"
+              [isSaving]="isSavingSettings()"
+              [errorMessage]="errorMessage()"
+              [successMessage]="successMessage()"
+              (eventTitleChange)="onEventTitleChange($event)"
+              (descriptionChange)="onEventDescriptionChange($event)"
+              (locationIdChange)="onEventLocationIdChange($event)"
+              (startDateChange)="onEventStartDateChange($event)"
+              (daysCountChange)="onSettingsDaysCountChange($event)"
+              (markupChange)="onEventMarkupChange($event)"
+              (cancelRequested)="cancelSettings()"
+              (saveRequested)="saveSettings()"
+            ></app-event-management-settings-tab>
+          }
         </p-tabpanel>
 
         <p-tabpanel value="days">
-          <app-event-management-days-tab
-            [dayRows]="dayRows()"
-            (dayDetailsOpen)="openDayDetails($event)"
-          ></app-event-management-days-tab>
+          @if (isLoading()) {
+            <div class="drawer-loading-surface ui-surface">
+              Загрузка дней мероприятия...
+            </div>
+          } @else {
+            <app-event-management-days-tab
+              [dayRows]="dayRows()"
+              (dayDetailsOpen)="openDayDetails($event)"
+            ></app-event-management-days-tab>
+          }
         </p-tabpanel>
 
         <p-tabpanel value="analytics">
-          <app-event-management-analytics-tab
-            [eventAnalytics]="eventAnalytics()"
-            [eventRating]="eventRating()"
-            [eventPersonCount]="eventPersonCount()"
-            [eventDaysCount]="eventDaysCount()"
-            [locationCapacity]="locationCapacity()"
-          ></app-event-management-analytics-tab>
+          @if (isLoading()) {
+            <div class="drawer-loading-surface ui-surface">
+              Загрузка аналитики мероприятия...
+            </div>
+          } @else {
+            <app-event-management-analytics-tab
+              [eventAnalytics]="eventAnalytics()"
+              [eventRating]="eventRating()"
+              [eventPersonCount]="eventPersonCount()"
+              [eventDaysCount]="eventDaysCount()"
+              [locationCapacity]="locationCapacity()"
+            ></app-event-management-analytics-tab>
+          }
         </p-tabpanel>
 
         @if (mode() !== 'create') {
           <p-tabpanel value="reviews">
-            <app-event-details-reviews-tab
-              [reviewText]="reviewText()"
-              [reviewRating]="reviewRating()"
-              [reviewRows]="reviewRows()"
-              [deletingFeedbackId]="deletingFeedbackId()"
-              [reviewCountLabel]="reviewCountLabel()"
-              [canSaveReview]="canSaveReview()"
-              (reviewTextChange)="onReviewInput($event)"
-              (reviewRatingChange)="onReviewRatingChange($event)"
-              (reviewCancel)="cancelReview()"
-              (reviewSave)="saveReview()"
-              (reviewDelete)="deleteReview($event)"
-            ></app-event-details-reviews-tab>
+            @if (isLoading()) {
+              <div class="drawer-loading-surface ui-surface">
+                Загрузка отзывов мероприятия...
+              </div>
+            } @else {
+              <app-event-details-reviews-tab
+                [reviewText]="reviewText()"
+                [reviewRating]="reviewRating()"
+                [reviewRows]="reviewRows()"
+                [deletingFeedbackId]="deletingFeedbackId()"
+                [reviewCountLabel]="reviewCountLabel()"
+                [canSaveReview]="canSaveReview()"
+                (reviewTextChange)="onReviewInput($event)"
+                (reviewRatingChange)="onReviewRatingChange($event)"
+                (reviewCancel)="cancelReview()"
+                (reviewSave)="saveReview()"
+                (reviewDelete)="deleteReview($event)"
+              ></app-event-details-reviews-tab>
+            }
           </p-tabpanel>
         }
       </p-tabpanels>

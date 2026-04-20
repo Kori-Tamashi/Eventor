@@ -78,7 +78,7 @@ export class Profile {
       case 0:
         return 'Администратор';
       case 1:
-        return 'Организатор мероприятий';
+        return 'Пользователь';
       case 2:
         return 'Гость';
       default:

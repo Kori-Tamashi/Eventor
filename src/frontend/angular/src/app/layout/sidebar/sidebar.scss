@@ -44,13 +44,33 @@
   background: transparent;
   padding: 0;
   cursor: pointer;
+  transition:
+    color 0.22s ease,
+    transform 0.22s ease;
 }
 
 .nav-item i {
   font-size: var(--text-h3);
+  transition:
+    transform 0.22s ease,
+    color 0.22s ease;
+}
+
+.nav-item:hover {
+  color: var(--eventor-text);
+}
+
+.nav-item:hover i {
+  transform: scale(1.04);
 }
 
 .nav-item.active {
+  background: var(--eventor-selected);
+  color: var(--eventor-surface);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.14);
+}
+
+.nav-item.active:hover {
   background: var(--eventor-selected);
   color: var(--eventor-surface);
 }

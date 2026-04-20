@@ -20,7 +20,7 @@
       }
     </div>
 
-    @if (currentUserId()) {
+    @if (currentUserId() && !isOrganizerRegistration()) {
       <div class="registration-form">
         <label class="registration-label" for="registrationType">Тип участия</label>
         <div class="ui-select-wrap registration-select-wrap">
@@ -33,7 +33,6 @@
           >
             <option value="0">Простой</option>
             <option value="1">VIP</option>
-            <option value="2">Организатор</option>
           </select>
           <i class="pi pi-angle-down ui-select-icon" aria-hidden="true"></i>
         </div>
@@ -58,7 +57,7 @@
         </div>
 
         <div class="registration-actions">
-          @if (isCurrentUserRegistered()) {
+          @if (canDeleteRegistration()) {
             <button
               pButton
               type="button"

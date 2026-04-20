@@ -83,7 +83,7 @@
                 type="button"
                 class="ui-icon-btn"
                 aria-label="Cancel registration"
-                [disabled]="cancelingRegistrationId() === row.registrationId"
+                [disabled]="!row.canCancel || cancelingRegistrationId() === row.registrationId"
                 (click)="cancelRegistration(row)"
               >
                 <span

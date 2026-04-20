@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, switchMap, tap } from 'rxjs';
 import type { Web_Dtos_LoginRequest, Web_Dtos_RegisterRequest } from '../generated';
 import { AuthService } from '../generated';
 import { AuthSessionStore } from '../../auth/auth-session.store';
@@ -28,12 +28,16 @@ export class AuthApiService {
     return this.authService.postApiV1AuthLogin({
       requestBody: payload as Web_Dtos_LoginRequest,
     }).pipe(
-      tap((response) => {
+      switchMap((response) => {
         const token = (response as AuthTokenResponse).token;
 
         if (token) {
           this.authSessionStore.setToken(token);
         }
+
+        return this.currentUserStore.refresh().pipe(
+          map(() => response as AuthTokenResponse)
+        );
       })
     ) as Observable<AuthTokenResponse>;
   }
