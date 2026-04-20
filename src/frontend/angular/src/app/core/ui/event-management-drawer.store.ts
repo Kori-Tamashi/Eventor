@@ -46,6 +46,7 @@ export class EventManagementDrawerStore {
   private saveEventSubscription: Subscription | null = null;
   private saveDaySubscription: Subscription | null = null;
   private saveReviewSubscription: Subscription | null = null;
+  private deleteReviewSubscription: Subscription | null = null;
   private loadDayExtrasSubscription: Subscription | null = null;
   private saveParticipantsSubscription: Subscription | null = null;
   private saveMenuItemsSubscription: Subscription | null = null;
@@ -83,6 +84,7 @@ export class EventManagementDrawerStore {
   readonly reviewText = signal<string>('');
   readonly reviewRating = signal<number>(0);
   readonly reviewRows = signal<EventManagementReviewRow[]>([]);
+  readonly deletingFeedbackId = signal<string | null>(null);
   readonly currentUserRegistrationId = signal<string | null>(null);
 
   readonly eventAnalytics = signal<EventManagementEventAnalytics>({
@@ -390,6 +392,32 @@ export class EventManagementDrawerStore {
       });
   }
 
+  deleteReview(feedbackId: string): void {
+    const review = this.reviewRows().find((row) => row.feedbackId === feedbackId) ?? null;
+
+    if (!review?.isOwnedByCurrentUser || this.deletingFeedbackId()) {
+      return;
+    }
+
+    if (typeof window !== 'undefined' && !window.confirm('Удалить ваш отзыв?')) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.deleteReviewSubscription?.unsubscribe();
+    this.deletingFeedbackId.set(feedbackId);
+    this.deleteReviewSubscription = this.dataService.deleteReview(feedbackId)
+      .pipe(finalize(() => this.deletingFeedbackId.set(null)))
+      .subscribe({
+        next: () => {
+          this.reviewRows.update((rows) => rows.filter((row) => row.feedbackId !== feedbackId));
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.mapDeleteReviewErrorMessage(error));
+        },
+      });
+  }
+
   cancelSelectedDay(): void {
     const selectedDay = this.selectedDay();
 
@@ -493,6 +521,7 @@ export class EventManagementDrawerStore {
     this.dayRowsState.set(data.dayRows);
     this.initialFormData.set(data);
     this.reviewRows.set(data.reviewRows);
+    this.deletingFeedbackId.set(null);
     this.currentUserRegistrationId.set(data.currentUserRegistrationId);
     this.eventAnalytics.set(data.eventAnalytics);
     this.eventRating.set(data.eventRating);
@@ -520,6 +549,7 @@ export class EventManagementDrawerStore {
     this.reviewText.set('');
     this.reviewRating.set(0);
     this.reviewRows.set([]);
+    this.deletingFeedbackId.set(null);
     this.currentUserRegistrationId.set(null);
     this.eventAnalytics.set({ eventCost: null, fundamentalPrice1D: null, fundamentalPriceNd: null, balance1D: null, balanceNd: null });
     this.eventRating.set(0);
@@ -544,6 +574,7 @@ export class EventManagementDrawerStore {
     this.saveEventSubscription?.unsubscribe();
     this.saveDaySubscription?.unsubscribe();
     this.saveReviewSubscription?.unsubscribe();
+    this.deleteReviewSubscription?.unsubscribe();
     this.loadDayExtrasSubscription?.unsubscribe();
     this.saveParticipantsSubscription?.unsubscribe();
     this.saveMenuItemsSubscription?.unsubscribe();
@@ -551,6 +582,7 @@ export class EventManagementDrawerStore {
     this.saveEventSubscription = null;
     this.saveDaySubscription = null;
     this.saveReviewSubscription = null;
+    this.deleteReviewSubscription = null;
     this.loadDayExtrasSubscription = null;
     this.saveParticipantsSubscription = null;
     this.saveMenuItemsSubscription = null;
@@ -596,6 +628,7 @@ export class EventManagementDrawerStore {
 
   private mapSaveEventErrorMessage(error: unknown): string {
     const status = this.extractStatusCode(error);
+    const backendMessage = this.extractBackendValidationMessage(error);
 
     if (status === 401) {
       return 'Выполните вход, чтобы сохранить мероприятие.';
@@ -603,6 +636,10 @@ export class EventManagementDrawerStore {
 
     if (status === 404) {
       return 'Связанные данные мероприятия не найдены.';
+    }
+
+    if (status === 400 && backendMessage) {
+      return backendMessage;
     }
 
     return 'Не удалось сохранить настройки мероприятия.';
@@ -640,6 +677,20 @@ export class EventManagementDrawerStore {
     return 'Не удалось сохранить отзыв.';
   }
 
+  private mapDeleteReviewErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Выполните вход, чтобы удалить отзыв.';
+    }
+
+    if (status === 404) {
+      return 'Отзыв не найден.';
+    }
+
+    return 'Не удалось удалить отзыв.';
+  }
+
   private extractStatusCode(error: unknown): number | null {
     if (typeof error !== 'object' || error === null || !('status' in error)) {
       return null;
@@ -647,5 +698,29 @@ export class EventManagementDrawerStore {
 
     const status = (error as { status?: unknown }).status;
     return typeof status === 'number' ? status : null;
+  }
+
+  private extractBackendValidationMessage(error: unknown): string | null {
+    if (typeof error !== 'object' || error === null || !('error' in error)) {
+      return null;
+    }
+
+    const body = (error as { error?: unknown }).error;
+
+    if (typeof body !== 'object' || body === null || !('errors' in body)) {
+      return null;
+    }
+
+    const errors = (body as { errors?: unknown }).errors;
+
+    if (typeof errors !== 'object' || errors === null) {
+      return null;
+    }
+
+    const messages = Object.values(errors)
+      .flatMap((value) => Array.isArray(value) ? value : [])
+      .filter((value): value is string => typeof value === 'string' && value.trim().length > 0);
+
+    return messages[0] ?? null;
   }
 }

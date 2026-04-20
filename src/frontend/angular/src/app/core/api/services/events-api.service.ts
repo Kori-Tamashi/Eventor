@@ -4,11 +4,28 @@ import { map } from 'rxjs/operators';
 import type {
   System_DateOnly,
   Web_Dtos_CreateDayRequest,
-  Web_Dtos_CreateEventRequest,
-  Web_Dtos_UpdateEventRequest,
 } from '../generated';
 import { EventsService } from '../generated';
 import { EventApiModel, EventListFilters } from '../models/event.models';
+
+export type CreateEventPayload = {
+  title: string;
+  description?: string | null;
+  startDate: string;
+  locationId: string;
+  daysCount: number;
+  percent: number;
+  createdByUserId: string;
+};
+
+export type UpdateEventPayload = {
+  title?: string | null;
+  description?: string | null;
+  startDate?: string | null;
+  locationId?: string | null;
+  daysCount?: number | null;
+  percent?: number | null;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -67,16 +84,16 @@ export class EventsApiService {
     );
   }
 
-  createEvent(payload: Web_Dtos_CreateEventRequest): Observable<EventApiModel> {
+  createEvent(payload: CreateEventPayload): Observable<EventApiModel> {
     return this.eventsService.postApiV1Events({
-      requestBody: payload,
+      requestBody: payload as never,
     }) as Observable<EventApiModel>;
   }
 
-  updateEvent(eventId: string, payload: Web_Dtos_UpdateEventRequest): Observable<void> {
+  updateEvent(eventId: string, payload: UpdateEventPayload): Observable<void> {
     return this.eventsService.putApiV1Events({
       eventId,
-      requestBody: payload,
+      requestBody: payload as never,
     }) as Observable<void>;
   }
 

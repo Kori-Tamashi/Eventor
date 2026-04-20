@@ -127,6 +127,12 @@ button.review-secondary-btn.p-button:focus-visible {
   gap: var(--space-3);
 }
 
+.review-item__head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .review-item__person {
   font-size: var(--text-body);
   font-weight: var(--font-weight-h6);
@@ -142,6 +148,10 @@ button.review-secondary-btn.p-button:focus-visible {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.review-delete-btn {
+  flex-shrink: 0;
 }
 
 .review-empty {

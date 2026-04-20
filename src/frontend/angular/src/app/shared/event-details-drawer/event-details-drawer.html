@@ -82,12 +82,14 @@
               [reviewText]="reviewText()"
               [reviewRating]="reviewRating()"
               [reviewRows]="reviewRows()"
+              [deletingFeedbackId]="deletingFeedbackId()"
               [reviewCountLabel]="reviewCountLabel()"
               [canSaveReview]="canSaveReview()"
               (reviewTextChange)="onReviewInput($event)"
               (reviewRatingChange)="onReviewRatingChange($event)"
               (reviewCancel)="cancelReview()"
               (reviewSave)="saveReview()"
+              (reviewDelete)="deleteReview($event)"
             ></app-event-details-reviews-tab>
           </p-tabpanel>
         </p-tabpanels>

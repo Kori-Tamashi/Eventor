@@ -6,6 +6,7 @@ import { Admin } from './admin';
 import { ItemsApiService } from '../../core/api/services/items-api.service';
 import { LocationsApiService } from '../../core/api/services/locations-api.service';
 import { MenusApiService } from '../../core/api/services/menus-api.service';
+import { DaysApiService } from '../../core/api/services/days-api.service';
 import { AdminEventsApiService } from '../../core/api/services/admin-events-api.service';
 import { AdminFeedbacksApiService } from '../../core/api/services/admin-feedbacks-api.service';
 import { AdminUsersApiService } from '../../core/api/services/admin-users-api.service';
@@ -89,12 +90,19 @@ describe('Admin', () => {
               menuItems: [],
             }),
             listMenuItems: () => of([]),
+            getMenuTitleMap: () => of({}),
             getMenuItemAmount: () => of(1),
             updateMenu: () => of(void 0),
             deleteMenu: () => of(void 0),
             addMenuItem: () => of(void 0),
             updateMenuItemAmount: () => of(void 0),
             removeMenuItem: () => of(void 0),
+          },
+        },
+        {
+          provide: DaysApiService,
+          useValue: {
+            listDays: () => of([]),
           },
         },
         {

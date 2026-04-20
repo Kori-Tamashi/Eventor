@@ -529,6 +529,111 @@ button.ui-primary-btn.p-button:focus-visible .p-button-label {
   height: auto !important;
 }
 
+.admin-page-card .admin-tabs-shell .p-tabs {
+  width: 100%;
+
+  --p-tabs-active-bar-height: 0px !important;
+  --p-tabs-active-bar-background: transparent !important;
+
+  --p-tabs-tablist-background: var(--sidebar-bg) !important;
+  --p-tabs-tablist-border-color: transparent !important;
+  --p-tabs-tablist-border-width: 0px !important;
+
+  --p-tabs-tab-background: transparent !important;
+  --p-tabs-tab-hover-background: transparent !important;
+  --p-tabs-tab-active-background: var(--eventor-surface) !important;
+  --p-tabs-tab-border-width: 0px !important;
+  --p-tabs-tab-border-color: transparent !important;
+  --p-tabs-tab-hover-border-color: transparent !important;
+  --p-tabs-tab-active-border-color: transparent !important;
+  --p-tabs-tab-color: var(--eventor-muted) !important;
+  --p-tabs-tab-hover-color: var(--eventor-text) !important;
+  --p-tabs-tab-active-color: var(--eventor-text) !important;
+  --p-tabs-tab-padding: 6px 14px !important;
+  --p-tabs-tab-font-weight: var(--font-weight-h4) !important;
+  --p-tabs-tab-margin: 0 !important;
+  --p-tabs-tab-gap: 0 !important;
+
+  --p-tabs-tabpanel-background: var(--eventor-surface) !important;
+  --p-tabs-tabpanel-color: var(--eventor-text) !important;
+  --p-tabs-tabpanel-padding: 0 !important;
+
+  background: var(--eventor-surface) !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tablist {
+  background: var(--sidebar-bg) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 5px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  margin-bottom: var(--space-4) !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tablist-content {
+  background: transparent !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tablist-tab-list {
+  gap: var(--space-1);
+}
+
+.admin-page-card .admin-tabs-shell .p-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center !important;
+
+  border-radius: calc(var(--radius-lg) - var(--space-1)) !important;
+  background: transparent !important;
+  color: var(--eventor-muted) !important;
+
+  min-height: 32px !important;
+  padding: 6px 14px !important;
+  font-size: var(--drawer-tab-text) !important;
+  line-height: 20px !important;
+  font-weight: var(--font-weight-h4) !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tab.p-tab-active {
+  background: var(--eventor-surface) !important;
+  color: var(--eventor-text) !important;
+  box-shadow: none !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tab:focus,
+.admin-page-card .admin-tabs-shell .p-tab:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tabs .p-tablist-ink-bar,
+.admin-page-card .admin-tabs-shell .p-tablist-active-bar {
+  display: none !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tabpanels,
+.admin-page-card .admin-tabs-shell .p-tabpanel,
+.admin-page-card .admin-tabs-shell .p-tabs-panel {
+  background: var(--eventor-surface) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tabpanels {
+  padding: 0 !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tabpanel,
+.admin-page-card .admin-tabs-shell .p-tabs-panel {
+  padding: 0 !important;
+}
+
+.admin-page-card .admin-tabs-shell .p-tabpanel > :first-child,
+.admin-page-card .admin-tabs-shell .p-tabs-panel > :first-child {
+  margin-top: 0;
+}
+
 /* =========================
    Base inputs (reusable)
    ========================= */

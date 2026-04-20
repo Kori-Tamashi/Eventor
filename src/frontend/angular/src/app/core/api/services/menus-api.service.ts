@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import type { Web_Dtos_UpdateMenuRequest } from '../generated';
 import { AdminMenusService, MenusService } from '../generated';
 
@@ -36,6 +37,29 @@ export class MenusApiService {
 
   getMenu(menuId: string): Observable<MenuApiModel> {
     return this.menusService.getApiV1Menus1({ menuId }) as Observable<MenuApiModel>;
+  }
+
+  getMenuTitleMap(menuIds: string[]): Observable<Record<string, string>> {
+    const uniqueIds = Array.from(new Set(menuIds.filter(Boolean)));
+
+    if (uniqueIds.length === 0) {
+      return of({});
+    }
+
+    return forkJoin(
+      uniqueIds.map((menuId) =>
+        this.getMenu(menuId).pipe(
+          map((menu) => ({ id: menuId, title: menu.title }))
+        )
+      )
+    ).pipe(
+      map((entries) =>
+        entries.reduce<Record<string, string>>((acc, entry) => {
+          acc[entry.id] = entry.title;
+          return acc;
+        }, {})
+      )
+    );
   }
 
   createMenu(title: string, description?: string): Observable<MenuApiModel> {

@@ -60,6 +60,7 @@ export class EventManagementDrawer {
   readonly reviewText = this.store.reviewText;
   readonly reviewRating = this.store.reviewRating;
   readonly reviewRows = this.store.reviewRows;
+  readonly deletingFeedbackId = this.store.deletingFeedbackId;
   readonly reviewCountLabel = this.store.reviewCountLabel;
   readonly canSaveReview = this.store.canSaveReview;
 
@@ -167,6 +168,10 @@ export class EventManagementDrawer {
 
   saveReview(): void {
     this.store.saveReview();
+  }
+
+  deleteReview(feedbackId: string): void {
+    this.store.deleteReview(feedbackId);
   }
 
   onSaveParticipants(rows: EventManagementParticipantRow[]): void {

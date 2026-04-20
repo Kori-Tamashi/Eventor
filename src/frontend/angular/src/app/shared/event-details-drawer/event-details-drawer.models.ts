@@ -17,9 +17,11 @@ export type EventDetailsDrawerDay = {
 };
 
 export type EventDetailsDrawerReview = {
+  feedbackId: string;
   person: string;
   comment: string;
   rating: number;
+  isOwnedByCurrentUser: boolean;
 };
 
 export type EventDetailsDrawerRegistrationType = 0 | 1 | 2;

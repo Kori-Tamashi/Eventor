@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
+import { AdminDaysSection } from '../../shared/admin/admin-days-section/admin-days-section';
 import { AdminEventsSection } from '../../shared/admin/admin-events-section/admin-events-section';
 import { AdminFeedbacksSection } from '../../shared/admin/admin-feedbacks-section/admin-feedbacks-section';
 import { AdminItemsSection } from '../../shared/admin/admin-items-section/admin-items-section';
@@ -10,7 +11,7 @@ import { AdminUsersSection } from '../../shared/admin/admin-users-section/admin-
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [TabsModule, AdminLocationsSection, AdminItemsSection, AdminMenusSection, AdminUsersSection, AdminEventsSection, AdminFeedbacksSection],
+  imports: [TabsModule, AdminLocationsSection, AdminItemsSection, AdminMenusSection, AdminUsersSection, AdminEventsSection, AdminFeedbacksSection, AdminDaysSection],
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
 })

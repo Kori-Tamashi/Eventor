@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { finalize, switchMap } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -45,9 +45,20 @@ export class Organization {
   readonly successMessage = signal<string>('');
 
   readonly allRows = signal<OrganizationEventRow[]>([]);
+  private wasDrawerOpen = false;
 
   constructor() {
     this.loadOrganizedEvents();
+
+    effect(() => {
+      const isDrawerOpen = this.eventManagementDrawerStore.isOpen();
+
+      if (this.wasDrawerOpen && !isDrawerOpen) {
+        this.loadOrganizedEvents();
+      }
+
+      this.wasDrawerOpen = isDrawerOpen;
+    });
   }
 
   private readonly paginationState = computed(() => {

@@ -17,6 +17,7 @@ export class EventDetailsDrawerStore {
 
   private loadSubscription: Subscription | null = null;
   private saveReviewSubscription: Subscription | null = null;
+  private deleteReviewSubscription: Subscription | null = null;
   private saveRegistrationSubscription: Subscription | null = null;
   private deleteRegistrationSubscription: Subscription | null = null;
 
@@ -25,6 +26,7 @@ export class EventDetailsDrawerStore {
   readonly isOpen = signal<boolean>(false);
   readonly isLoading = signal<boolean>(false);
   readonly isSavingRegistration = signal<boolean>(false);
+  readonly deletingFeedbackId = signal<string | null>(null);
   readonly errorMessage = signal<string>('');
   readonly context = signal<EventDetailsDrawerContext | null>(null);
   readonly selectedDay = signal<EventDetailsDrawerDay | null>(null);
@@ -106,6 +108,7 @@ export class EventDetailsDrawerStore {
     this.selectedDay.set(null);
     this.reviewText.set('');
     this.reviewRating.set(0);
+    this.deletingFeedbackId.set(null);
     this.syncRegistrationFormFromContext(context);
     this.isLoading.set(false);
     this.isSavingRegistration.set(false);
@@ -143,6 +146,7 @@ export class EventDetailsDrawerStore {
     this.reviewRating.set(0);
     this.registrationType.set(0);
     this.registrationDayIds.set([]);
+    this.deletingFeedbackId.set(null);
     this.errorMessage.set('');
     this.isLoading.set(true);
     this.isSavingRegistration.set(false);
@@ -178,6 +182,7 @@ export class EventDetailsDrawerStore {
     this.reviewRating.set(0);
     this.registrationType.set(0);
     this.registrationDayIds.set([]);
+    this.deletingFeedbackId.set(null);
   }
 
   onDrawerVisibleChange(visible: boolean): void {
@@ -337,6 +342,45 @@ export class EventDetailsDrawerStore {
       });
   }
 
+  deleteReview(feedbackId: string): void {
+    const currentContext = this.context();
+    const review = currentContext?.data.reviewRows.find((row) => row.feedbackId === feedbackId) ?? null;
+
+    if (!currentContext || !review?.isOwnedByCurrentUser || this.deletingFeedbackId()) {
+      return;
+    }
+
+    if (typeof window !== 'undefined' && !window.confirm('Удалить ваш отзыв?')) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.deleteReviewSubscription?.unsubscribe();
+    this.deletingFeedbackId.set(feedbackId);
+    this.deleteReviewSubscription = this.dataService.deleteReview(feedbackId)
+      .pipe(finalize(() => this.deletingFeedbackId.set(null)))
+      .subscribe({
+        next: () => {
+          this.context.update((ctx) => {
+            if (!ctx) {
+              return null;
+            }
+
+            return {
+              ...ctx,
+              data: {
+                ...ctx.data,
+                reviewRows: ctx.data.reviewRows.filter((row) => row.feedbackId !== feedbackId),
+              },
+            };
+          });
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.mapDeleteReviewErrorMessage(error));
+        },
+      });
+  }
+
   private get dataService(): EventDetailsDrawerDataService {
     return this.injector.get(EventDetailsDrawerDataService);
   }
@@ -344,10 +388,12 @@ export class EventDetailsDrawerStore {
   private cancelOngoingRequests(): void {
     this.loadSubscription?.unsubscribe();
     this.saveReviewSubscription?.unsubscribe();
+    this.deleteReviewSubscription?.unsubscribe();
     this.saveRegistrationSubscription?.unsubscribe();
     this.deleteRegistrationSubscription?.unsubscribe();
     this.loadSubscription = null;
     this.saveReviewSubscription = null;
+    this.deleteReviewSubscription = null;
     this.saveRegistrationSubscription = null;
     this.deleteRegistrationSubscription = null;
   }
@@ -382,6 +428,20 @@ export class EventDetailsDrawerStore {
     }
 
     return 'Не удалось сохранить отзыв.';
+  }
+
+  private mapDeleteReviewErrorMessage(error: unknown): string {
+    const status = this.extractStatusCode(error);
+
+    if (status === 401) {
+      return 'Выполните вход, чтобы удалить отзыв.';
+    }
+
+    if (status === 404) {
+      return 'Отзыв не найден.';
+    }
+
+    return 'Не удалось удалить отзыв.';
   }
 
   private hasRegistrationChanges(): boolean {

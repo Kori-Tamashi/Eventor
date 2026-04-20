@@ -73,7 +73,15 @@ export class EventDetailsDrawerDataService {
 
             const dayRows = this.buildDayRows(days, registrations, userMap, dayPriceMap);
             const reviewRows = feedbacks.map((feedback) =>
-              this.mapReviewRow(feedback.registrationId, feedback.comment, feedback.rate, registrationById, userMap)
+              this.mapReviewRow(
+                feedback.id,
+                feedback.registrationId,
+                feedback.comment,
+                feedback.rate,
+                registrationById,
+                userMap,
+                currentUser?.id ?? null,
+              )
             );
 
             return {
@@ -106,11 +114,17 @@ export class EventDetailsDrawerDataService {
   createReview(payload: CreateFeedbackPayload, person: string): Observable<EventDetailsDrawerReview> {
     return this.feedbacksApiService.createFeedback(payload).pipe(
       map((feedback) => ({
+        feedbackId: feedback.id,
         person,
         comment: feedback.comment,
         rating: feedback.rate,
+        isOwnedByCurrentUser: true,
       }))
     );
+  }
+
+  deleteReview(feedbackId: string): Observable<void> {
+    return this.feedbacksApiService.deleteFeedback(feedbackId);
   }
 
   createRegistration(payload: Web_Dtos_CreateRegistrationRequest): Observable<RegistrationApiModel> {
@@ -155,19 +169,23 @@ export class EventDetailsDrawerDataService {
   }
 
   private mapReviewRow(
+    feedbackId: string,
     registrationId: string,
     comment: string,
     rating: number,
     registrationById: Record<string, RegistrationApiModel>,
-    userMap: Record<string, string>
+    userMap: Record<string, string>,
+    currentUserId: string | null,
   ): EventDetailsDrawerReview {
     const registration = registrationById[registrationId];
     const person = registration ? userMap[registration.userId] ?? 'Участник' : 'Участник';
 
     return {
+      feedbackId,
       person,
       comment,
       rating,
+      isOwnedByCurrentUser: currentUserId !== null && registration?.userId === currentUserId,
     };
   }
 
